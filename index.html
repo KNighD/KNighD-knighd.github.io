@@ -115,6 +115,16 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
@@ -205,8 +215,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 22:19:23" itemprop="dateModified" datetime="2020-07-17T22:19:23+08:00">2020-07-17</time>
+                <time title="修改时间：2020-07-17 22:56:15" itemprop="dateModified" datetime="2020-07-17T22:56:15+08:00">2020-07-17</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+                </span>
+            </span>
 
           
 
@@ -221,31 +240,14 @@
       
           <h5 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h5><p>在实际工作的业务开发中，使用到 Generator 比较少。近期有个项目状态管理使用的是 redux-saga，而 redux-saga 又是基于 Generator，借此机会重新学了下 Generator。</p>
 <p>本文主要是记录 generator 的要点，以防将来遗忘。</p>
-<h5 id="调用-generator-将会返回一个迭代器"><a href="#调用-generator-将会返回一个迭代器" class="headerlink" title="调用 generator 将会返回一个迭代器"></a>调用 generator 将会返回一个迭代器</h5><p>所谓 generator 实际上就是带有 * 的函数，调用后不会执行 generator 内部代码，而是返回一个 iterator</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> generatorFunction = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'generator'</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> iterator = generatorFunction()</span><br><span class="line"><span class="built_in">console</span>.log(iterator[<span class="built_in">Symbol</span>.iterator])</span><br><span class="line"></span><br><span class="line"><span class="comment">// function [Symbol.iterator]()</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="执行-generator"><a href="#执行-generator" class="headerlink" title="执行 generator"></a>执行 generator</h5><p>每次调用返回的迭代器的 next 方法可以执行 generator 中的代码，直到执行完遇到的第一个 yield 或者 return 后并交出执行权</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> generatorFunction = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'1'</span>)</span><br><span class="line">  <span class="keyword">yield</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'2'</span>)</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> iterator = generatorFunction()</span><br><span class="line">iterator.next()</span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line">iterator.next()</span><br><span class="line"><span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="return-与-yield-的异同"><a href="#return-与-yield-的异同" class="headerlink" title="return 与 yield 的异同"></a>return 与 yield 的异同</h5><p>执行 iterator.next 返回的是一个包括 value 和 done 两个属性的对象，这个对象的 value 就是 <code>yield</code> 或 <code>return</code> 后面表达式的值。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> generatorFunction = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">yield</span> <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> iterator = generatorFunction()</span><br><span class="line"><span class="keyword">var</span> a = iterator.next()</span><br><span class="line"><span class="built_in">console</span>.log(a)</span><br><span class="line"><span class="comment">// &#123; value: 1, done: false &#125;</span></span><br><span class="line"><span class="keyword">var</span> b = iterator.next()</span><br><span class="line"><span class="built_in">console</span>.log(b)</span><br><span class="line"><span class="comment">// &#123; value: undefined, done: true &#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>yield 与 return 类似，但 yield 是暂停的意思，而 return 则代表结束, return 之后的代码将不会被执行到。</p>
-<p>done 为 true 表示遍历结束，但是此时依然可以可以继续调用 iterator.next()，只不过返回值将是 { value: undefined, done: true }。</p>
-<p><code>for...of</code>循环可以自动遍历 Generator 函数运行时生成的<code>Iterator</code>对象，直到 done 变为 true。</p>
-<p>⚠️ done 为 true 的运行结果会被抛弃掉：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> generatorFunction = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">4</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> iterator = generatorFunction();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> index <span class="keyword">of</span> iterator) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(index);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="next-的参数"><a href="#next-的参数" class="headerlink" title="next 的参数"></a>next 的参数</h5><p>next 的参数可以最为 yield 语句的返回值:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> generatorFunction = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="keyword">yield</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'a'</span>, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> iterator = generatorFunction()</span><br><span class="line">iterator.next()</span><br><span class="line">iterator.next(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// a 1</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="yield"><a href="#yield" class="headerlink" title="yield *"></a>yield *</h5><p>通过 yield * 可以进入到另一个 generator 中：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> foo = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'foo'</span>;</span><br><span class="line">    <span class="keyword">yield</span> * bar();</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> bar = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'bar'</span>;</span><br><span class="line">    <span class="keyword">yield</span> * baz();</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> baz = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'baz'</span>;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> index <span class="keyword">of</span> foo()) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(index);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// foo</span></span><br><span class="line"><span class="comment">// bar</span></span><br><span class="line"><span class="comment">// baz</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="向-generaotr-内部抛异常"><a href="#向-generaotr-内部抛异常" class="headerlink" title="向 generaotr 内部抛异常"></a>向 generaotr 内部抛异常</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> generatorFunction = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">yield</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="string">'a'</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> e;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'Generator caught'</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> iterator = generatorFunction();</span><br><span class="line">iterator.next();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    iterator.throw(<span class="string">'a'</span>);</span><br><span class="line">    iterator.throw(<span class="string">'b'</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Uncaught'</span>, e);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Generator caught a</span></span><br><span class="line"><span class="comment">// Uncaught b</span></span><br></pre></td></tr></table></figure>
-
-<p>资料主要参考自  <a href="https://github.com/gajus/gajus.com-blog/blob/master/posts/the-definitive-guide-to-the-javascript-generators/index.md" target="_blank" rel="noopener">generator 权威指南</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/07/15/%E9%87%8D%E5%AD%A6%20Generator/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -389,9 +391,17 @@
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
-      <div class="site-state-item site-state-tags">
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
         <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
