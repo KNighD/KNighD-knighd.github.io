@@ -28,7 +28,7 @@
 <meta property="og:description" content="背景电商项目需要搭建一个 h5 项目。这里简单记录一下搭建过程遇到的坑，作为总结。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-20T07:21:54.000Z">
-<meta property="article:modified_time" content="2020-07-20T10:40:39.263Z">
+<meta property="article:modified_time" content="2020-07-20T10:54:57.468Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="javascript">
 <meta name="twitter:card" content="summary">
@@ -214,7 +214,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-07-20 15:21:54 / 修改时间：18:40:39" itemprop="dateCreated datePublished" datetime="2020-07-20T15:21:54+08:00">2020-07-20</time>
+              <time title="创建时间：2020-07-20 15:21:54 / 修改时间：18:54:57" itemprop="dateCreated datePublished" datetime="2020-07-20T15:21:54+08:00">2020-07-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -253,7 +253,7 @@
 <li><p>新增 .babelrc</p>
 </li>
 <li><p>修改  tsconfig 的 module 为 <code>es6</code></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"module"</span>: <span class="string">"ES6"</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"module"</span>: <span class="string">"ES6"</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -297,14 +297,14 @@
 <p>通过 <code>customize-cra</code> 提供的 <code>addLessLoader</code> 方法即可，同时也提供了 <code>fixBabelImports</code>  可以很方便的添加 babel-plugin-import 配置：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">  override,</span><br><span class="line">  fixBabelImports,</span><br><span class="line">  addLessLoader,</span><br><span class="line">&#125; = <span class="built_in">require</span>(<span class="string">'customize-cra'</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = override(</span><br><span class="line">  fixBabelImports(<span class="string">'import'</span>, &#123;</span><br><span class="line">    libraryName: <span class="string">'antd-mobile'</span>,</span><br><span class="line">    style: <span class="literal">true</span>,</span><br><span class="line">  &#125;),</span><br><span class="line">  addLessLoader(&#123;</span><br><span class="line">    lessOptions: &#123;</span><br><span class="line">      javascriptEnabled: <span class="literal">true</span>,</span><br><span class="line">      modifyVars: &#123;</span><br><span class="line">        <span class="string">'@brand-primary'</span>: <span class="string">'#ff74b9'</span>,</span><br><span class="line">        <span class="string">'brand-primary-tap'</span>: <span class="string">'#ff9cca'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 
-<p>接着是配置路径别名遇到的问题，通过 <code>customize-cra</code>  提供的 <code>addWebpackAlias</code> 可以配置别名，但是 typescript 一直无法解析对应别名，那么应该只需要配置好 ts 的 paths 就行了吧：</p>
+<h5 id="别名"><a href="#别名" class="headerlink" title="别名"></a>别名</h5><p>接着是配置路径别名遇到的问题，通过 <code>customize-cra</code>  提供的 <code>addWebpackAlias</code> 可以配置别名，但是 typescript 一直无法解析对应别名，那么应该只需要配置好 ts 的 paths 就行了吧：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"baseUrl"</span>: <span class="string">"."</span>,</span><br><span class="line">    <span class="attr">"paths"</span>: &#123;</span><br><span class="line">      <span class="attr">"@/*"</span>: [<span class="string">"./src/*"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>vscode 不再报错了,接下来就是见证奇迹的时刻了<code>npm run start</code>：</p>
 <p>控制台显示 <code>- compilerOptions.paths must not be set (aliased imports are not supported)</code> 并且自动把 tscongfig 中的 paths 移除了😂</p>
 <p>根据 <a href="https://github.com/timarney/react-app-rewired/issues/375" target="_blank" rel="noopener">issue</a>，使用 extends 的方式将 paths 移动到单独的文件后 npm run start，果然不会被重写了！</p>
-<p>就在我以为没问题的时候，运行了下 build，emmm，build 依然会出现以上错误，并且虽然 build 成功，但是没有 index.html 文件输出。</p>
-<p>同样在 build 时，mini-css-extract-plugin 提示 Conflicting order， 错误位置在 antd-mobile 的样式文件，考虑将 <code>customize-cra</code> 替换成 <a href="https://github.com/gsoft-inc/craco" target="_blank" rel="noopener">craco</a> </p>
+<p>就在我以为没问题的时候，运行了下 build，emmm，build 依然会出现以上错误，并且虽然 build 成功，但是没有 index.html 文件输出，对于这个问题，考虑将 <code>customize-cra</code> 替换成 <a href="https://github.com/gsoft-inc/craco" target="_blank" rel="noopener">craco</a> </p>
+<h5 id="mini-css-extract-plugin"><a href="#mini-css-extract-plugin" class="headerlink" title="mini-css-extract-plugin"></a>mini-css-extract-plugin</h5><p>在 build 时，mini-css-extract-plugin 提示 Conflicting order， 错误位置在 antd-mobile 的样式文件。根据 <a href="https://github.com/ant-design/ant-design/issues/14895" target="_blank" rel="noopener">issue</a> 以及 <a href="https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250" target="_blank" rel="noopener"> issue </a>看来这个问题主要是由于懒加载加上antd 组件导入顺序不一致导致的，目前看来无需解决</p>
 <p>未完待续…</p>
 
     </div>
@@ -386,7 +386,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#antd-mobile-按需加载"><span class="nav-number">2.</span> <span class="nav-text">antd-mobile 按需加载</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置-antd-mobile-主题"><span class="nav-number">3.</span> <span class="nav-text">配置 antd-mobile 主题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#create-react-app"><span class="nav-number">4.</span> <span class="nav-text">create-react-app</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#antd-mobile-按需加载"><span class="nav-number">2.</span> <span class="nav-text">antd-mobile 按需加载</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置-antd-mobile-主题"><span class="nav-number">3.</span> <span class="nav-text">配置 antd-mobile 主题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#create-react-app"><span class="nav-number">4.</span> <span class="nav-text">create-react-app</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#别名"><span class="nav-number">5.</span> <span class="nav-text">别名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mini-css-extract-plugin"><span class="nav-number">6.</span> <span class="nav-text">mini-css-extract-plugin</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
