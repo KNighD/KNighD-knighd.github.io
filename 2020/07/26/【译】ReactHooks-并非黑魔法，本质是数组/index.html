@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"knighd.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言本文翻译自 React hooks: not magic, just arrays，该文章很好的阐释了 react hooks 原理，我将保持原文的意思进行翻译，如有自己感觉不清楚的地方将会在括号中注明。以下为翻译内容。 我是 hooks api 的忠实粉丝。然而 hooks 在使用时却有一些奇怪的约束。在这里，我给尝试去理解这些规则由来的人提供一个了模型，用于思考如何去使用这些新 api。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【译】ReactHooks-并非黑魔法，本质是数组">
+<meta property="og:url" content="https://knighd.github.io/2020/07/26/%E3%80%90%E8%AF%91%E3%80%91ReactHooks-%E5%B9%B6%E9%9D%9E%E9%BB%91%E9%AD%94%E6%B3%95%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="前言本文翻译自 React hooks: not magic, just arrays，该文章很好的阐释了 react hooks 原理，我将保持原文的意思进行翻译，如有自己感觉不清楚的地方将会在括号中注明。以下为翻译内容。 我是 hooks api 的忠实粉丝。然而 hooks 在使用时却有一些奇怪的约束。在这里，我给尝试去理解这些规则由来的人提供一个了模型，用于思考如何去使用这些新 api。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://miro.medium.com/max/1280/1*LAZDuAEm7nbcx0vWVKJJ2w.png">
+<meta property="og:image" content="https://miro.medium.com/max/1260/1*8TpWnrL-Jqh7PymLWKXbWg.png">
+<meta property="og:image" content="https://miro.medium.com/max/1254/1*qtwvPWj-K3PkLQ6SzE2u8w.png">
+<meta property="og:image" content="https://miro.medium.com/max/1260/1*3L8YJnn5eV5ev1FuN6rKSQ.png">
+<meta property="og:image" content="https://miro.medium.com/max/1270/1*C4IA_Y7v6eoptZTBspRszQ.png">
+<meta property="og:image" content="https://miro.medium.com/max/1274/1*aK7jIm6oOeHJqgWnNXt8Ig.png">
+<meta property="article:published_time" content="2020-07-26T14:14:50.000Z">
+<meta property="article:modified_time" content="2020-07-27T04:41:03.569Z">
+<meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://miro.medium.com/max/1280/1*LAZDuAEm7nbcx0vWVKJJ2w.png">
+
+<link rel="canonical" href="https://knighd.github.io/2020/07/26/%E3%80%90%E8%AF%91%E3%80%91ReactHooks-%E5%B9%B6%E9%9D%9E%E9%BB%91%E9%AD%94%E6%B3%95%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF%E6%95%B0%E7%BB%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【译】ReactHooks-并非黑魔法，本质是数组 | 前端见闻录</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">前端见闻录</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Hello World</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.github.io/2020/07/26/%E3%80%90%E8%AF%91%E3%80%91ReactHooks-%E5%B9%B6%E9%9D%9E%E9%BB%91%E9%AD%94%E6%B3%95%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF%E6%95%B0%E7%BB%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【译】ReactHooks-并非黑魔法，本质是数组
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-26 22:14:50" itemprop="dateCreated datePublished" datetime="2020-07-26T22:14:50+08:00">2020-07-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-27 12:41:03" itemprop="dateModified" datetime="2020-07-27T12:41:03+08:00">2020-07-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>本文翻译自 <a href="https://medium.com/@ryardley/react-hooks-not-magic-just-arrays-cd4f1857236e" target="_blank" rel="noopener">React hooks: not magic, just arrays</a>，该文章很好的阐释了 react hooks 原理，我将保持原文的意思进行翻译，如有自己感觉不清楚的地方将会在括号中注明。以下为翻译内容。</p>
+<p>我是 hooks api 的忠实粉丝。然而 hooks 在使用时却有一些<a href="https://reactjs.org/docs/hooks-rules.html" target="_blank" rel="noopener">奇怪的约束</a>。在这里，我给尝试去理解这些规则由来的人提供一个了模型，用于思考如何去使用这些新 api。</p>
+<a id="more"></a>
+
+<h4 id="hooks-的规则"><a href="#hooks-的规则" class="headerlink" title="hooks 的规则"></a>hooks 的规则</h4><p>在 <a href="https://reactjs.org/docs/hooks-rules.html" target="_blank" rel="noopener">hooks proposal documentation</a>  的提纲中，React 核心团队规定了两条开发者在使用 hooks 时需要遵守的主要规则：</p>
+<ul>
+<li>不要在循环，条件或者是嵌套函数中使用 hooks</li>
+<li>只能在 React Functions 中才能使用 hooks</li>
+</ul>
+<p>后者我认为是显而易见的。要将行为附加到函数式组件上，你需要能够以某种方式将该行为与组件关联起来。（原文为： To attach behaviour to a functional component you need to be able to associate that behaviour with the component somehow. 不太理解作者想表达的意思）</p>
+<p>前者我认为会比较让人困惑，因为像这样使用 api 可能看起来不太自然。而这正是我今天想要探讨的内容。</p>
+<h4 id="hooks-的状态管理都是基于数组"><a href="#hooks-的状态管理都是基于数组" class="headerlink" title="hooks 的状态管理都是基于数组"></a>hooks 的状态管理都是基于数组</h4><p>为了更清晰地理解心智模型，让我们来看一下如何实现一个简单的 hooks api。</p>
+<p><strong>注意这只是 API 的一种可能的实现方式及猜想，用于让你理解，而非 API 真正的内部实现方式</strong></p>
+<h4 id="我们如何实现-useState"><a href="#我们如何实现-useState" class="headerlink" title="我们如何实现 useState?"></a>我们如何实现 <code>useState</code>?</h4><p>让我们打开一个实例来演示如何实现一个 state hook。</p>
+<p>首先，我们定义一个组件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function RenderFunctionComponent() &#123;</span><br><span class="line">  const [firstName, setFirstName] &#x3D; useState(&quot;Rudi&quot;);</span><br><span class="line">  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个 Hooks api 背后的思想是，你可以用 hook 函数返回的数组的第二个元素作为 setter 方法，这个 setter 方法可以控制被 hook 管理的状态。</p>
+<h4 id="那么-React-是如何做到这个的呢？"><a href="#那么-React-是如何做到这个的呢？" class="headerlink" title="那么 React 是如何做到这个的呢？"></a>那么 React 是如何做到这个的呢？</h4><p>让我们看看这个在 React 内部是如何运作的。以下内容将在特定组件的上下文中运行。这就是说数据存储在要渲染的组件的上一层。这个 state 不与其他组件共享，但是维护在一个可以用于该组件后续渲染的作用域内。（原文：The following would work within the execution context for rendering a particular component. That means that the data stored here lives one level outside of the component being rendered. This state is not shared with other components but it is maintained in a scope that is accessible to subsequent rendering of the specific component）</p>
+<ol>
+<li><p>初始化</p>
+<p>创建两个空数组：<code>setter</code> 和 <code>state</code></p>
+<p>将指针设置为 0</p>
+<p><img src="https://miro.medium.com/max/1280/1*LAZDuAEm7nbcx0vWVKJJ2w.png" alt="Image for post"></p>
+</li>
+</ol>
+<ol start="2">
+<li><p>首次渲染</p>
+<p>首次运行该组件。</p>
+<p>每次调用 <code>useState</code> ，如果是首次运行，则 push 一个 setter 方法（绑定到指针的位置）到 setters 数组中，并且 push 一些 state 到 state 数组中。</p>
+<p><img src="https://miro.medium.com/max/1260/1*8TpWnrL-Jqh7PymLWKXbWg.png" alt="Image for post"></p>
+</li>
+<li><p>后续渲染</p>
+<p>每次后续渲染，指针将被重置，然后从各个数组中读取对应的值。</p>
+<p><img src="https://miro.medium.com/max/1254/1*qtwvPWj-K3PkLQ6SzE2u8w.png" alt="Image for post"></p>
+</li>
+<li><p>事件处理</p>
+<p>每一个 setter 都保存一个对应的指针位置的引用，因此触发任意一个 <code>setter</code> 都可以修改 state 数组中对应指针位置的 state。</p>
+<p><img src="https://miro.medium.com/max/1260/1*3L8YJnn5eV5ev1FuN6rKSQ.png" alt="Image for post"></p>
+</li>
+</ol>
+<h4 id="简单的实现-And-the-naive-implementation"><a href="#简单的实现-And-the-naive-implementation" class="headerlink" title="简单的实现(And the naive implementation)"></a>简单的实现(And the naive implementation)</h4><p>下面是简单的代码演示：</p>
+<p><strong>注意：这不代表 hooks 的实际实现，但是应该能给你一个理解 hooks 工作原理的思路。这就是我为什么使用块级变量的原因（原文： That is why we are using module level vars etc）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">let state &#x3D; [];</span><br><span class="line">let setters &#x3D; [];</span><br><span class="line">let firstRun &#x3D; true;</span><br><span class="line">let cursor &#x3D; 0;</span><br><span class="line"></span><br><span class="line">function createSetter(cursor) &#123;</span><br><span class="line">  return function setterWithCursor(newVal) &#123;</span><br><span class="line">    state[cursor] &#x3D; newVal;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; This is the pseudocode for the useState helper</span><br><span class="line">export function useState(initVal) &#123;</span><br><span class="line">  if (firstRun) &#123;</span><br><span class="line">    state.push(initVal);</span><br><span class="line">    setters.push(createSetter(cursor));</span><br><span class="line">    firstRun &#x3D; false;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const setter &#x3D; setters[cursor];</span><br><span class="line">  const value &#x3D; state[cursor];</span><br><span class="line"></span><br><span class="line">  cursor++;</span><br><span class="line">  return [value, setter];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Our component code that uses hooks</span><br><span class="line">function RenderFunctionComponent() &#123;</span><br><span class="line">  const [firstName, setFirstName] &#x3D; useState(&quot;Rudi&quot;); &#x2F;&#x2F; cursor: 0</span><br><span class="line">  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;); &#x2F;&#x2F; cursor: 1</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Richard&quot;)&#125;&gt;Richard&lt;&#x2F;Button&gt;</span><br><span class="line">      &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; This is sort of simulating Reacts rendering cycle</span><br><span class="line">function MyComponent() &#123;</span><br><span class="line">  cursor &#x3D; 0; &#x2F;&#x2F; resetting the cursor</span><br><span class="line">  return &lt;RenderFunctionComponent &#x2F;&gt;; &#x2F;&#x2F; render</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">console.log(state); &#x2F;&#x2F; Pre-render: []</span><br><span class="line">MyComponent();</span><br><span class="line">console.log(state); &#x2F;&#x2F; First-render: [&#39;Rudi&#39;, &#39;Yardley&#39;]</span><br><span class="line">MyComponent();</span><br><span class="line">console.log(state); &#x2F;&#x2F; Subsequent-render: [&#39;Rudi&#39;, &#39;Yardley&#39;]</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; click the &#39;Fred&#39; button</span><br><span class="line"></span><br><span class="line">console.log(state); &#x2F;&#x2F; After-click: [&#39;Fred&#39;, &#39;Yardley&#39;]</span><br></pre></td></tr></table></figure>
+
+<h4 id="为什么顺序很重要？"><a href="#为什么顺序很重要？" class="headerlink" title="为什么顺序很重要？"></a>为什么顺序很重要？</h4><p>现在如果在一个生命周期里，我们基于外部的因素或者组件状态改变了 hooks 的顺序，将会发生什么事情？</p>
+<p>让我们试试看 react 不建议我们做的事情：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">let firstRender &#x3D; true;</span><br><span class="line"></span><br><span class="line">function RenderFunctionComponent() &#123;</span><br><span class="line">  let initName;</span><br><span class="line">  </span><br><span class="line">  if(firstRender)&#123;</span><br><span class="line">    [initName] &#x3D; useState(&quot;Rudi&quot;);</span><br><span class="line">    firstRender &#x3D; false;</span><br><span class="line">  &#125;</span><br><span class="line">  const [firstName, setFirstName] &#x3D; useState(initName);</span><br><span class="line">  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在一个条件语句中使用了 <code>useState</code>，让我们看看造成了什么样的破坏：</p>
+<h4 id="坏组件的第一次渲染"><a href="#坏组件的第一次渲染" class="headerlink" title="坏组件的第一次渲染"></a>坏组件的第一次渲染</h4><p><img src="https://miro.medium.com/max/1270/1*C4IA_Y7v6eoptZTBspRszQ.png" alt="Image for post"></p>
+<p>在这个时候，我们的实例变量 <code>firstName</code> 和 <code>lastName</code> 指向的正确的数据，但是我们看看第二次渲染发生了什么：</p>
+<h4 id="坏组件的第二次渲染"><a href="#坏组件的第二次渲染" class="headerlink" title="坏组件的第二次渲染"></a>坏组件的第二次渲染</h4><p><img src="https://miro.medium.com/max/1274/1*aK7jIm6oOeHJqgWnNXt8Ig.png" alt="Image for post"></p>
+<p>现在我们的 state 存储出现异常， <code>firstName</code> 和 <code>lastName</code> 都指向 “Rudi”。上述明显错误的操作给了我们一个思路：为什么 hooks 要如此规定。</p>
+<blockquote>
+<p>The React team are stipulating the usage rules because not following them will lead to inconsistent data</p>
+</blockquote>
+<h4 id="想想-hooks-操作一系列的数组，那么你就不会打破规则了（Think-about-hooks-manipulating-a-set-of-arrays-and-you-wont-break-the-rules）"><a href="#想想-hooks-操作一系列的数组，那么你就不会打破规则了（Think-about-hooks-manipulating-a-set-of-arrays-and-you-wont-break-the-rules）" class="headerlink" title="想想 hooks 操作一系列的数组，那么你就不会打破规则了（Think about hooks manipulating a set of arrays and you wont break the rules）"></a>想想 hooks 操作一系列的数组，那么你就不会打破规则了（Think about hooks manipulating a set of arrays and you wont break the rules）</h4><p>现在应该能很清晰理解为什么不能在条件或者循环语句中使用 <code>use</code> hook 了：因为我们使用了指针指向了数组，如果在 render 的时候改变了顺序，那么指针就不能对应正确的数据，所以调用 use 也不会指向正确的数据和 setter。</p>
+<p>因此，诀窍就是将 hooks 想像成用恒定的指针来管理一系列数组。如果能做到这个，那么一切就能按预期进行。</p>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>希望我已经就如何思考 hooks api 的工作原理指出了一个清晰的心智模型。（后面就偷个懒不翻译了，基本是上述观点的重复强调。）</p>
+<p>Hopefully I have laid out a clearer mental model for how to think about what is going on under the hood with the new hooks API. Remember the true value here is being able to group concerns together so being careful about order and using the hooks API will have a high payoff.</p>
+<p>Hooks is an effective plugin API for React Components. There is a reason why people are excited about this and if you think about this kind of model where state exists as a set of arrays then you should not find yourselves breaking the rules around their usage.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/24/%E5%89%8D%E7%AB%AF%E5%85%A5%E5%9D%91flutter/" rel="prev" title="前端入坑flutter">
+      <i class="fa fa-chevron-left"></i> 前端入坑flutter
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hooks-的规则"><span class="nav-number">2.</span> <span class="nav-text">hooks 的规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hooks-的状态管理都是基于数组"><span class="nav-number">3.</span> <span class="nav-text">hooks 的状态管理都是基于数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们如何实现-useState"><span class="nav-number">4.</span> <span class="nav-text">我们如何实现 useState?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#那么-React-是如何做到这个的呢？"><span class="nav-number">5.</span> <span class="nav-text">那么 React 是如何做到这个的呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单的实现-And-the-naive-implementation"><span class="nav-number">6.</span> <span class="nav-text">简单的实现(And the naive implementation)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么顺序很重要？"><span class="nav-number">7.</span> <span class="nav-text">为什么顺序很重要？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#坏组件的第一次渲染"><span class="nav-number">8.</span> <span class="nav-text">坏组件的第一次渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#坏组件的第二次渲染"><span class="nav-number">9.</span> <span class="nav-text">坏组件的第二次渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#想想-hooks-操作一系列的数组，那么你就不会打破规则了（Think-about-hooks-manipulating-a-set-of-arrays-and-you-wont-break-the-rules）"><span class="nav-number">10.</span> <span class="nav-text">想想 hooks 操作一系列的数组，那么你就不会打破规则了（Think about hooks manipulating a set of arrays and you wont break the rules）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结论"><span class="nav-number">11.</span> <span class="nav-text">结论</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jay Day"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jay Day</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay Day</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">18k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">30 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
