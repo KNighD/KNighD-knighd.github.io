@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"knighd.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"knighd.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="背景最近安全部门的小伙伴提了一个前端安全的漏洞，想到前端开发过程中有时候往往追求开发效率，忽略掉一些安全问题，以下简单总结一些自己遇到过的以及一些常见的攻击手段，以自查自省。">
@@ -286,10 +286,10 @@
 </ol>
 <h4 id="Iframe"><a href="#Iframe" class="headerlink" title="Iframe"></a>Iframe</h4><p>当我们使用 iframe 加载第三方网站时，第三方网站可以对我们的网站执行恶意操作，如操作DOM，加载 js 等。<br>防范的方法是通过设置 sandbox 属性控制 iframe 的操作权限。</p>
 <h4 id="opener"><a href="#opener" class="headerlink" title="opener"></a>opener</h4><p>我们在通常通过以下写法在 新 tab 下打开链接：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> &lt;a target=<span class="string">'_blank'</span> href=<span class="string">'new-site.com'</span>&gt;</span><br><span class="line"><span class="number">2.</span> <span class="built_in">window</span>.open(<span class="string">'new-site.com'</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-number">1.</span> &lt;a target=<span class="hljs-string">'_blank'</span> href=<span class="hljs-string">'new-site.com'</span>&gt;<br><span class="hljs-number">2.</span> <span class="hljs-built_in">window</span>.open(<span class="hljs-string">'new-site.com'</span>)<br></code></pre></td></tr></table></figure>
 
 <p>上述两种写法的问题在于， <code>new-site.com</code> 是可以通过 <code>window.opener</code> 来拿到源页面的 <code>window</code> 对象，进而进行恶意操作。<br>防范的方法通常是：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> &lt;a target=<span class="string">"_blank"</span> href=<span class="string">"new-site.com"</span> rel=<span class="string">"noopener noreferrer nofollow"</span>&gt;a标签跳转url&lt;<span class="regexp">/a&gt;</span></span><br><span class="line"><span class="regexp">2. function openurl(url) &#123;</span></span><br><span class="line"><span class="regexp">    var newTab = window.open();</span></span><br><span class="line"><span class="regexp">    newTab.opener = null;</span></span><br><span class="line"><span class="regexp">    newTab.location = url;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-number">1.</span> &lt;a target=<span class="hljs-string">"_blank"</span> href=<span class="hljs-string">"new-site.com"</span> rel=<span class="hljs-string">"noopener noreferrer nofollow"</span>&gt;a标签跳转url&lt;<span class="hljs-regexp">/a&gt;</span><br><span class="hljs-regexp">2. function openurl(url) &#123;</span><br><span class="hljs-regexp">    var newTab = window.open();</span><br><span class="hljs-regexp">    newTab.opener = null;</span><br><span class="hljs-regexp">    newTab.location = url;</span><br><span class="hljs-regexp">&#125;</span><br></code></pre></td></tr></table></figure>
 
 <h5 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h5><ul>
 <li><p><a href="https://tech.meituan.com/2018/09/27/fe-security.html" target="_blank" rel="noopener">前端安全系列（一）：如何防止XSS攻击？</a></p>
@@ -452,6 +452,13 @@
     </span>
     <span title="站点阅读时长">30 分钟</span>
 </div>
+<link rel="stylesheet"
+      href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js">
+</script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
 
         
 
