@@ -303,10 +303,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-24 13:54:06 / 修改时间：14:20:15" itemprop="dateCreated datePublished" datetime="2020-07-24T13:54:06+08:00">2020-07-24</time>
+              <time title="创建时间：2020-07-24 13:54:06" itemprop="dateCreated datePublished" datetime="2020-07-24T13:54:06+08:00">2020-07-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-27 12:43:12" itemprop="dateModified" datetime="2020-07-27T12:43:12+08:00">2020-07-27</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -343,28 +349,14 @@
 
       
           <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>踩过 RN 的坑之后越发想尝试学习下 flutter 的开发，本文用于记录下开发过程中的问题与思考，本来是写在 notion 里的，最近 notion 无法打开，故记录于此。</p>
-<h4 id="Flutter为什么选择了-Dart而不是-JavaScript"><a href="#Flutter为什么选择了-Dart而不是-JavaScript" class="headerlink" title="Flutter为什么选择了 Dart而不是 JavaScript"></a>Flutter为什么选择了 Dart而不是 JavaScript</h4><p>首先要了解两个概念：JIT和AOT。<br>目前，程序主要有两种运行方式：静态编译与动态解释。静态编译的程序在执行前全部被翻译为机器码，通常将这种类型称为<strong>AOT</strong> （Ahead of time）即 “提前编译”；而解释执行的则是一句一句边翻译边运行，通常将这种类型称为<strong>JIT</strong>（Just-in-time）即“即时编译”。AOT程序的典型代表是用C/C++开发的应用，它们必须在执行前编译成机器码，而JIT的代表则非常多，如JavaScript、python等，事实上，所有脚本语言都支持JIT模式。但需要注意的是JIT和AOT指的是程序运行方式，和编程语言并非强关联的，有些语言既可以以JIT方式运行也可以以AOT方式运行，如Java、Python，它们可以在第一次执行时编译成中间字节码、然后在之后执行时可以直接执行字节码，也许有人会说，中间字节码并非机器码，在程序执行时仍然需要动态将字节码转为机器码，是的，这没有错，不过通常我们区分是否为AOT的标准就是看代码在执行之前是否需要编译，只要需要编译，无论其编译产物是字节码还是机器码，都属于AOT。在此，读者不必纠结于概念，概念就是为了传达精神而发明的，只要读者能够理解其原理即可，得其神忘其形。<br>JavaScript为脚本语言，执行时需要JIT(Just In Time)，执行效率和AOT(Ahead Of Time)代码仍有差距。<br>Dart在 JIT（即时编译）模式下，速度与 JavaScript基本持平。<br>但是 Dart支持 AOT，当以 AOT模式运行时，JavaScript便远远追不上了。</p>
-<h4 id="网页开发"><a href="#网页开发" class="headerlink" title="网页开发"></a>网页开发</h4><p>现在 flutter 已经支持 web 了，切换到 beta ：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 启动开发模式</span><br><span class="line">flutter run -d chrome</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h4><p>过程不提，文档讲的比较清晰了，注意配置国内的源即可。</p>
-<h4 id="项目结构与命名规范"><a href="#项目结构与命名规范" class="headerlink" title="项目结构与命名规范"></a>项目结构与命名规范</h4><p>dart 的文件名是用下划线连接的，源文件在 lib 目录下，main.dart 为入口文件, 从 main 函数开始执行，下划线开头的变量为私有变量</p>
-<h4 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h4><p>dart 里如何导入本地文件的呢？和引用第三方的库的用法一样：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'package:&#123;项目名&#125;/&#123;文件名&#125;'</span>;</span><br></pre></td></tr></table></figure>
-
-<p>其中成员变量自动导出，那么如何防止命名冲突？:</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'package:&#123;项目名&#125;/&#123;文件名&#125;'</span> <span class="keyword">as</span> MyModule;</span><br></pre></td></tr></table></figure>
-
-<p>通过 as 来指定包名，此时要使用内部成员就需要 MyModule.xxx。</p>
-<p>也可以屏蔽某些变量导出：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'package:&#123;项目名&#125;/&#123;文件名&#125;'</span> <span class="keyword">hide</span> MyVar;</span><br></pre></td></tr></table></figure>
-
-<h4 id="💀-Divider-在-web-需要传-thickness"><a href="#💀-Divider-在-web-需要传-thickness" class="headerlink" title="💀 Divider 在 web 需要传 thickness"></a>💀 Divider 在 web 需要传 thickness</h4><p>否则不渲染， issue 如下： <a href="https://github.com/flutter/flutter/issues/46339" target="_blank" rel="noopener">https://github.com/flutter/flutter/issues/46339</a></p>
-<h4 id="💀-BottomNavigationBar"><a href="#💀-BottomNavigationBar" class="headerlink" title="💀 BottomNavigationBar"></a>💀 BottomNavigationBar</h4><p>如果超过 3 个 items，背景会变白，原因是超过 3 个 BottomNavigationBar 的 type 会变成 BottomNavigationBarType.shifting 类型，详情见 <a href="https://github.com/flutter/flutter/issues/13642#issuecomment-371875044，解决的办法是设置" target="_blank" rel="noopener">https://github.com/flutter/flutter/issues/13642#issuecomment-371875044，解决的办法是设置</a> type 属性为 fixed。</p>
-<h4 id="进程锁死"><a href="#进程锁死" class="headerlink" title="进程锁死"></a>进程锁死</h4><p>遇到控制台提示，Waiting for another flutter command to release the startup lock… 可以简单粗暴杀进程：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">killall -9 dart</span><br></pre></td></tr></table></figure>
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/07/24/%E5%89%8D%E7%AB%AF%E5%85%A5%E5%9D%91flutter/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
