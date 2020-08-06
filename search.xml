@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>debounce与throttle</title>
+      <link href="/2020/08/06/debounce%E4%B8%8Ethrottle/"/>
+      <url>/2020/08/06/debounce%E4%B8%8Ethrottle/</url>
+      
+        <content type="html"><![CDATA[<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handleSearch = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line"><span class="comment">// ...请求接口</span></span><br><span class="line">&#125;</span><br><span class="line">&lt;Input onChange=&#123;handleSearch&#125; /&gt;</span><br></pre></td></tr></table></figure><p>解决方法是通过 <code>debounce</code> 来控制输入的频率。</p><p>实际上 <code>debounce</code> 和 <code>throttle</code> 这两个概念经常是一起出现，在工作中也常常使用到。在早年接触前端的时候，项目里有 <code>lodash</code>，因此直接使用其提供的  <code>debounce</code> 和 <code>throttle</code> 。后来在一些简单的项目里，出于体积的考量，不引入 <code>lodash</code>，常常也会自己手写一个。</p><p>其实手写的时候要注意的地方还不少，但是都没做过总结，借此机会，在本文记录下。</p><a id="more"></a><h4 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h4><p><code>debounce</code> 也就是防抖，看看 lodash 中 debounce 的定义：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_.debounce(func, [wait=<span class="number">0</span>], [options=&#123;&#125;])</span><br></pre></td></tr></table></figure><p>返回一个函数，该函数会距离上次调用后，延迟 <code>wait</code> 毫秒后调用<code>func</code>。</p><p>在上面的 bug 中，对原搜索方法进行防抖处理后，仅当用户停止输入 300 毫秒后，才请求接口进行搜索：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 停止输入 300 ms 后，进行搜索</span></span><br><span class="line">_.debounce(handleSearch, <span class="number">300</span>)</span><br></pre></td></tr></table></figure><p>####throttle</p><p><code>throttle</code> 我们称之为截流，同样看看 loads 中 throttle 的定义：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_.throttle(func, [wait=<span class="number">0</span>], [options=&#123;&#125;])</span><br></pre></td></tr></table></figure><p>返回一个函数，该函数最多每 <code>wait</code> 毫秒调用一次 <code>func</code>。</p><p>如果对搜索方法进行截流，则无论用户输入多快，每 1 秒仅请求一次：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 停止输入 300 ms 后，进行搜索</span></span><br><span class="line">_.debounce(handleSearch, <span class="number">1000</span>)</span><br></pre></td></tr></table></figure><h4 id="手写一个-debounce"><a href="#手写一个-debounce" class="headerlink" title="手写一个 debounce"></a>手写一个 debounce</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure><h4 id="手写一个-throttle"><a href="#手写一个-throttle" class="headerlink" title="手写一个 throttle"></a>手写一个 throttle</h4>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> javascript </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>当我们说到打包时，我们在说什么</title>
       <link href="/2020/07/31/%E5%BD%93%E6%88%91%E4%BB%AC%E8%AF%B4%E5%88%B0%E6%89%93%E5%8C%85%E6%97%B6%EF%BC%8C%E6%88%91%E4%BB%AC%E5%9C%A8%E8%AF%B4%E4%BB%80%E4%B9%88/"/>
       <url>/2020/07/31/%E5%BD%93%E6%88%91%E4%BB%AC%E8%AF%B4%E5%88%B0%E6%89%93%E5%8C%85%E6%97%B6%EF%BC%8C%E6%88%91%E4%BB%AC%E5%9C%A8%E8%AF%B4%E4%BB%80%E4%B9%88/</url>
