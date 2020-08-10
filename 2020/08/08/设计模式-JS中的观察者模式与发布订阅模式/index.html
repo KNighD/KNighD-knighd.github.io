@@ -28,7 +28,7 @@
 <meta property="og:description" content="背景在上一篇文章《debounce与throttle》 中提到了 RxJS， RxJS 中有两个重要的概念: Observable（可被观察者） 和 Observer（观察者），RxJS 的 Observable 就是观察者模式和迭代器模式的组合。 在 javascript 中，观察者模式和发布订阅模式极为相似，因此本文将探讨这两种模式以及其应用。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-08T14:00:28.000Z">
-<meta property="article:modified_time" content="2020-08-10T03:05:59.706Z">
+<meta property="article:modified_time" content="2020-08-10T09:03:53.702Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-10 11:05:59" itemprop="dateModified" datetime="2020-08-10T11:05:59+08:00">2020-08-10</time>
+                <time title="修改时间：2020-08-10 17:03:53" itemprop="dateModified" datetime="2020-08-10T17:03:53+08:00">2020-08-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -238,14 +238,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -270,15 +270,43 @@
 <li>当发布者发布通知时，遍历观察者列表，并调用观察者提供的方法</li>
 </ol>
 <p>发布者的实现如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 发布者</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Publisher</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(&#123; observers &#125;) &#123;</span><br><span class="line">    <span class="comment">// 维护一个观察者列表</span></span><br><span class="line">    <span class="keyword">this</span>.observers = observers || []</span><br><span class="line">    </span><br><span class="line">  &#125;    </span><br><span class="line">  <span class="comment">// 添加观察者</span></span><br><span class="line">  addObserver(observer) &#123;</span><br><span class="line">    <span class="keyword">this</span>.observers.push(observer)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 移除观察者</span></span><br><span class="line">  removeObserver(observer) &#123;</span><br><span class="line">    <span class="keyword">this</span>.observers = <span class="keyword">this</span>.observers.filter(<span class="function"><span class="params">item</span> =&gt;</span> item !== observer)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 发布通知</span></span><br><span class="line">  notify() &#123;</span><br><span class="line">    <span class="keyword">this</span>.observers.forEach(<span class="function">(<span class="params">item</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 执行观察者提供的方法，这里假设为 update</span></span><br><span class="line">      item.update()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 发布者</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Publisher</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="comment">// 维护一个观察者列表</span></span><br><span class="line">    <span class="keyword">this</span>.observers = []</span><br><span class="line">    </span><br><span class="line">  &#125;    </span><br><span class="line">  <span class="comment">// 添加观察者</span></span><br><span class="line">  addObserver(observer) &#123;</span><br><span class="line">    <span class="keyword">this</span>.observers.push(observer)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 移除观察者</span></span><br><span class="line">  removeObserver(observer) &#123;</span><br><span class="line">    <span class="keyword">this</span>.observers = <span class="keyword">this</span>.observers.filter(<span class="function"><span class="params">item</span> =&gt;</span> item !== observer)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 发布通知</span></span><br><span class="line">  notify() &#123;</span><br><span class="line">    <span class="keyword">this</span>.observers.forEach(<span class="function">(<span class="params">item</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 执行观察者提供的方法，这里假设为 update</span></span><br><span class="line">      item.update()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>订阅者则比较简单，实现如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(name) &#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">  update() &#123;</span><br><span class="line">    <span class="comment">// 更新状态</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`observer <span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span> update`</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>最终：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = <span class="keyword">new</span> Observer(<span class="string">'a'</span>)</span><br><span class="line"><span class="keyword">const</span> b = <span class="keyword">new</span> Observer(<span class="string">'b'</span>)</span><br><span class="line"><span class="keyword">const</span> c = <span class="keyword">new</span> Observer(<span class="string">'c'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> publisher = <span class="keyword">new</span> Publisher(&#123;</span><br><span class="line">  observers: [a, b]</span><br><span class="line">&#125;)</span><br><span class="line">publisher.addObserver(c)</span><br><span class="line">publisher.notify()</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = <span class="keyword">new</span> Observer(<span class="string">'a'</span>)</span><br><span class="line"><span class="keyword">const</span> b = <span class="keyword">new</span> Observer(<span class="string">'b'</span>)</span><br><span class="line"><span class="keyword">const</span> c = <span class="keyword">new</span> Observer(<span class="string">'c'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> publisher = <span class="keyword">new</span> Publisher()</span><br><span class="line">publisher.addObserver(a)</span><br><span class="line">publisher.addObserver(b)</span><br><span class="line">publisher.addObserver(c)</span><br><span class="line"><span class="comment">// 发布通知</span></span><br><span class="line">publisher.notify()</span><br></pre></td></tr></table></figure>
 
-<h4 id="观察者模式在-vue-中的应用"><a href="#观察者模式在-vue-中的应用" class="headerlink" title="观察者模式在 vue 中的应用"></a>观察者模式在 vue 中的应用</h4>
+<h4 id="Vue-的响应式原理"><a href="#Vue-的响应式原理" class="headerlink" title="Vue 的响应式原理"></a>Vue 的响应式原理</h4><p>在 Vue（以下均指的是 2.x 版本） 中，数据模型仅仅是普通的 JavaScript 对象，当你修改它们时，视图会进行更新，这就是 Vue 的响应式系统。以下为阅读源码时，对响应式实现原理的理解，为了更清晰，省略一些细节：</p>
+<ol>
+<li>每个 vue 实例化时会初始化一个 watcher 实例。这个 watcher 是一个观察者，调用 watcher 的 update 后将会更新视图。</li>
+<li>在组件渲染的过程中，会把使用到的 data 属性（以及子属性）记录为依赖，这个过程称为依赖收集。 </li>
+<li>每个属性都有一个 dep 实例，这个 dep 实例是一个发布者。这个 dep 实例维护了一个 watcher 的数组，即观察者的数组。</li>
+<li>当改变属性的时候，就会调用该属性的 dep 的 notify 方法发布通知，watcher 接收到通知后调用 update 进行视图更新。</li>
+</ol>
+<p>整体的思路是这样的，那么结合源码来看（当涉及无关代码时，会用注释 // 略：… 来进行占位和说明 ）：</p>
+<p>在 Vue 的初始化阶段会执行 <code>initState(vm)</code> 方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">initState</span> (<span class="params">vm: Component</span>) </span>&#123;</span><br><span class="line">	<span class="comment">// 略：...初始化 props，methods 等</span></span><br><span class="line">  <span class="keyword">if</span> (opts.data) &#123;</span><br><span class="line">    initData(vm)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    observe(vm._data = &#123;&#125;, <span class="literal">true</span> <span class="comment">/* asRootData */</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 略：...初始化 computed，watch 等</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>initData</code> :</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initData</span> (<span class="params">vm: Component</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 略：...将 data 的每个属性都挂在 vm 上</span></span><br><span class="line">  <span class="comment">// observe data</span></span><br><span class="line">  observe(data, <span class="literal">true</span> <span class="comment">/* asRootData */</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>observe</code> 用于创建一个 observer 实例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">observe</span> (<span class="params">value: any, asRootData: ?boolean</span>): <span class="title">Observer</span> | <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> ob: Observer | <span class="keyword">void</span></span><br><span class="line">  <span class="comment">// 判断是否已经 observe 过，是的话直接返回</span></span><br><span class="line">  <span class="keyword">if</span> (hasOwn(value, <span class="string">'__ob__'</span>) &amp;&amp; value.__ob__ <span class="keyword">instanceof</span> Observer) &#123;</span><br><span class="line">    <span class="comment">// 这里可以看到 observer 最终会挂在 value 的 __ob__ 属性上</span></span><br><span class="line">    ob = value.__ob__</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (...) &#123;</span><br><span class="line">    <span class="comment">// 否则满足一系列条件的情况下就会重新实例化一个 observer</span></span><br><span class="line">    ob = <span class="keyword">new</span> Observer(value)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ob</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Observer</code> 的作用是给传入对象的属性添加 getter 和 setter，用于依赖收集和派发更新：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span> (value: any) &#123;</span><br><span class="line">    <span class="keyword">this</span>.value = value</span><br><span class="line">    <span class="keyword">this</span>.dep = <span class="keyword">new</span> Dep()</span><br><span class="line">    <span class="comment">// 即上面提到的， observer 最终会挂在 value 的 __ob__ 属性上</span></span><br><span class="line">    def(value, <span class="string">'__ob__'</span>, <span class="keyword">this</span>)</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(value)) &#123;</span><br><span class="line">      <span class="comment">// 略：...重写 value 的一些数组方法</span></span><br><span class="line">      <span class="keyword">this</span>.observeArray(value)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.walk(value)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  walk (obj: <span class="built_in">Object</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> keys = <span class="built_in">Object</span>.keys(obj)</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; keys.length; i++) &#123;</span><br><span class="line">      defineReactive(obj, keys[i])</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  observeArray (items: <span class="built_in">Array</span>&lt;any&gt;) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, l = items.length; i &lt; l; i++) &#123;</span><br><span class="line">      observe(items[i])</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中最核心的一个函数是 <code>defineReactive</code>，做了以下几件事情：</p>
+<ol>
+<li>初始化目标属性的 dep 实例</li>
+<li>对该属性的子对象递归调用 observe</li>
+<li>通过<code>Object.defineProperty</code>对劫持该属性的 getter 与 setter</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     
@@ -299,7 +327,10 @@
     <a href="/2020/08/06/debounce%E4%B8%8Ethrottle/" rel="prev" title="debounce与throttle">
       <i class="fa fa-chevron-left"></i> debounce与throttle
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/10/react%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90/" rel="next" title="react常见问题解析">
+      react常见问题解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -358,7 +389,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#观察者模式基本原理"><span class="nav-number">2.</span> <span class="nav-text">观察者模式基本原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#观察者模式在-vue-中的应用"><span class="nav-number">3.</span> <span class="nav-text">观察者模式在 vue 中的应用</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#观察者模式基本原理"><span class="nav-number">2.</span> <span class="nav-text">观察者模式基本原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vue-的响应式原理"><span class="nav-number">3.</span> <span class="nav-text">Vue 的响应式原理</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -374,7 +405,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -387,7 +418,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -423,12 +454,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">30k</span>
+    <span title="站点总字数">32k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">49 分钟</span>
+    <span title="站点阅读时长">53 分钟</span>
 </div>
 
         
