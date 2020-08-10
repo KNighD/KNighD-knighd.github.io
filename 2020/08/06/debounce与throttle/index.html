@@ -17,13 +17,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"knighd.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"knighd.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="背景测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的： 1234const handleSearch &#x3D; () &#x3D;&gt; &amp;#123;	&#x2F;&#x2F; ...请求接口&amp;#125;&lt;Input onChange&#x3D;&amp;#123;handleSearch&amp;#125; &#x2F;&gt;  解决方法是通过 debounce 来控制输">
 <meta property="og:type" content="article">
 <meta property="og:title" content="debounce与throttle">
-<meta property="og:url" content="https://knighd.github.io/2020/08/06/debounce%E4%B8%8Ethrottle/index.html">
+<meta property="og:url" content="https://knighd.gitee.io/2020/08/06/debounce%E4%B8%8Ethrottle/index.html">
 <meta property="og:site_name" content="前端见闻录">
 <meta property="og:description" content="背景测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的： 1234const handleSearch &#x3D; () &#x3D;&gt; &amp;#123;	&#x2F;&#x2F; ...请求接口&amp;#125;&lt;Input onChange&#x3D;&amp;#123;handleSearch&amp;#125; &#x2F;&gt;  解决方法是通过 debounce 来控制输">
 <meta property="og:locale" content="zh_CN">
@@ -33,7 +33,7 @@
 <meta property="article:tag" content="javascript">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://knighd.github.io/2020/08/06/debounce%E4%B8%8Ethrottle/">
+<link rel="canonical" href="https://knighd.gitee.io/2020/08/06/debounce%E4%B8%8Ethrottle/">
 
 
 <script id="page-configurations">
@@ -190,7 +190,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://knighd.github.io/2020/08/06/debounce%E4%B8%8Ethrottle/">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/08/06/debounce%E4%B8%8Ethrottle/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -323,8 +323,8 @@
       <i class="fa fa-chevron-left"></i> 当我们说到打包时，我们在说什么
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-JS%E4%B8%AD%E7%9A%84%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/" rel="next" title="设计模式-JS中的观察者模式">
-      设计模式-JS中的观察者模式 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-JS%E4%B8%AD%E7%9A%84%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E4%B8%8E%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/" rel="next" title="设计模式-JS中的观察者模式与发布订阅模式">
+      设计模式-JS中的观察者模式与发布订阅模式 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -449,12 +449,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">29k</span>
+    <span title="站点总字数">30k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">48 分钟</span>
+    <span title="站点阅读时长">49 分钟</span>
 </div>
 
         
