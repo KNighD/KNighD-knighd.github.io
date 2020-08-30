@@ -28,7 +28,7 @@
 <meta property="og:description" content="背景最近有个需求：  根据传入的 code 生成条形码 svg 图片 将 svg 图片上传至 cdn 展示图片时需要点击按钮后保存至本地">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-17T02:52:11.000Z">
-<meta property="article:modified_time" content="2020-08-23T15:24:16.396Z">
+<meta property="article:modified_time" content="2020-08-30T07:54:36.921Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="javascript">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-23 23:24:16" itemprop="dateModified" datetime="2020-08-23T23:24:16+08:00">2020-08-23</time>
+                <time title="修改时间：2020-08-30 15:54:36" itemprop="dateModified" datetime="2020-08-30T15:54:36+08:00">2020-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -245,14 +245,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -283,7 +283,8 @@
 
 <h5 id="Base64的解码与编码"><a href="#Base64的解码与编码" class="headerlink" title="Base64的解码与编码"></a>Base64的解码与编码</h5><p><code>atob()</code> 函数能够解码通过base-64编码的字符串数据。</p>
 <p><code>btoa()</code> 函数能够从二进制数据“字符串”创建一个base-64编码的ASCII字符串。</p>
-<h5 id="Base64-转-Blob"><a href="#Base64-转-Blob" class="headerlink" title="Base64 转 Blob"></a>Base64 转 Blob</h5><p>上传图片文件需要将 base64 转成 Blob 对象：</p>
+<h5 id="Base64-转-Blob"><a href="#Base64-转-Blob" class="headerlink" title="Base64 转 Blob"></a>Base64 转 Blob</h5><p>上传图片文件需要将 base64 转成 Blob 对象，有两种方法：</p>
+<p>######Base64 转 Blob 第一种方法：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dataURItoBlob</span>(<span class="params">dataURI: string</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 通过 atob 转回 string</span></span><br><span class="line">  <span class="keyword">const</span> byteString = atob(dataURI.split(<span class="string">','</span>)[<span class="number">1</span>]);</span><br><span class="line">  <span class="comment">// 获得文件类型</span></span><br><span class="line">  <span class="keyword">const</span> mimeString = dataURI.split(<span class="string">','</span>)[<span class="number">0</span>].split(<span class="string">':'</span>)[<span class="number">1</span>].split(<span class="string">';'</span>)[<span class="number">0</span>];</span><br><span class="line">  <span class="comment">// 转成 </span></span><br><span class="line">  <span class="keyword">const</span> ab = <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(byteString.length);</span><br><span class="line">  <span class="keyword">const</span> ia = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(ab);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; byteString.length; i++) &#123;</span><br><span class="line">    ia[i] = byteString.charCodeAt(i);</span><br><span class="line">  &#125;</span><br><span class="line">	<span class="comment">// 转成 blob</span></span><br><span class="line">  <span class="keyword">const</span> bb = <span class="keyword">new</span> Blob([ab], &#123; <span class="attr">type</span>: mimeString &#125;);</span><br><span class="line">  <span class="keyword">return</span> bb;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p> 思路：</p>
@@ -294,8 +295,11 @@
 <li>通过TypedArray（这里使用 Uint8Array）将字符串的内容写入 arraybuffer </li>
 <li>将 array buffer 转成 blob</li>
 </ol>
+<h6 id="Base64-转-Blob-第二种方法："><a href="#Base64-转-Blob-第二种方法：" class="headerlink" title="Base64 转 Blob 第二种方法："></a>Base64 转 Blob 第二种方法：</h6><p>通过 <code>fetch</code> 将 dataURI 转成 blob：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> bb = <span class="keyword">await</span> fetch(dataURI).then(<span class="function">(<span class="params">res</span>) =&gt;</span> res.blob())</span><br></pre></td></tr></table></figure>
+
 <h5 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h5><p>构造 FormData 上传图片文件：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> upload = <span class="function">(<span class="params">dataURI</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 创建form对象</span></span><br><span class="line">	<span class="keyword">const</span> formData = <span class="keyword">new</span> FormData();</span><br><span class="line">  <span class="comment">// 通过 append 向 form 对象添加数据</span></span><br><span class="line">  formData.append(<span class="string">'file'</span>, dataURItoBlob(dataURI));</span><br><span class="line">  <span class="keyword">const</span> &#123; data &#125; = <span class="keyword">await</span> axios.post(<span class="string">'/api/upload'</span>, formData, &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'multipart/form-data'</span>,</span><br><span class="line">      <span class="string">'X-Requested-With'</span>: <span class="string">'XMLHttpRequest'</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> upload = <span class="function">(<span class="params">dataURI: string</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 创建form对象</span></span><br><span class="line">	<span class="keyword">const</span> formData = <span class="keyword">new</span> FormData();</span><br><span class="line">  <span class="comment">// 通过 append 向 form 对象添加数据</span></span><br><span class="line">  formData.append(<span class="string">'file'</span>, dataURItoBlob(dataURI));</span><br><span class="line">  <span class="keyword">const</span> &#123; data &#125; = <span class="keyword">await</span> axios.post(<span class="string">'/api/upload'</span>, formData, &#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">      <span class="string">'Content-Type'</span>: <span class="string">'multipart/form-data'</span>,</span><br><span class="line">      <span class="string">'X-Requested-With'</span>: <span class="string">'XMLHttpRequest'</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h5 id="下载图片"><a href="#下载图片" class="headerlink" title="下载图片"></a>下载图片</h5><p>保存图片到本地：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> download = <span class="function">(<span class="params">fileUrl, name</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> x = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">  x.open(<span class="string">'GET'</span>, fileUrl, <span class="literal">true</span>);</span><br><span class="line">  x.responseType = <span class="string">'blob'</span>;</span><br><span class="line">  x.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 转为 objectUrl</span></span><br><span class="line">    <span class="keyword">const</span> url = <span class="built_in">window</span>.URL.createObjectURL(x.response);</span><br><span class="line">    <span class="comment">// 构建一个 a 标签</span></span><br><span class="line">    <span class="keyword">const</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">    a.href = url;</span><br><span class="line">    a.download = name;</span><br><span class="line">    a.click();</span><br><span class="line">  &#125;;</span><br><span class="line">  x.send();</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -393,7 +397,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生成条形码"><span class="nav-number">2.</span> <span class="nav-text">生成条形码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片上传"><span class="nav-number">3.</span> <span class="nav-text">图片上传</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#svg-转-canvas"><span class="nav-number">3.1.</span> <span class="nav-text">svg 转 canvas</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Data-URL"><span class="nav-number">3.2.</span> <span class="nav-text">Data URL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Base64的解码与编码"><span class="nav-number">3.3.</span> <span class="nav-text">Base64的解码与编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Base64-转-Blob"><span class="nav-number">3.4.</span> <span class="nav-text">Base64 转 Blob</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#上传图片"><span class="nav-number">3.5.</span> <span class="nav-text">上传图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#下载图片"><span class="nav-number">3.6.</span> <span class="nav-text">下载图片</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#补充几个概念"><span class="nav-number">4.</span> <span class="nav-text">补充几个概念</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#blob"><span class="nav-number">4.1.</span> <span class="nav-text">blob</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#File"><span class="nav-number">4.2.</span> <span class="nav-text">File</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Blob-转-URL"><span class="nav-number">4.3.</span> <span class="nav-text">Blob 转 URL</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生成条形码"><span class="nav-number">2.</span> <span class="nav-text">生成条形码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片上传"><span class="nav-number">3.</span> <span class="nav-text">图片上传</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#svg-转-canvas"><span class="nav-number">3.1.</span> <span class="nav-text">svg 转 canvas</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Data-URL"><span class="nav-number">3.2.</span> <span class="nav-text">Data URL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Base64的解码与编码"><span class="nav-number">3.3.</span> <span class="nav-text">Base64的解码与编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Base64-转-Blob"><span class="nav-number">3.4.</span> <span class="nav-text">Base64 转 Blob</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Base64-转-Blob-第二种方法："><span class="nav-number">3.4.1.</span> <span class="nav-text">Base64 转 Blob 第二种方法：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#上传图片"><span class="nav-number">3.5.</span> <span class="nav-text">上传图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#下载图片"><span class="nav-number">3.6.</span> <span class="nav-text">下载图片</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#补充几个概念"><span class="nav-number">4.</span> <span class="nav-text">补充几个概念</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#blob"><span class="nav-number">4.1.</span> <span class="nav-text">blob</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#File"><span class="nav-number">4.2.</span> <span class="nav-text">File</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Blob-转-URL"><span class="nav-number">4.3.</span> <span class="nav-text">Blob 转 URL</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -458,12 +462,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">46k</span>
+    <span title="站点总字数">47k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:17</span>
+    <span title="站点阅读时长">1:18</span>
 </div>
 
         
