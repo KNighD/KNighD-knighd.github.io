@@ -28,7 +28,7 @@
 <meta property="og:description" content="背景Promise 是异步编程的一种解决方案，可以解决前端的回调地狱。以下根据 ES6 入门 简单过一下 Promise 的基础及个人的一些见解补充，同时尝试实现一个符合 PromiseA+ 规范的 Promise。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-25T14:38:51.000Z">
-<meta property="article:modified_time" content="2020-09-02T15:56:45.622Z">
+<meta property="article:modified_time" content="2020-09-02T16:05:54.132Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="JavaScript">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-02 23:56:45" itemprop="dateModified" datetime="2020-09-02T23:56:45+08:00">2020-09-02</time>
+                <time title="修改时间：2020-09-03 00:05:54" itemprop="dateModified" datetime="2020-09-03T00:05:54+08:00">2020-09-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -318,10 +318,10 @@
 <li>链式调用</li>
 <li><code>onFulfilled</code> or <code>onRejected</code> must not be called until the <a href="https://es5.github.io/#x10.3" target="_blank" rel="noopener">execution context</a> stack contains only platform code。即需要确保<code>onFulfilled</code> 和 <code>onRejected</code>是异步执行的，可以使用如 <code>setTimeout</code> 或 <code>setImmediate</code> 之类的“宏任务”机制，或者使用诸如 <code>MutationObserver</code> 或 <code>process.nextTick</code> 之类的“微任务”机制来实现。</li>
 </ol>
-<h4 id="值穿透"><a href="#值穿透" class="headerlink" title="值穿透"></a>值穿透</h4><p>针对 then 的参数可选这一点，如果 <code>onFulfilled</code>  和 <code>onRejectd</code> 不是函数，则会被忽略，并且将值传递给下一个 then。即所谓的值穿透，对 <code>then</code> 进行改造:</p>
+<h5 id="值穿透"><a href="#值穿透" class="headerlink" title="值穿透"></a>值穿透</h5><p>针对 then 的参数可选这一点，如果 <code>onFulfilled</code>  和 <code>onRejectd</code> 不是函数，则会被忽略，并且将值传递给下一个 then。即所谓的值穿透，对 <code>then</code> 进行改造:</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">then(onFulfilled, onRejected) &#123;</span><br><span class="line">  <span class="comment">// 如果不是函数，传递 result</span></span><br><span class="line">    onFulfilled =</span><br><span class="line">      <span class="keyword">typeof</span> onFulfilled === <span class="string">'function'</span> ? onFulfilled : <span class="function">(<span class="params">result</span>) =&gt;</span> result</span><br><span class="line">  <span class="comment">// 如果不是函数，抛出 reason</span></span><br><span class="line">    onRejected =</span><br><span class="line">      <span class="keyword">typeof</span> onRejected === <span class="string">'function'</span></span><br><span class="line">        ? onRejected</span><br><span class="line">        : <span class="function">(<span class="params">reason</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> reason</span><br><span class="line">          &#125;</span><br><span class="line">  <span class="comment">// ... if (this.state === PENDING) ... </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>当然目前的 promise 还不支持链式调用，值穿透也就无从谈起。</p>
+<p>当然当前的简易版 promise 还不支持链式调用，值穿透也就无从谈起。</p>
 <h5 id="链式调用"><a href="#链式调用" class="headerlink" title="链式调用"></a>链式调用</h5><p>promise 要支持链式调用</p>
 
     </div>
@@ -406,7 +406,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Promise-基础"><span class="nav-number">2.</span> <span class="nav-text">Promise 基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Promise-的状态"><span class="nav-number">2.1.</span> <span class="nav-text">Promise 的状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#构造一个-Promise"><span class="nav-number">2.2.</span> <span class="nav-text">构造一个 Promise</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#promise-then"><span class="nav-number">2.3.</span> <span class="nav-text">promise.then</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#resolve"><span class="nav-number">2.4.</span> <span class="nav-text">resolve</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#resolve-与-return"><span class="nav-number">2.5.</span> <span class="nav-text">resolve 与 return</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#catch"><span class="nav-number">2.6.</span> <span class="nav-text">.catch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#finally"><span class="nav-number">2.7.</span> <span class="nav-text">.finally()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手写一个简易的-Promise"><span class="nav-number">3.</span> <span class="nav-text">手写一个简易的 Promise</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#符合-Promise-A-的-Promise"><span class="nav-number">4.</span> <span class="nav-text">符合 Promise &#x2F; A+ 的 Promise</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#值穿透"><span class="nav-number">5.</span> <span class="nav-text">值穿透</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#链式调用"><span class="nav-number">5.1.</span> <span class="nav-text">链式调用</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Promise-基础"><span class="nav-number">2.</span> <span class="nav-text">Promise 基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Promise-的状态"><span class="nav-number">2.1.</span> <span class="nav-text">Promise 的状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#构造一个-Promise"><span class="nav-number">2.2.</span> <span class="nav-text">构造一个 Promise</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#promise-then"><span class="nav-number">2.3.</span> <span class="nav-text">promise.then</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#resolve"><span class="nav-number">2.4.</span> <span class="nav-text">resolve</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#resolve-与-return"><span class="nav-number">2.5.</span> <span class="nav-text">resolve 与 return</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#catch"><span class="nav-number">2.6.</span> <span class="nav-text">.catch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#finally"><span class="nav-number">2.7.</span> <span class="nav-text">.finally()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手写一个简易的-Promise"><span class="nav-number">3.</span> <span class="nav-text">手写一个简易的 Promise</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#符合-Promise-A-的-Promise"><span class="nav-number">4.</span> <span class="nav-text">符合 Promise &#x2F; A+ 的 Promise</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#值穿透"><span class="nav-number">4.1.</span> <span class="nav-text">值穿透</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#链式调用"><span class="nav-number">4.2.</span> <span class="nav-text">链式调用</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -471,12 +471,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">51k</span>
+    <span title="站点总字数">52k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:25</span>
+    <span title="站点阅读时长">1:26</span>
 </div>
 
         
