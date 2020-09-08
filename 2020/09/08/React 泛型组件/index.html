@@ -20,15 +20,20 @@
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="前端见闻录">
-<meta property="og:url" content="https://knighd.gitee.io/archives/index.html">
+  <meta name="description" content="背景场景：封装一个 antd 的 Radio 组件时，需要从父组件获取到 value 的类型。其 props 接口定义如下 12345interface CustomRadioProps&lt;ValueType&gt; &amp;#123;  options: Option&lt;ValueType&gt;[];  value: ValueType;  onChange: (value: ValueTy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React 泛型组件">
+<meta property="og:url" content="https://knighd.gitee.io/2020/09/08/React%20%E6%B3%9B%E5%9E%8B%E7%BB%84%E4%BB%B6/index.html">
 <meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="背景场景：封装一个 antd 的 Radio 组件时，需要从父组件获取到 value 的类型。其 props 接口定义如下 12345interface CustomRadioProps&lt;ValueType&gt; &amp;#123;  options: Option&lt;ValueType&gt;[];  value: ValueType;  onChange: (value: ValueTy">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-08T14:26:15.000Z">
+<meta property="article:modified_time" content="2020-09-08T15:56:14.848Z">
 <meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="TypeScript">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://knighd.gitee.io/archives/">
+<link rel="canonical" href="https://knighd.gitee.io/2020/09/08/React%20%E6%B3%9B%E5%9E%8B%E7%BB%84%E4%BB%B6/">
 
 
 <script id="page-configurations">
@@ -36,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | 前端见闻录</title>
+  <title>React 泛型组件 | 前端见闻录</title>
   
 
 
@@ -178,234 +183,130 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 17 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/09/08/React%20%E6%B3%9B%E5%9E%8B%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          React 泛型组件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-08 22:26:15 / 修改时间：23:56:14" itemprop="dateCreated datePublished" datetime="2020-09-08T22:26:15+08:00">2020-09-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
+        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>场景：封装一个 antd 的 Radio 组件时，需要从父组件获取到 value 的类型。其 props 接口定义如下</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> CustomRadioProps&lt;ValueType&gt; &#123;</span><br><span class="line">  options: Option&lt;ValueType&gt;[];</span><br><span class="line">  value: ValueType;</span><br><span class="line">  onChange: <span class="function">(<span class="params">value: ValueType</span>) =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+<p>使用时这里假设传进去的是个 number 类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;CustomRadio&lt;number&gt;</span><br><span class="line">  onChange&#x3D;&#123;handleTypeChange&#125;</span><br><span class="line">  options&#x3D;&#123;[</span><br><span class="line">    &#123;</span><br><span class="line">      label: &#39;1&#39;,</span><br><span class="line">      value: 1,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      label: &#39;1&#39;,</span><br><span class="line">      value: 2,</span><br><span class="line">    &#125;,</span><br><span class="line">  ]&#125;</span><br><span class="line">  value&#x3D;&#123;1&#125;</span><br><span class="line">&#x2F;&gt;</span><br></pre></td></tr></table></figure>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-09-08T22:26:15+08:00"
-              content="2020-09-08">
-          09-08
-        </time>
-      </div>
+<p>那么这个 CustomRadioProps 称为泛型组件。</p>
+<p>那么如何定义一个泛型组件？</p>
+<h4 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class CustomRadio&lt;T&gt; extends React.Component&lt;Props&lt;T&gt;&gt; &#123; </span><br><span class="line">	&#x2F;&#x2F; ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/09/08/React%20%E6%B3%9B%E5%9E%8B%E7%BB%84%E4%BB%B6/" itemprop="url">
-            <span itemprop="name">React 泛型组件</span>
-          </a>
-      </div>
+<h4 id="函数组件"><a href="#函数组件" class="headerlink" title="函数组件"></a>函数组件</h4><p>对于用 function 声明的函数式组件实际上于泛型函数是一样的写法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomRadio</span>&lt;<span class="title">T</span>&gt;(<span class="params">props: IProps&lt;T&gt;</span>) </span>&#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-    </header>
-  </article>
+<p>然而对于用箭头函数不可以这么写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const CustomRadio: React.FunctionComponent&lt;IProps&lt;T&gt;&gt; &#x3D; props &#x3D;&gt; &#123; &#x2F;*...*&#x2F; &#125;</span><br></pre></td></tr></table></figure>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+<p>箭头函数组件正确的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const IconRadioGroup &#x3D; &lt;T extends any&gt;(props: IProps&lt;T&gt;) &#x3D;&gt; &#123;</span><br><span class="line">	&#x2F;&#x2F; ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-09-02T17:28:58+08:00"
-              content="2020-09-02">
-          09-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/09/02/js%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E5%90%8E%E7%BC%80%E5%90%8D/" itemprop="url">
-            <span itemprop="name">js获取后缀名</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-26T14:21:41+08:00"
-              content="2020-08-26">
-          08-26
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/26/TypeScript%E4%B8%AD%E7%9A%84const%E6%96%AD%E8%A8%80/" itemprop="url">
-            <span itemprop="name">TypeScript中的const断言</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-25T22:38:51+08:00"
-              content="2020-08-25">
-          08-25
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/25/%E4%B8%8D%E5%8F%98%E7%9A%84%E6%89%BF%E8%AF%BA%20Promise/" itemprop="url">
-            <span itemprop="name">不变的承诺 Promise</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-17T10:52:11+08:00"
-              content="2020-08-17">
-          08-17
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/17/svg%20%E5%9B%BE%E7%89%87%E7%9A%84%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD/" itemprop="url">
-            <span itemprop="name">svg 图片的上传下载</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-11T09:45:20+08:00"
-              content="2020-08-11">
-          08-11
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/11/%E6%BA%90%E7%A0%81%E5%B1%82%E9%9D%A2%E8%A7%A3%E8%AF%BBVue%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86/" itemprop="url">
-            <span itemprop="name">源码层面解读Vue响应式原理</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-10T12:50:23+08:00"
-              content="2020-08-10">
-          08-10
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/10/react%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90/" itemprop="url">
-            <span itemprop="name">react常见问题解析</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-08T22:00:28+08:00"
-              content="2020-08-08">
-          08-08
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-JS%E4%B8%AD%E7%9A%84%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E4%B8%8E%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/" itemprop="url">
-            <span itemprop="name">设计模式-JS中的观察者模式与发布订阅模式</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-06T15:18:31+08:00"
-              content="2020-08-06">
-          08-06
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/06/debounce%E4%B8%8Ethrottle/" itemprop="url">
-            <span itemprop="name">debounce与throttle</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-07-31T09:20:24+08:00"
-              content="2020-07-31">
-          07-31
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/31/%E5%BD%93%E6%88%91%E4%BB%AC%E8%AF%B4%E5%88%B0%E6%89%93%E5%8C%85%E6%97%B6%EF%BC%8C%E6%88%91%E4%BB%AC%E5%9C%A8%E8%AF%B4%E4%BB%80%E4%B9%88/" itemprop="url">
-            <span itemprop="name">当我们说到打包时，我们在说什么</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+<p>这里 T 必须要使用 extends, 用 <code>T extends any</code> 来表明接收任意类型，如果只能 number 或者 string类型，则改成  <code>T extends number｜string</code> 即可。</p>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"># TypeScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/02/js%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E5%90%8E%E7%BC%80%E5%90%8D/" rel="prev" title="js获取后缀名">
+      <i class="fa fa-chevron-left"></i> js获取后缀名
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
   
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
+  
+  
 
 
 
@@ -457,6 +358,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类组件"><span class="nav-number">2.</span> <span class="nav-text">类组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数组件"><span class="nav-number">3.</span> <span class="nav-text">函数组件</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
