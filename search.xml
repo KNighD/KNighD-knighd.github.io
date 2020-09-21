@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title> TypeScript 的 enum 类型收窄问题</title>
+      <link href="/2020/09/21/TypeScript-%E7%9A%84-enum-%E7%B1%BB%E5%9E%8B%E6%94%B6%E7%AA%84%E9%97%AE%E9%A2%98/"/>
+      <url>/2020/09/21/TypeScript-%E7%9A%84-enum-%E7%B1%BB%E5%9E%8B%E6%94%B6%E7%AA%84%E9%97%AE%E9%A2%98/</url>
+      
+        <content type="html"><![CDATA[<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>在项目中看到一段小伙伴写的代码，简化后大概如下：</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> A &#123;</span><br><span class="line">  <span class="string">"ONE"</span> = <span class="number">1</span>,</span><br><span class="line">  <span class="string">"TWO"</span> = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> a = <span class="built_in">Math</span>.random() &gt; <span class="number">0.5</span> ? A.ONE : A.TWO</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> b = <span class="built_in">Math</span>.random() &gt; <span class="number">0.5</span> ? a : <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(b === <span class="number">1</span> || b === <span class="number">2</span>) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>此时，b === 2 处 ts 会提示 </p><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This condition will <span class="keyword">always</span> <span class="keyword">return</span> <span class="string">'false'</span> since the <span class="keyword">types</span> <span class="string">'0'</span> <span class="keyword">and</span> <span class="string">'2'</span> have <span class="keyword">no</span> overlap.ts(<span class="number">2367</span>)</span><br></pre></td></tr></table></figure><p>为何 TypeScript 会提示 0 与 2 没有重合的地方呢？</p><h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>鼠标悬浮在 b === 1 时，提示 b 的类型为 A ｜ 0 的联合类型，而到了 b === 2 时，却变成了 <code>b: 0</code>。那么也就是说 TypeScript 在判断 b !== 1 时，就判定 b 不可能为类型 A，此时将类型收窄为 0。而 0 不可能 assgin 给 2，因此报错。上网搜索似乎也没有得到为何时这种收窄策略的原因，仅有一个可能有关联的 <a href="https://github.com/Microsoft/TypeScript/issues/9998，然而至今还是" target="_blank" rel="noopener">https://github.com/Microsoft/TypeScript/issues/9998，然而至今还是</a> open 的。</p><h4 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h4><p>那我们要怎么解决这个报错呢？实际上我们将判断的右值改成 enum 即可，且逻辑更清晰，维护更简单：</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(b === A.ONE || b === A.TWO) &#123;</span><br><span class="line"><span class="comment">// no error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>或者下面这种也可以（不是很推荐，没有发挥出 enum 应有的作用）</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(b <span class="keyword">as</span> A === <span class="number">1</span> || b === <span class="number">0</span>) &#123;</span><br><span class="line"><span class="comment">// no error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> TypeScript </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>关于 cookie</title>
+      <link href="/2020/09/21/%E5%85%B3%E4%BA%8E-cookie/"/>
+      <url>/2020/09/21/%E5%85%B3%E4%BA%8E-cookie/</url>
+      
+        <content type="html"><![CDATA[<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>目前在我们的后台项目中，用户的登录信息主要是存放在 cookie 中。读写 cookie 的过程主要是服务端的工作，所以前端负责业务的同学有可能接触不到，但是 cookie 又与网络完全，跨域，代理等等诸多概念有关联，因此于本文记录我所了解的 cookie。</p><h4 id="本地开发代理"><a href="#本地开发代理" class="headerlink" title="本地开发代理"></a>本地开发代理</h4><p>本地开发时通常会将接口代理到测试环境</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 网络 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>记录一次bug排查</title>
       <link href="/2020/09/16/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1bug%E6%8E%92%E6%9F%A5/"/>
       <url>/2020/09/16/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1bug%E6%8E%92%E6%9F%A5/</url>
