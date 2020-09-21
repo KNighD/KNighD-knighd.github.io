@@ -209,7 +209,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-09-21 21:16:48 / 修改时间：21:49:59" itemprop="dateCreated datePublished" datetime="2020-09-21T21:16:48+08:00">2020-09-21</time>
+              <time title="创建时间：2020-09-21 21:16:48 / 修改时间：21:51:17" itemprop="dateCreated datePublished" datetime="2020-09-21T21:16:48+08:00">2020-09-21</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,7 +227,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>675</span>
+              <span>676</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -249,18 +249,18 @@
           <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>在项目中看到一段小伙伴写的代码，简化后大概如下：</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> A &#123;</span><br><span class="line">  <span class="string">"ONE"</span> = <span class="number">1</span>,</span><br><span class="line">  <span class="string">"TWO"</span> = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> a = <span class="built_in">Math</span>.random() &gt; <span class="number">0.5</span> ? A.ONE : A.TWO</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> b = <span class="built_in">Math</span>.random() &gt; <span class="number">0.5</span> ? a : <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(b === <span class="number">1</span> || b === <span class="number">2</span>) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>此时，b === 2 处 ts 会提示 </p>
+<p>此时，b === 2 处 ts 会提示:</p>
 <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This condition will <span class="keyword">always</span> <span class="keyword">return</span> <span class="string">'false'</span> since the <span class="keyword">types</span> <span class="string">'0'</span> <span class="keyword">and</span> <span class="string">'2'</span> have <span class="keyword">no</span> overlap.ts(<span class="number">2367</span>)</span><br></pre></td></tr></table></figure>
 
 <p>为何 TypeScript 会提示 0 与 2 没有重合的地方呢？</p>
-<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>鼠标悬浮在 b === 1 时，提示 b 的类型为 A ｜ 0 的联合类型，而到了 b === 2 时，却变成了 <code>b: 0</code>。那么也就是说 TypeScript 在判断 b !== 1 时，就判定 b 不可能为类型 A，此时将类型收窄为 0。而 0 不可能 assgin 给 2，因此报错。上网搜索似乎也没有得到为何时这种收窄策略的原因，仅有一个可能有关联的 <a href="https://github.com/Microsoft/TypeScript/issues/9998，然而至今还是" target="_blank" rel="noopener">https://github.com/Microsoft/TypeScript/issues/9998，然而至今还是</a> open 的。</p>
-<h4 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h4><p>那我们要怎么解决这个报错呢？实际上我们将判断的右值改成 enum 即可，且逻辑更清晰，维护更简单：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(b === A.ONE || b === A.TWO) &#123;</span><br><span class="line">	<span class="comment">// no error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>或者下面这种也可以（不是很推荐，没有发挥出 enum 应有的作用）</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(b <span class="keyword">as</span> A === <span class="number">1</span> || b === <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="comment">// no error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/21/TypeScript-%E7%9A%84-enum-%E7%B1%BB%E5%9E%8B%E6%94%B6%E7%AA%84%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
