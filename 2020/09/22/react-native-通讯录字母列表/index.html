@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://images.gitee.com/uploads/images/2020/0922/211128_c1c0816f_1748283.png">
 <meta property="article:published_time" content="2020-09-22T13:07:05.000Z">
-<meta property="article:modified_time" content="2020-09-22T13:46:29.532Z">
+<meta property="article:modified_time" content="2020-09-23T14:07:06.050Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="ReactNative">
 <meta name="twitter:card" content="summary">
@@ -214,10 +214,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-09-22 21:07:05 / 修改时间：21:46:29" itemprop="dateCreated datePublished" datetime="2020-09-22T21:07:05+08:00">2020-09-22</time>
+              <time title="创建时间：2020-09-22 21:07:05" itemprop="dateCreated datePublished" datetime="2020-09-22T21:07:05+08:00">2020-09-22</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-23 22:07:06" itemprop="dateModified" datetime="2020-09-23T22:07:06+08:00">2020-09-23</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -241,14 +247,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>968</span>
+              <span>3.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -277,7 +283,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;AlphabetList dataSource&#x3D;&#123;dataSource&#125; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
 
 <p>dataSource 的结构如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> SectionItem &#123;</span><br><span class="line">	sectionKey: <span class="built_in">string</span>;</span><br><span class="line">	data: &#123;</span><br><span class="line">		name: <span class="built_in">string</span>;</span><br><span class="line">		value: <span class="built_in">string</span></span><br><span class="line">	&#125;[]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> DataSource: SectionItem[]</span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> IListItem &#123;</span><br><span class="line">  name: <span class="built_in">string</span>;</span><br><span class="line">  value: <span class="built_in">string</span> | <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> ISectionItem &#123;</span><br><span class="line">	sectionKey: <span class="built_in">string</span>;</span><br><span class="line">	data: &#123;</span><br><span class="line">		name: <span class="built_in">string</span>;</span><br><span class="line">		value: <span class="built_in">string</span></span><br><span class="line">	&#125;[]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> DataSource: SectionItem[]</span><br></pre></td></tr></table></figure>
 
 <p>例如：</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    sectionKey: <span class="string">'常'</span>,</span><br><span class="line">    data: [</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'顺丰物流'</span>,</span><br><span class="line">        value: <span class="string">'1'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'京东快递'</span>,</span><br><span class="line">        value: <span class="string">'2'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    sectionKey: <span class="string">'A'</span>,</span><br><span class="line">    data: [</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'安能物流'</span>,</span><br><span class="line">        value: <span class="string">'3'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'澳大利亚邮政'</span>,</span><br><span class="line">        value: <span class="string">'4'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
@@ -286,8 +292,18 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;View&gt;</span><br><span class="line">  &#123;&#x2F;* 主列表 *&#x2F;&#125;</span><br><span class="line">  &lt;MainList &#x2F;&gt;</span><br><span class="line">  &#123;&#x2F;* 右侧字母列表 *&#x2F;&#125;</span><br><span class="line">  &lt;SideBar &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;View&gt;</span><br></pre></td></tr></table></figure>
 
 <h4 id="MainList"><a href="#MainList" class="headerlink" title="MainList"></a>MainList</h4><p>主列表分组 Main，那么使用 SectionList 是一个不错的选择（当然也可以用 FlatList 来实现）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>当滚动 MainList 时，通过 <code>onListViewableItemsChanged</code> 的回调可以得到当前窗口可视的分组，从而改变当前选中的字母</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">const MainList &#x3D; (&#123;</span><br><span class="line">    dataSource,</span><br><span class="line">    onMainListViewableItemsChanged,</span><br><span class="line">  &#125;) &#x3D;&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;SectionList</span><br><span class="line">      renderItem&#x3D;&#123;(&#123; item &#125;) &#x3D;&gt; (&lt;ListItem item&#x3D;&#123;item&#125; &#x2F;&gt;)&#125;</span><br><span class="line">      renderSectionHeader&#x3D;&#123;(&#123; section &#125;) &#x3D;&gt; &lt;SectionHeader section&#x3D;&#123;section&#125; &#x2F;&gt;&#125;</span><br><span class="line">      keyExtractor&#x3D;&#123;(item) &#x3D;&gt; &#96;$&#123;item.value&#125;&#96;&#125;</span><br><span class="line">      sections&#x3D;&#123;dataSource&#125;</span><br><span class="line">      stickySectionHeadersEnabled&#x3D;&#123;false&#125;</span><br><span class="line">      onViewableItemsChanged&#x3D;&#123;onMainListViewableItemsChanged&#125;</span><br><span class="line">    &#x2F;&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default MainList;</span><br></pre></td></tr></table></figure>
 
+<p>在 AlphabetList 中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">const AlphabetList &#x3D; (&#123; dataSource &#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  &#x2F;&#x2F; 右侧字母表列表</span><br><span class="line">  const letterlist &#x3D; dataSource.map((item) &#x3D;&gt; &#123;</span><br><span class="line">    return item.sectionKey;</span><br><span class="line">  &#125;);</span><br><span class="line">  const [currentSectionKey, setCurrentSectionKey] &#x3D; useState(letterlist);</span><br><span class="line">  const onMainListViewableItemsChanged &#x3D; (info: &#123;</span><br><span class="line">    viewableItems: ViewToken[];</span><br><span class="line">  &#125;) &#x3D;&gt; &#123;</span><br><span class="line">    &#x2F;&#x2F; 将选中的字母设置为当前第一个可见 section 的 sectionKey</span><br><span class="line">    setCurrentSectionKey(info.viewableItems.section.sectionKey);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View style&#x3D;&#123;styles.container&#125;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 start *&#x2F;&#125;</span><br><span class="line">      &lt;MainList</span><br><span class="line">        dataSource&#x3D;&#123;dataSource&#125;</span><br><span class="line">        onMainListTouchStart&#x3D;&#123;() &#x3D;&gt; setCurrentResponder(&#39;mainList&#39;)&#125;</span><br><span class="line">        onMainListViewableItemsChanged&#x3D;&#123;onMainListViewableItemsChanged&#125;</span><br><span class="line">      &#x2F;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 end *&#x2F;&#125;</span><br><span class="line">      &#123;&#x2F;* 右侧字母列表 start *&#x2F;&#125;</span><br><span class="line">      &lt;SideBar &#x2F;&gt;</span><br><span class="line">      &#123;&#x2F;* 右侧字母列表 end *&#x2F;&#125;</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default AlphabetList;</span><br></pre></td></tr></table></figure>
+
+<h4 id="SideBar"><a href="#SideBar" class="headerlink" title="SideBar"></a>SideBar</h4><p>侧边栏的实现比起来则要复杂一些，这里使用 FlatList，实际上简单使用 View 去实现也是可以的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const SideBar &#x3D; (&#123;</span><br><span class="line">  letterlist,</span><br><span class="line">  handleSideBarItemRespond,</span><br><span class="line">  currentSectionKey</span><br><span class="line">&#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;FlatList</span><br><span class="line">      style&#x3D;&#123;styles.Wrap&#125;</span><br><span class="line">      scrollEnabled&#x3D;&#123;false&#125;</span><br><span class="line">      data&#x3D;&#123;letterlist&#125;</span><br><span class="line">      renderItem&#x3D;&#123;(&#123; item, index &#125;) &#x3D;&gt; (</span><br><span class="line">        &lt;Item</span><br><span class="line">          item&#x3D;&#123;item&#125;</span><br><span class="line">          handleSideBarItemRespond&#x3D;&#123;handleSideBarItemRespond&#125;</span><br><span class="line">          letterlist&#x3D;&#123;letterlist&#125;</span><br><span class="line">        &#x2F;&gt;</span><br><span class="line">      )&#125;</span><br><span class="line">      keyExtractor&#x3D;&#123;item &#x3D;&gt; item&#125;</span><br><span class="line">    &#x2F;&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一开始我的想法是通过监听 Item 的 onPress | onPressIn ，从一项滑动到另一项的时候，依次触发事件，实验后发现，在释放手势之前，仅会有一个</p>
+<p>响应的元素。</p>
+<p>这里就得提一下 RN 的手势系统了。</p>
 
     </div>
 
@@ -368,7 +384,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AlphabetList"><span class="nav-number">2.</span> <span class="nav-text">AlphabetList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MainList"><span class="nav-number">3.</span> <span class="nav-text">MainList</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AlphabetList"><span class="nav-number">2.</span> <span class="nav-text">AlphabetList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MainList"><span class="nav-number">3.</span> <span class="nav-text">MainList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SideBar"><span class="nav-number">4.</span> <span class="nav-text">SideBar</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -433,12 +449,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">68k</span>
+    <span title="站点总字数">70k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:53</span>
+    <span title="站点阅读时长">1:57</span>
 </div>
 
         
