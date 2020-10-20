@@ -8,9 +8,21 @@
       <link href="/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/"/>
       <url>/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，尝试来实现一个 RN 瀑布流组件。</p><a id="more"></a><h4 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h4><ol><li><p>支持上拉加载，下拉刷新</p></li><li><p>支持多列可定制</p></li><li><p>每一项的高度分 已知 / 未知 两种情况</p></li><li><p>性能尽量好</p></li><li><p>效果大概如图 ，原设计稿就不贴了，从花瓣截个图</p><img src="https://i.loli.net/2020/10/20/8gxisTetz1qOYG4.png" alt="image.png"></li></ol>]]></content>
       
       
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ReactNative </tag>
+            
+        </tags>
       
     </entry>
     
