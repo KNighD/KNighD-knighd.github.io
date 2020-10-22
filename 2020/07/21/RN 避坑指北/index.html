@@ -28,7 +28,7 @@
 <meta property="og:description" content="记录平时开发 rn 时遇到的问题，特指 0.59 版本，不同版本可能情况不同，仅供参考。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-21T06:16:53.000Z">
-<meta property="article:modified_time" content="2020-10-19T06:14:20.766Z">
+<meta property="article:modified_time" content="2020-10-22T07:20:17.052Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="ReactNative">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-19 14:14:20" itemprop="dateModified" datetime="2020-10-19T14:14:20+08:00">2020-10-19</time>
+                <time title="修改时间：2020-10-22 15:20:17" itemprop="dateModified" datetime="2020-10-22T15:20:17+08:00">2020-10-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -245,7 +245,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.9k</span>
+              <span>5.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -315,6 +315,10 @@
 <h5 id="iOS-Text"><a href="#iOS-Text" class="headerlink" title="iOS Text"></a>iOS Text</h5><p>ios 的 Text 组件 <code>borderRadius</code> | <code>textAlignVertical</code> 属性无效，只能外层再包个 View</p>
 <h5 id="Border"><a href="#Border" class="headerlink" title="Border"></a>Border</h5><p>RN 的盒模型是 border-box, 即 宽高包括了 padding 和 border。</p>
 <p>在开发中发现如果容器具有 backgroundColor 与 borderRadius 后，设置一个不同颜色的 border, 该容器外围会有一层浅浅的 backgroundColor 描边（目前仅 ios 有这种情况）解决方案：在容器外层再包一个 View，设置 border 样式</p>
+<h5 id="FlatList-的-onViewableItemsChanged"><a href="#FlatList-的-onViewableItemsChanged" class="headerlink" title="FlatList 的 onViewableItemsChanged"></a>FlatList 的 onViewableItemsChanged</h5><p>onViewableItemsChanged 的方法在 FlatList 的生命周期中不可以改变，否则报错：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Invariant Violation: Changing onViewableItemsChanged <span class="keyword">on</span> <span class="keyword">the</span> fly <span class="keyword">is</span> <span class="keyword">not</span> supported</span><br></pre></td></tr></table></figure>
+
+<p>如果是类组件，可以在 constructor 中定义该方法，如果是函数组件，可以通过 useRef 包裹该方法。</p>
 <p>未完待续～</p>
 
     </div>
@@ -399,7 +403,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一像素问题"><span class="nav-number">1.</span> <span class="nav-text">一像素问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TextInput-组件"><span class="nav-number">2.</span> <span class="nav-text">TextInput  组件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#阴影"><span class="nav-number">3.</span> <span class="nav-text">阴影</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#border-虚线"><span class="nav-number">4.</span> <span class="nav-text">border 虚线</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#多行文字"><span class="nav-number">5.</span> <span class="nav-text">多行文字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现不同字号的文字底部对齐"><span class="nav-number">6.</span> <span class="nav-text">实现不同字号的文字底部对齐</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Text-组件样式继承"><span class="nav-number">7.</span> <span class="nav-text">Text 组件样式继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ScrollView-与-Keyboard"><span class="nav-number">8.</span> <span class="nav-text">ScrollView 与 Keyboard</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iOS-Text"><span class="nav-number">9.</span> <span class="nav-text">iOS Text</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Border"><span class="nav-number">10.</span> <span class="nav-text">Border</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一像素问题"><span class="nav-number">1.</span> <span class="nav-text">一像素问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TextInput-组件"><span class="nav-number">2.</span> <span class="nav-text">TextInput  组件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#阴影"><span class="nav-number">3.</span> <span class="nav-text">阴影</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#border-虚线"><span class="nav-number">4.</span> <span class="nav-text">border 虚线</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#多行文字"><span class="nav-number">5.</span> <span class="nav-text">多行文字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现不同字号的文字底部对齐"><span class="nav-number">6.</span> <span class="nav-text">实现不同字号的文字底部对齐</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Text-组件样式继承"><span class="nav-number">7.</span> <span class="nav-text">Text 组件样式继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ScrollView-与-Keyboard"><span class="nav-number">8.</span> <span class="nav-text">ScrollView 与 Keyboard</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iOS-Text"><span class="nav-number">9.</span> <span class="nav-text">iOS Text</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Border"><span class="nav-number">10.</span> <span class="nav-text">Border</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FlatList-的-onViewableItemsChanged"><span class="nav-number">11.</span> <span class="nav-text">FlatList 的 onViewableItemsChanged</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -464,12 +468,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">76k</span>
+    <span title="站点总字数">77k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:07</span>
+    <span title="站点阅读时长">2:08</span>
 </div>
 
         
