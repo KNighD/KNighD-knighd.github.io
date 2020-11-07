@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="背景当前的项目由于不是严格按照敏捷开发进行的，经常有功能分支需要分别上到 测试，预发以及开发环境。这个就导致了功能分支比较多，且开发要在临上线前整理需上线的分支，在上到正式环境之前需要合并到一个临时分支，之后再统一上到 master 分支。因此经常会遗漏掉一些分支。用 git log 可以查询出某人在某个时间段内的合并记录，从而知道有哪些分支合并到测试分支，那么这些分支就有可能是需要上线到 mas">
+  <meta name="description" content="背景当前的项目由于不是严格按照敏捷开发进行的，经常有功能分支需要分别上到 测试，预发以及开发环境。这个就导致了功能分支比较多，且开发要在临上线前整理需上线的分支，在上到正式环境之前需要合并到一个临时分支，之后再统一上到 master 分支。因此经常会遗漏掉一些分支。用 git log 可以对比出两个分支合并分支的区别，从而知道有哪些分支合并到测试分支，但是并没合并到 master。 那么这些分支就">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VSCode MergeLog 插件开发">
+<meta property="og:title" content="VSCode merge-diffs 插件开发">
 <meta property="og:url" content="https://knighd.gitee.io/2020/10/30/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景当前的项目由于不是严格按照敏捷开发进行的，经常有功能分支需要分别上到 测试，预发以及开发环境。这个就导致了功能分支比较多，且开发要在临上线前整理需上线的分支，在上到正式环境之前需要合并到一个临时分支，之后再统一上到 master 分支。因此经常会遗漏掉一些分支。用 git log 可以查询出某人在某个时间段内的合并记录，从而知道有哪些分支合并到测试分支，那么这些分支就有可能是需要上线到 mas">
+<meta property="og:description" content="背景当前的项目由于不是严格按照敏捷开发进行的，经常有功能分支需要分别上到 测试，预发以及开发环境。这个就导致了功能分支比较多，且开发要在临上线前整理需上线的分支，在上到正式环境之前需要合并到一个临时分支，之后再统一上到 master 分支。因此经常会遗漏掉一些分支。用 git log 可以对比出两个分支合并分支的区别，从而知道有哪些分支合并到测试分支，但是并没合并到 master。 那么这些分支就">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-10-30T00:56:16.000Z">
-<meta property="article:modified_time" content="2020-11-01T15:10:50.740Z">
+<meta property="article:modified_time" content="2020-11-07T13:05:18.374Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="JavaScript">
 <meta name="twitter:card" content="summary">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>VSCode MergeLog 插件开发 | 前端见闻录</title>
+  <title>VSCode merge-diffs 插件开发 | 前端见闻录</title>
   
 
 
@@ -203,7 +203,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          VSCode MergeLog 插件开发
+          VSCode merge-diffs 插件开发
         </h1>
 
         <div class="post-meta">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-01 23:10:50" itemprop="dateModified" datetime="2020-11-01T23:10:50+08:00">2020-11-01</time>
+                <time title="修改时间：2020-11-07 21:05:18" itemprop="dateModified" datetime="2020-11-07T21:05:18+08:00">2020-11-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -245,14 +245,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
+              <span>6.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>10 分钟</span>
             </span>
 
         </div>
@@ -264,8 +264,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>当前的项目由于不是严格按照敏捷开发进行的，经常有功能分支需要分别上到 测试，预发以及开发环境。这个就导致了功能分支比较多，且开发要在临上线前整理需上线的分支，在上到正式环境之前需要合并到一个临时分支，之后再统一上到 master 分支。因此经常会遗漏掉一些分支。用 git log 可以查询出某人在某个时间段内的合并记录，从而知道有哪些分支合并到测试分支，那么这些分支就有可能是需要上线到 master 的。我个人比较习惯使用命令行 + vscode 来使用 git，但是命令行不太直观，且交互比较麻烦，因此打算写个 VSCode 插件。</p>
-<p>下面是我边开发边记录下来，可能会存在一些不足或者待优化的地方。</p>
+        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>当前的项目由于不是严格按照敏捷开发进行的，经常有功能分支需要分别上到 测试，预发以及开发环境。这个就导致了功能分支比较多，且开发要在临上线前整理需上线的分支，在上到正式环境之前需要合并到一个临时分支，之后再统一上到 master 分支。因此经常会遗漏掉一些分支。用 git log 可以对比出两个分支合并分支的区别，从而知道有哪些分支合并到测试分支，但是并没合并到 master。 那么这些分支就有可能是需要上线到 master 的。我个人比较习惯使用命令行 + vscode 来使用 git，但是命令行不太直观，且交互比较麻烦，因此打算写个 VSCode 插件。</p>
+<a id="more"></a>
+
+<p>关于个人项目（排除单纯为了折腾技术的目的）我有一个经验是追求的不应该是技术方案完美，而是能尽快作出需要的功能（否则极可能中途放弃），之后再不断迭代直至自己满意，因此这个过程中可能会有一些不够十全十美的地方，还望见谅。</p>
+<p>代码地址：<a href="https://github.com/KNighD/merge-diffs" target="_blank" rel="noopener">https://github.com/KNighD/merge-diffs</a></p>
 <h4 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h4><p>这里我选择使用 Typescript 来实现插件，要说原因，主要是可以提示参数类型吧，毕竟不太熟悉文档。</p>
 <p>由于存在输入时间之类的交互，因此还是需要使用到 webview 的，html 部分考虑使用 vue3 来实现（虽然react 写起来更熟悉，但是想折腾一下）</p>
 <p>总体的想法是在页面输入查询条件，然后在与 node 端进行通信，执行命令查询出结果处理完成后回传给页面并做展示。界面 UI 的话就参考 Git History。</p>
@@ -291,9 +294,12 @@
 <p>项目打包后资源文件会带上 hash 值，按照 webpack 的经验，应该可以采取两种处理方式：</p>
 <ol>
 <li>修改打包配置将 public path 替换成 getRelativeResource 后获取到的地址, 动态读取打包后的 html</li>
-<li>webview 写死 html 模板，修改打包配置，让打包后的资源不带 hash</li>
+<li>webview 写死 html 模板，修改打包配置，让打包后的资源不带 hash,见 <a href="https://github.com/vitejs/vite/issues/378" target="_blank" rel="noopener">https://github.com/vitejs/vite/issues/378</a></li>
 </ol>
-<p>不过由于这里使用 vite 打包，在不熟悉 vite 的情况下，先采取最简单的处理：每次打包后手动改 hash 值。</p>
+<p>这里采用第二种方案，在 client 下添加 <code>vite.config.js</code> </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vite.config.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  rollupOutputOptions: &#123;</span><br><span class="line">    entryFileNames: <span class="string">`[name].js`</span>,</span><br><span class="line">    chunkFileNames: <span class="string">`[name].js`</span>,</span><br><span class="line">    assetFileNames: <span class="string">`[name].[ext]`</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>🤔不过还有一个问题，调试起来非常麻烦，每次修改完都需要 build 一下</p>
 <h4 id="实现简单通信"><a href="#实现简单通信" class="headerlink" title="实现简单通信"></a>实现简单通信</h4><p>在页面上添加一个简单的按钮，点击这个按钮后，将会发一个 getLogs 的命令给插件端，插件端接收之后，执行 <code>git log</code>,并返回结果。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; App.vue</span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;button @click&#x3D;&quot;sendMessage&quot;&gt;sendMessage&lt;&#x2F;button&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default &#123;</span><br><span class="line">  data() &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">      vscode: null,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  mounted() &#123;</span><br><span class="line">    &#x2F;&#x2F; 初始化 vscode 对象</span><br><span class="line">    this.vscode &#x3D; acquireVsCodeApi()</span><br><span class="line">    &#x2F;&#x2F; 监听来自 vscode 插件的信息</span><br><span class="line">    window.addEventListener(&#39;message&#39;, (event) &#x3D;&gt; &#123;</span><br><span class="line">      const message &#x3D; event.data</span><br><span class="line">      console.log(message)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    sendMessage() &#123;</span><br><span class="line">      &#x2F;&#x2F; 发送消息给插件</span><br><span class="line">      this.vscode.postMessage(&#39;getLogs&#39;)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
 
@@ -302,7 +308,31 @@
 <p>使用 <code>child_process</code> 并执行 node 命令，并封装成 Promise：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> getLogs = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    cp.exec(</span><br><span class="line">      <span class="string">`git log`</span>,</span><br><span class="line">      (err: <span class="built_in">Error</span>, <span class="attr">stdout</span>: string, <span class="attr">stderr</span>: string) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (stderr || err) &#123;</span><br><span class="line">          <span class="keyword">return</span> reject(stderr || err);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> resolve(stdout);</span><br><span class="line">      &#125;</span><br><span class="line">    );</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<h4 id="整理-log-格式"><a href="#整理-log-格式" class="headerlink" title="整理 log 格式"></a>整理 log 格式</h4><p>这里不打算自己造轮子了</p>
+<p>⚠️ 由于 exec 会衍生子 shell，因此在每次执行 shell 命令时要确认当前的路径是否正确。</p>
+<p>至此一个大体的框架就完成了。</p>
+<p>后续的开发主要是用 <code>git branch --merged</code> 查询分支合并情况，然后分别对比两个分支的合并分支的异同，并展示到页面上，这里不进行赘述。</p>
+<h4 id="添加-UI-组件库"><a href="#添加-UI-组件库" class="headerlink" title="添加 UI 组件库"></a>添加 UI 组件库</h4><p>组件库这里看到 ant-desin-vue 支持 vue3 了，打算试试。版本需要 2.0.0-beta.5 及以上。</p>
+<p>按需引入，原先是是用 babel-plugin-import 来处理的，不过还没研究如何在 vite 中添加，就打算使用 <code>import Button from &#39;ant-design-vue/lib/button&#39;;</code> 这样的写法，然而运行的时候，vite 会提示:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[vite] Avoid deep import "ant-design-vue/lib/button" (imported by /src/main.js)</span><br><span class="line">because "ant-design-vue" has been pre-optimized by vite into a single file.</span><br><span class="line">Prefer importing directly from the module entry:</span><br><span class="line"></span><br><span class="line">import &#123; ... &#125; from "ant-design-vue" </span><br><span class="line"></span><br><span class="line">If the dependency requires deep import to function properly, </span><br><span class="line">add the deep path to optimizeDeps.include in vite.config.js.</span><br></pre></td></tr></table></figure>
+
+<p>意思是 vite 已经做了按需引入的优化了，那么应该直接导入就好了。</p>
+<h4 id="vue3-的-eslint-配置"><a href="#vue3-的-eslint-配置" class="headerlink" title="vue3 的 eslint 配置"></a>vue3 的 eslint 配置</h4><p>填之前的坑，顺便补上 prettier 配置，最终根目录的 eslint 配置如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"root"</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">"parser"</span>: <span class="string">"vue-eslint-parser"</span>,</span><br><span class="line">  <span class="attr">"parserOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"parser"</span>: <span class="string">"@typescript-eslint/parser"</span>,</span><br><span class="line">    <span class="attr">"ecmaVersion"</span>: <span class="number">6</span>,</span><br><span class="line">    <span class="attr">"sourceType"</span>: <span class="string">"module"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"extends"</span>: [<span class="string">"plugin:vue/vue3-recommended"</span>],</span><br><span class="line">  <span class="attr">"plugins"</span>: [<span class="string">"@typescript-eslint"</span>, <span class="string">"prettier"</span>],</span><br><span class="line">  <span class="attr">"rules"</span>: &#123;</span><br><span class="line">    <span class="attr">"@typescript-eslint/naming-convention"</span>: <span class="string">"warn"</span>,</span><br><span class="line">    <span class="attr">"curly"</span>: <span class="string">"warn"</span>,</span><br><span class="line">    <span class="attr">"eqeqeq"</span>: <span class="string">"warn"</span>,</span><br><span class="line">    <span class="attr">"no-throw-literal"</span>: <span class="string">"warn"</span>,</span><br><span class="line">    <span class="attr">"semi"</span>: <span class="string">"off"</span>,</span><br><span class="line">    <span class="attr">"vue/singleline-html-element-content-newline"</span>: <span class="string">"off"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="vite-别名"><a href="#vite-别名" class="headerlink" title="vite 别名"></a>vite 别名</h4><p>目前似乎没有支持多目录 vue 项目的 vscode 插件，见 <a href="https://github.com/vuejs/vetur/issues/424。我这里使用的是" target="_blank" rel="noopener">https://github.com/vuejs/vetur/issues/424。我这里使用的是</a> vetur，为了避免报错，在 vite 中配置 alias。（吐槽一下：总觉得 vscode / ts 对 react 的支持还是比 vue 要好上不少的）</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">alias: &#123;</span><br><span class="line">  <span class="comment">// import useInit from '/@/composables/useInit'</span></span><br><span class="line">  '/@/': path.resolve(__dirname, './src/'),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h4><p>由于输出安装包时无需用到 client 的源码，因此可以在 .vscodeignore 中加入 client，同时修改 vite 的输出目录，以及插件中引用 client 资源的目录。</p>
+<p>如果此前没有发布过，可以参考 <a href="https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publishing-extensions。" target="_blank" rel="noopener">https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publishing-extensions。</a></p>
+<p>需要在 package.json 中添加 <code>publisher name</code> 和 <code>repository</code>，运行 <code>vsce package</code> 可以打出一个 .vsix 的拓展包用于安装。</p>
+<p>如果此前有发布过插件，那么有可能个人访问令牌已经失效了，需要到 <a href="https://aka.ms/SignupAzureDevOps" target="_blank" rel="noopener">https://aka.ms/SignupAzureDevOps</a> 上重新创建新的个人访问令牌。</p>
+<p>创建个人访问令牌要注意<code>Organization</code>要选择<code>all accessible organizations</code>，<code>Scopes</code>要选择<code>Full access</code>，否则发布会失败。</p>
+<p>之后添加一下 icon ，再补全一下 README 就可以发布了</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">vsce publish</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h4><p>以下为个人观点：总体上感觉 Vue3 的组合式 api 和 react 的 hooks 想做的都是同一件事：将原先跟生命周期绑定在一起的逻辑抽离出来，使得代码的关注点更为清晰，同时也更易于复用，作为 hoc / mixins 的一个替代方案。</p>
+<p>不同点是 react 是越来越偏向函数式，比如 useEffect 完全脱离了生命周期的概念，声明式编程。而 vue 依然是命令式，提供了onMounted 之类的 api。</p>
+<p>至于 vite 还没仔细去研究，不过配置确实是少了很多，更容易上手的样子，似乎是基于 rollup ？还有待踩坑。</p>
 
     </div>
 
@@ -383,7 +413,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#技术栈"><span class="nav-number">2.</span> <span class="nav-text">技术栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化项目"><span class="nav-number">3.</span> <span class="nav-text">初始化项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调试"><span class="nav-number">4.</span> <span class="nav-text">调试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">5.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打开一个-webview"><span class="nav-number">6.</span> <span class="nav-text">打开一个 webview</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开发-web-页面"><span class="nav-number">7.</span> <span class="nav-text">开发 web 页面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现简单通信"><span class="nav-number">8.</span> <span class="nav-text">实现简单通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#整理-log-格式"><span class="nav-number">9.</span> <span class="nav-text">整理 log 格式</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#技术栈"><span class="nav-number">2.</span> <span class="nav-text">技术栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化项目"><span class="nav-number">3.</span> <span class="nav-text">初始化项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调试"><span class="nav-number">4.</span> <span class="nav-text">调试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">5.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打开一个-webview"><span class="nav-number">6.</span> <span class="nav-text">打开一个 webview</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开发-web-页面"><span class="nav-number">7.</span> <span class="nav-text">开发 web 页面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现简单通信"><span class="nav-number">8.</span> <span class="nav-text">实现简单通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加-UI-组件库"><span class="nav-number">9.</span> <span class="nav-text">添加 UI 组件库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vue3-的-eslint-配置"><span class="nav-number">10.</span> <span class="nav-text">vue3 的 eslint 配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vite-别名"><span class="nav-number">11.</span> <span class="nav-text">vite 别名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发布"><span class="nav-number">12.</span> <span class="nav-text">发布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#感想"><span class="nav-number">13.</span> <span class="nav-text">感想</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -448,12 +478,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">82k</span>
+    <span title="站点总字数">85k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:16</span>
+    <span title="站点阅读时长">2:21</span>
 </div>
 
         
