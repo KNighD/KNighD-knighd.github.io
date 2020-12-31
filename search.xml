@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>记录一次踩坑：webp与ios</title>
+      <link href="/2020/12/31/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%B8%A9%E5%9D%91%EF%BC%9Awebp%E4%B8%8Eios/"/>
+      <url>/2020/12/31/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%B8%A9%E5%9D%91%EF%BC%9Awebp%E4%B8%8Eios/</url>
+      
+        <content type="html"><![CDATA[<p>最近有同事遇到一个问题，有个页面的图片（<a href="http://www.xxx.jpg）在安卓和" target="_blank" rel="noopener">www.xxx.jpg）在安卓和</a> pc 都能正常显示，但是用 ios 就展示不了。通常出现在这种情况是因为 WKWebview 不支持 webp 的图片导致的。通过 <a href="https://caniuse.com/?search=webp，可以看到" target="_blank" rel="noopener">https://caniuse.com/?search=webp，可以看到</a> safari 在 14.0 之后才支持 webp。</p><a id="more"></a><p>虽然这个场景里的图片后缀名是 jpg，但文件的后缀名并不能准确反映文件的实际格式。因此在 pc 端打开链接后，查看 <code>Content-Type</code> 看到属性为 <code>image/webp</code>, 因此可以确定这个图片文件实际上是 webp。</p><p>这个图片是在后台系统上传的，那么有可能是操作人员从网络下载了一张 webp 的图片，之后修改后缀名并上传。</p><p>上传组件是通过 antdesign 提供的<code>Upload</code>（该组件本质上也是封装了 input 组件）。 在 <code>beforeUpload</code> 可以获取到上传的 file， 上传前通过 <code>file.type</code> 校验过文件的 MIME type 必须是 <code>image/jpeg</code>。</p><p>奇怪的这里 webp 文件，如果后缀名改成 jpg, 则 file.type 显示的是 <code>image/jpeg</code> 而非 <code>image/webp</code>, 即 file.type 获取到类型会收到后缀名的影响，并不是准确的文件类型。</p><p>根据 MDN 的描述</p><blockquote><p> Based on the current implementation, browsers won’t actually read the bytestream of a file to determine its media type. It is assumed based on the file extension; a PNG image file renamed to .txt would give “<em>text/plain</em>“ and not “<em>image/png</em>“. Moreover, <code>file.type</code> is generally reliable only for common file types like images, HTML documents, audio and video. Uncommon file extensions would return an empty string. Client configuration (for instance, the Windows Registry) may result in unexpected values even for common types. <strong>Developers are advised not to rely on this property as a sole validation scheme.</strong></p></blockquote><p>确实浏览器会依据后缀名来判断 File.type 而非真正去读取文件流内容。</p><p>那么如何判断文件的类型是否为我们需要的类型呢？有同事给了段代码:</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reader = <span class="keyword">new</span> FileReader();</span><br><span class="line">reader.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> isJPG = <span class="function"><span class="params">z</span> =&gt;</span> [<span class="number">255</span>,<span class="number">216</span>,<span class="number">255</span>].every(<span class="function">(<span class="params">v, k</span>) =&gt;</span> z.charCodeAt(k)===v);</span><br><span class="line">  <span class="keyword">const</span> isWEBP = <span class="function"><span class="params">z</span> =&gt;</span> [<span class="number">87</span>,<span class="number">69</span>,<span class="number">66</span>,<span class="number">80</span>].every(<span class="function">(<span class="params">v, k</span>) =&gt;</span> z.charCodeAt(k+<span class="number">8</span>)===v);</span><br><span class="line">  <span class="keyword">const</span> isPNG = <span class="function"><span class="params">z</span> =&gt;</span> [<span class="number">137</span>,<span class="number">80</span>,<span class="number">78</span>,<span class="number">71</span>,<span class="number">13</span>,<span class="number">10</span>,<span class="number">26</span>,<span class="number">10</span>].every(<span class="function">(<span class="params">v, k</span>) =&gt;</span> z.charCodeAt(k) === v);</span><br><span class="line">  <span class="keyword">const</span> isGIF = <span class="function"><span class="params">z</span> =&gt;</span> [<span class="number">71</span>,<span class="number">73</span>,<span class="number">70</span>].every(<span class="function">(<span class="params">v, k</span>) =&gt;</span> z.charCodeAt(k) === v);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> res = reader.result;</span><br><span class="line">  <span class="built_in">console</span>.log(isJPG(res));</span><br><span class="line">  <span class="built_in">console</span>.log(isWEBP(res));</span><br><span class="line">  <span class="built_in">console</span>.log(isPNG(res));</span><br><span class="line">  <span class="built_in">console</span>.log(isGIF(res));</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line">reader.readAsBinaryString($<span class="number">0.</span>files[<span class="number">0</span>]);</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> HTML </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>开发一个局域网传输文件的小工具</title>
+      <link href="/2020/12/15/%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%B1%80%E5%9F%9F%E7%BD%91%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6%E7%9A%84%E5%B0%8F%E5%B7%A5%E5%85%B7/"/>
+      <url>/2020/12/15/%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E5%B1%80%E5%9F%9F%E7%BD%91%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6%E7%9A%84%E5%B0%8F%E5%B7%A5%E5%85%B7/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>给 RN 添加 mobx</title>
       <link href="/2020/12/14/%E7%BB%99-RN-%E6%B7%BB%E5%8A%A0-mobx/"/>
       <url>/2020/12/14/%E7%BB%99-RN-%E6%B7%BB%E5%8A%A0-mobx/</url>
