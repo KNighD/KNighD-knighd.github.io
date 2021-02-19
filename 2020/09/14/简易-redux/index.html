@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -247,7 +247,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -271,13 +271,68 @@
 <a id="more"></a>
 
 <h4 id="redux-demo"><a href="#redux-demo" class="headerlink" title="redux demo"></a>redux demo</h4><p>redux 提供了使用 demo 如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createStore &#125; <span class="keyword">from</span> <span class="string">'redux'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 这是个 reducer，纯函数，用于描述状态是如何转变的</span></span><br><span class="line"><span class="comment"> * reducer 接收 state 和 action 作为参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">counter</span>(<span class="params">state = <span class="number">0</span>, action</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'INCREMENT'</span>:</span><br><span class="line">      <span class="keyword">return</span> state + <span class="number">1</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">'DECREMENT'</span>:</span><br><span class="line">      <span class="keyword">return</span> state - <span class="number">1</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// createStore：接收 reducer 作为参数，以此构建一个 store</span></span><br><span class="line"><span class="keyword">let</span> store = createStore(counter)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 订阅 store, 每次 dispatch 的时候，都将触发回调</span></span><br><span class="line">store.subscribe(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(store.getState()))</span><br><span class="line"></span><br><span class="line"><span class="comment">// dispath 一个 action</span></span><br><span class="line">store.dispatch(&#123; <span class="attr">type</span>: <span class="string">'INCREMENT'</span> &#125;)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">import &#123; createStore &#125; from &#39;redux&#39;
+
+&#x2F;**
+ * 这是个 reducer，纯函数，用于描述状态是如何转变的
+ * reducer 接收 state 和 action 作为参数
+ *&#x2F;
+function counter(state &#x3D; 0, action) &#123;
+  switch (action.type) &#123;
+    case &#39;INCREMENT&#39;:
+      return state + 1
+    case &#39;DECREMENT&#39;:
+      return state - 1
+    default:
+      return state
+  &#125;
+&#125;
+
+&#x2F;&#x2F; createStore：接收 reducer 作为参数，以此构建一个 store
+let store &#x3D; createStore(counter)
+
+&#x2F;&#x2F; 订阅 store, 每次 dispatch 的时候，都将触发回调
+store.subscribe(() &#x3D;&gt; console.log(store.getState()))
+
+&#x2F;&#x2F; dispath 一个 action
+store.dispatch(&#123; type: &#39;INCREMENT&#39; &#125;)</code></pre>
 
 <h4 id="简化的数据流"><a href="#简化的数据流" class="headerlink" title="简化的数据流"></a>简化的数据流</h4><img src="https://i.loli.net/2020/11/09/UscH6njLXxCVDvu.png" alt="fiber" style="zoom:50%;" />
 
 <p>以上的数据流简化了 combineReducers 等过程</p>
 <h4 id="简易-redux"><a href="#简易-redux" class="headerlink" title="简易 redux"></a>简易 redux</h4><p>可以看出 redux 实际上就是一个发布订阅模式，简易版实现如下</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> createStore = <span class="function">(<span class="params">reducer</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> state</span><br><span class="line">  <span class="comment">// 订阅的回调</span></span><br><span class="line">  <span class="keyword">let</span> listeners = []</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 获取 state</span></span><br><span class="line">  <span class="keyword">const</span> getState = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> state</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> dispatch = <span class="function">(<span class="params">action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 更新 state</span></span><br><span class="line">    state = reducer(state, action)</span><br><span class="line">    <span class="comment">// 一旦 dispatch 就执行所有订阅的回调</span></span><br><span class="line">    listeners.forEach(<span class="function">(<span class="params">listener</span>) =&gt;</span> listener())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> subscribe = <span class="function">(<span class="params">listener</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 收集回调</span></span><br><span class="line">    listeners.push(listener)</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 取消订阅</span></span><br><span class="line">      listeners = listeners.filter(<span class="function">(<span class="params">l</span>) =&gt;</span> l !== listener)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    getState,</span><br><span class="line">    dispatch,</span><br><span class="line">    subscribe,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const createStore &#x3D; (reducer) &#x3D;&gt; &#123;
+  let state
+  &#x2F;&#x2F; 订阅的回调
+  let listeners &#x3D; []
+
+  &#x2F;&#x2F; 获取 state
+  const getState &#x3D; () &#x3D;&gt; &#123;
+    return state
+  &#125;
+
+  const dispatch &#x3D; (action) &#x3D;&gt; &#123;
+    &#x2F;&#x2F; 更新 state
+    state &#x3D; reducer(state, action)
+    &#x2F;&#x2F; 一旦 dispatch 就执行所有订阅的回调
+    listeners.forEach((listener) &#x3D;&gt; listener())
+  &#125;
+
+  const subscribe &#x3D; (listener) &#x3D;&gt; &#123;
+    &#x2F;&#x2F; 收集回调
+    listeners.push(listener)
+    return () &#x3D;&gt; &#123;
+      &#x2F;&#x2F; 取消订阅
+      listeners &#x3D; listeners.filter((l) &#x3D;&gt; l !&#x3D;&#x3D; listener)
+    &#125;
+  &#125;
+
+  return &#123;
+    getState,
+    dispatch,
+    subscribe,
+  &#125;
+&#125;</code></pre>
 
 
     </div>
@@ -362,7 +417,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#redux-demo"><span class="nav-number">2.</span> <span class="nav-text">redux demo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简化的数据流"><span class="nav-number">3.</span> <span class="nav-text">简化的数据流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简易-redux"><span class="nav-number">4.</span> <span class="nav-text">简易 redux</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#redux-demo"><span class="nav-number">2.</span> <span class="nav-text">redux demo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8C%96%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">3.</span> <span class="nav-text">简化的数据流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E6%98%93-redux"><span class="nav-number">4.</span> <span class="nav-text">简易 redux</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -427,12 +482,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

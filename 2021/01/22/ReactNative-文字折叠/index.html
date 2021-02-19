@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="h5 的单行&#x2F;多行文字溢出截断实现如下 123456789101112131415&#x2F;&#x2F; 单行div &amp;#123;  white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;&amp;#125;&#x2F;&#x2F; 多行div &amp;#123;  display: -webkit-box;  overflow: hidden;  -webkit-lin">
+  <meta name="description" content="h5 的单行&#x2F;多行文字溢出截断实现如下 &#x2F;&#x2F; 单行 div &amp;#123;   white-space: nowrap;   overflow: hidden;   text-overflow: ellipsis; &amp;#125;  &#x2F;&#x2F; 多行 div &amp;#123;   display: -webkit-box;   overflow: hidden;   -">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ReactNative 文字折叠">
 <meta property="og:url" content="https://knighd.gitee.io/2021/01/22/ReactNative-%E6%96%87%E5%AD%97%E6%8A%98%E5%8F%A0/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="h5 的单行&#x2F;多行文字溢出截断实现如下 123456789101112131415&#x2F;&#x2F; 单行div &amp;#123;  white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;&amp;#125;&#x2F;&#x2F; 多行div &amp;#123;  display: -webkit-box;  overflow: hidden;  -webkit-lin">
+<meta property="og:description" content="h5 的单行&#x2F;多行文字溢出截断实现如下 &#x2F;&#x2F; 单行 div &amp;#123;   white-space: nowrap;   overflow: hidden;   text-overflow: ellipsis; &amp;#125;  &#x2F;&#x2F; 多行 div &amp;#123;   display: -webkit-box;   overflow: hidden;   -">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-22T07:37:11.000Z">
 <meta property="article:modified_time" content="2021-01-25T02:14:11.747Z">
@@ -245,7 +245,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -265,7 +265,21 @@
 
       
         <p> h5 的单行/多行文字溢出截断实现如下</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 单行</span><br><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">white-space</span>: nowrap;</span><br><span class="line">  <span class="attribute">overflow</span>: hidden;</span><br><span class="line">  <span class="attribute">text-overflow</span>: ellipsis;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 多行</span><br><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: -webkit-box;</span><br><span class="line">  <span class="attribute">overflow</span>: hidden;</span><br><span class="line">  <span class="attribute">-webkit-line-clamp</span>: <span class="number">2</span>;</span><br><span class="line">  <span class="attribute">-webkit-box-orient</span>: vertical;</span><br><span class="line">  <span class="attribute">text-overflow</span>: ellipsis;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-css" data-language="css"><code class="language-css">&#x2F;&#x2F; 单行
+div &#123;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+&#125;
+
+&#x2F;&#x2F; 多行
+div &#123;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+&#125;</code></pre>
 
 <p>在 h5 中，多行文字截断的兼容性并不好，而在 RN 中，实现文字截断则简单的多，只需要给 Text 组件添加 <code>numberOfLines</code> 属性即可。</p>
 <p>但是通常我们还会遇到如下需求：</p>
@@ -274,15 +288,67 @@
 
 <p>如果我们能得知文字初始时是否处于折叠状态，那么就很好办了，通过修改 <code>numberOfLines</code>  的值 0 / N，来变更 展开与折叠 状态。</p>
 <p>但是很可惜，RN 并没有提供 api 来告知文字是否处于折叠状态，因此只能另寻他法。</p>
-<h5 id="尝试一"><a href="#尝试一" class="headerlink" title="尝试一"></a>尝试一</h5><p>参考 github 上的 <a href="https://github.com/facebook/react-native/issues/2496" target="_blank" rel="noopener">issue</a> 可以看到这个问题由来已久，有个解法是在 onLayout 时获取 Text 的高度, 对比理论折叠值( N * lineHeight)，如果比理论折叠值大，则说明文字处于折叠状态。</p>
+<h5 id="尝试一"><a href="#尝试一" class="headerlink" title="尝试一"></a>尝试一</h5><p>参考 github 上的 <a target="_blank" rel="noopener" href="https://github.com/facebook/react-native/issues/2496">issue</a> 可以看到这个问题由来已久，有个解法是在 onLayout 时获取 Text 的高度, 对比理论折叠值( N * lineHeight)，如果比理论折叠值大，则说明文字处于折叠状态。</p>
 <p>上面这个方案我尝试了下，在 ios 上表现良好，但是在 安卓 机器上，onLayout 时获取到的 Text 高度却是折叠后的高度，这意味着上述方法将失效。</p>
 <h5 id="尝试二"><a href="#尝试二" class="headerlink" title="尝试二"></a>尝试二</h5><p>接着我又注意到一个 api <code>onTextLayout</code>。<code>onTextLayout</code> 在 Text layout 的时候会被调用，可以获取到 lines，这是个对象数组，包含了每行文字的宽高等信息。我打算尝试一下这个 api 具体的表现如何。奇怪的是<code>onTextLayout</code> 虽然可以使用，但是 TS 的申明文件中 Text 组件却没有这个属性。再则在安卓机上 <code>onTextLayout</code>  返回的 lines 为未折叠时的行数，而在 ios 上则为折叠后的行数（最后一行将包括折叠后未能放下的文字）。看来仅通过 <code>onTextLayout</code>  也是无法判断到是否文字处于折叠状态。</p>
 <h5 id="尝试三"><a href="#尝试三" class="headerlink" title="尝试三"></a>尝试三</h5><p>不过上述的尝试启发了我，如果我们可以得知文字在全部展开时的行数，如果超过 N ，则将 <code>numberOfLines</code>  设置为 N，否则为 0，此时的初始化状态必定是折叠的。那么问题是如何得知文字在全部展开时的行数？如果将文字 <code>numberOfLines</code>  初始值设置为 0，表现将会是一开始全部展开，之后再收起，显然不符合需求。那么我们需要在一个不会被看到的地方暗戳戳地渲染 <code>numberOfLines</code>  为 0 的 Text。这里我是构建了一个 height 为 0 的 ScrollView，在这个 ScrollView 中渲染 <code>numberOfLines</code>  为 0 的 Text，并且通过该 Text 的 onTextLayout 可以获取到文字的行数，并且与 N 进行对比，就可以知道文字是否可折叠。</p>
 <p>最终代码实现如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> 该组件的主要用途是测量具有 numberOfLines 属性的 Text 是否会被裁剪，以用于自定义展开更多按钮</span><br><span class="line"> 原理是在一个高度为 0 的 ScrollView 中进行渲染，获取到渲染后的行数</span><br><span class="line">*&#x2F;</span><br><span class="line">import React, &#123; Children, isValidElement, cloneElement &#125; from &#39;react&#39;;</span><br><span class="line">import &#123; View, ViewStyle, ScrollView &#125; from &#39;react-native&#39;;</span><br><span class="line"></span><br><span class="line">interface IProps &#123;</span><br><span class="line">	&#x2F;&#x2F; 最多行数，超出折叠</span><br><span class="line">  limitLineNumber: number;</span><br><span class="line">  children: React.ReactElement;</span><br><span class="line">  onReady: (truncated: boolean) &#x3D;&gt; void;</span><br><span class="line">  style: ViewStyle;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const ReadMore &#x3D; (&#123; children, limitLineNumber, onReady, style &#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  &#x2F;* 复制出一个不带有 numberOfLines 的 children *&#x2F;</span><br><span class="line">  const childrenTemp &#x3D; Children.map(children, (child) &#x3D;&gt; &#123;</span><br><span class="line">    if (isValidElement(child)) &#123;</span><br><span class="line">      return cloneElement(child as React.ReactElement&lt;any&gt;, &#123;</span><br><span class="line">        numberOfLines: 0,</span><br><span class="line">        onTextLayout: (e: any) &#x3D;&gt; &#123;</span><br><span class="line">          &#x2F;&#x2F; onTextLayout事件：ios 与 安卓 在文字折叠情况时会略微不同，体现在 lines 属性上</span><br><span class="line">          &#x2F;&#x2F; ios 是返回折叠后的，而安卓则返回的是折叠之前的</span><br><span class="line">          &#x2F;&#x2F; onTextLayout 在 0.59 的文档上并未体现，且 ts 类型也没有，但实际上是可以使用的</span><br><span class="line">          onReady(e.nativeEvent.lines?.length &gt; limitLineNumber);</span><br><span class="line">        &#125;,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return child;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View style&#x3D;&#123;style&#125;&gt;</span><br><span class="line">      &lt;ScrollView style&#x3D;&#123;&#123; height: 0 &#125;&#125;&gt;&#123;childrenTemp&#125;&lt;&#x2F;ScrollView&gt;</span><br><span class="line">      &#123;children&#125;</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default ReadMore;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">&#x2F;*
+ 该组件的主要用途是测量具有 numberOfLines 属性的 Text 是否会被裁剪，以用于自定义展开更多按钮
+ 原理是在一个高度为 0 的 ScrollView 中进行渲染，获取到渲染后的行数
+*&#x2F;
+import React, &#123; Children, isValidElement, cloneElement &#125; from &#39;react&#39;;
+import &#123; View, ViewStyle, ScrollView &#125; from &#39;react-native&#39;;
+
+interface IProps &#123;
+	&#x2F;&#x2F; 最多行数，超出折叠
+  limitLineNumber: number;
+  children: React.ReactElement;
+  onReady: (truncated: boolean) &#x3D;&gt; void;
+  style: ViewStyle;
+&#125;
+
+const ReadMore &#x3D; (&#123; children, limitLineNumber, onReady, style &#125;: IProps) &#x3D;&gt; &#123;
+  &#x2F;* 复制出一个不带有 numberOfLines 的 children *&#x2F;
+  const childrenTemp &#x3D; Children.map(children, (child) &#x3D;&gt; &#123;
+    if (isValidElement(child)) &#123;
+      return cloneElement(child as React.ReactElement&lt;any&gt;, &#123;
+        numberOfLines: 0,
+        onTextLayout: (e: any) &#x3D;&gt; &#123;
+          &#x2F;&#x2F; onTextLayout事件：ios 与 安卓 在文字折叠情况时会略微不同，体现在 lines 属性上
+          &#x2F;&#x2F; ios 是返回折叠后的，而安卓则返回的是折叠之前的
+          &#x2F;&#x2F; onTextLayout 在 0.59 的文档上并未体现，且 ts 类型也没有，但实际上是可以使用的
+          onReady(e.nativeEvent.lines?.length &gt; limitLineNumber);
+        &#125;,
+      &#125;);
+    &#125;
+
+    return child;
+  &#125;);
+
+  return (
+    &lt;View style&#x3D;&#123;style&#125;&gt;
+      &lt;ScrollView style&#x3D;&#123;&#123; height: 0 &#125;&#125;&gt;&#123;childrenTemp&#125;&lt;&#x2F;ScrollView&gt;
+      &#123;children&#125;
+    &lt;&#x2F;View&gt;
+  );
+&#125;;
+
+export default ReadMore;
+</code></pre>
 
 <p>使用时:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const Demo &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  const onReadMoreReady &#x3D; (truncated: boolean) &#x3D;&gt; &#123;</span><br><span class="line">      &#x2F;&#x2F; 根据是否可折叠，判断展示按钮的文字等状态</span><br><span class="line">  &#125;;</span><br><span class="line">  </span><br><span class="line">  return &lt;ReadMore onReady&#x3D;&#123;onReadMoreReady&#125; limitLineNumber&#x3D;&#123;2&#125; &gt;</span><br><span class="line">    &lt;Text&gt;</span><br><span class="line">      any content you need...</span><br><span class="line">    &lt;&#x2F;Text&gt;</span><br><span class="line">  &lt;&#x2F;ReadMore&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const Demo &#x3D; () &#x3D;&gt; &#123;
+  const onReadMoreReady &#x3D; (truncated: boolean) &#x3D;&gt; &#123;
+      &#x2F;&#x2F; 根据是否可折叠，判断展示按钮的文字等状态
+  &#125;;
+  
+  return &lt;ReadMore onReady&#x3D;&#123;onReadMoreReady&#125; limitLineNumber&#x3D;&#123;2&#125; &gt;
+    &lt;Text&gt;
+      any content you need...
+    &lt;&#x2F;Text&gt;
+  &lt;&#x2F;ReadMore&gt;
+&#125;</code></pre>
 
 
 
@@ -308,7 +374,10 @@
     <a href="/2020/12/31/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%B8%A9%E5%9D%91%EF%BC%9Awebp%E4%B8%8Eios/" rel="prev" title="记录一次踩坑：webp与ios">
       <i class="fa fa-chevron-left"></i> 记录一次踩坑：webp与ios
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/19/JavaScript-%E9%A3%8E%E6%A0%BC%E6%8C%87%E5%8D%97/" rel="next" title="JavaScript 风格指南">
+      JavaScript 风格指南 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -367,7 +436,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#尝试一"><span class="nav-number">1.</span> <span class="nav-text">尝试一</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#尝试二"><span class="nav-number">2.</span> <span class="nav-text">尝试二</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#尝试三"><span class="nav-number">3.</span> <span class="nav-text">尝试三</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E4%B8%80"><span class="nav-number">1.</span> <span class="nav-text">尝试一</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E4%BA%8C"><span class="nav-number">2.</span> <span class="nav-text">尝试二</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E4%B8%89"><span class="nav-number">3.</span> <span class="nav-text">尝试三</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -432,12 +501,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

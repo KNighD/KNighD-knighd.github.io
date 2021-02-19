@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -329,7 +329,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -419,7 +419,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
+              <span>2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -439,7 +439,13 @@
 
       
           <p>在以往的开发中往往会出现类似以下的代码</p>
- <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(status === <span class="number">1</span>) &#123;</span><br><span class="line">   <span class="comment">// do something</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span>(status === <span class="number">2</span>) &#123;</span><br><span class="line">   <span class="comment">// do something</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (status === <span class="number">3</span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+ <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">if(status &#x3D;&#x3D;&#x3D; 1) &#123;
+   &#x2F;&#x2F; do something
+&#125; else if(status &#x3D;&#x3D;&#x3D; 2) &#123;
+   &#x2F;&#x2F; do something
+&#125; else if (status &#x3D;&#x3D;&#x3D; 3) &#123;
+  &#x2F;&#x2F; ...
+&#125;</code></pre>
 
 <p>上面代码中的 <code>1</code>，<code>2</code>，<code>3</code>就是所谓的魔法数字，即没有注释的情况下我们很难知道 1，2，3 代表的到底是什么 status。</p>
           <!--noindex-->
@@ -531,10 +537,27 @@
 
       
           <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>场景：封装一个 antd 的 Radio 组件时，需要从父组件获取到 value 的类型。其 props 接口定义如下</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> CustomRadioProps&lt;ValueType&gt; &#123;</span><br><span class="line">  options: Option&lt;ValueType&gt;[];</span><br><span class="line">  value: ValueType;</span><br><span class="line">  onChange: <span class="function">(<span class="params">value: ValueType</span>) =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">interface CustomRadioProps&lt;ValueType&gt; &#123;
+  options: Option&lt;ValueType&gt;[];
+  value: ValueType;
+  onChange: (value: ValueType) &#x3D;&gt; void;
+&#125;</code></pre>
 
 <p>使用时这里假设传进去的是个 number 类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;CustomRadio&lt;number&gt;</span><br><span class="line">  onChange&#x3D;&#123;handleTypeChange&#125;</span><br><span class="line">  options&#x3D;&#123;[</span><br><span class="line">    &#123;</span><br><span class="line">      label: &#39;1&#39;,</span><br><span class="line">      value: 1,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      label: &#39;1&#39;,</span><br><span class="line">      value: 2,</span><br><span class="line">    &#125;,</span><br><span class="line">  ]&#125;</span><br><span class="line">  value&#x3D;&#123;1&#125;</span><br><span class="line">&#x2F;&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">&lt;CustomRadio&lt;number&gt;
+  onChange&#x3D;&#123;handleTypeChange&#125;
+  options&#x3D;&#123;[
+    &#123;
+      label: &#39;1&#39;,
+      value: 1,
+    &#125;,
+    &#123;
+      label: &#39;1&#39;,
+      value: 2,
+    &#125;,
+  ]&#125;
+  value&#x3D;&#123;1&#125;
+&#x2F;&gt;</code></pre>
 
 <p>那么这个 CustomRadioProps 称为泛型组件。</p>
 <p>那么如何定义一个泛型组件？</p>
@@ -613,7 +636,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>984</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -633,7 +656,14 @@
 
       
           <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>Code Review 的时候看到小伙伴提交了一段用于提取文件拓展名的代码：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 截取图片后缀信息</span></span><br><span class="line"><span class="comment">// example: 'www.baidu.com/somepic.jpg?h/w/'</span></span><br><span class="line"><span class="comment">// return: '.jpg'</span></span><br><span class="line"><span class="keyword">const</span> getExtension = <span class="function">(<span class="params">url = <span class="string">''</span></span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> end = url.indexOf(<span class="string">'?'</span>) || <span class="literal">undefined</span>;</span><br><span class="line">  <span class="keyword">const</span> start = url.lastIndexOf(<span class="string">'.'</span>, end);</span><br><span class="line">  <span class="keyword">return</span> url.substring(start, end);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 截取图片后缀信息
+&#x2F;&#x2F; example: &#39;www.baidu.com&#x2F;somepic.jpg?h&#x2F;w&#x2F;&#39;
+&#x2F;&#x2F; return: &#39;.jpg&#39;
+const getExtension &#x3D; (url &#x3D; &#39;&#39;) &#x3D;&gt; &#123;
+  const end &#x3D; url.indexOf(&#39;?&#39;) || undefined;
+  const start &#x3D; url.lastIndexOf(&#39;.&#39;, end);
+  return url.substring(start, end);
+&#125;;</code></pre>
 
 <p>这种写法固然没错，那么是否有别的写法嘞?</p>
           <!--noindex-->
@@ -711,14 +741,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.7k</span>
+              <span>4.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -806,14 +836,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>13k</span>
+              <span>15k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>22 分钟</span>
+              <span>24 分钟</span>
             </span>
 
         </div>
@@ -825,7 +855,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>Promise 是异步编程的一种解决方案，可以解决前端的回调地狱。以下根据 <a href="https://es6.ruanyifeng.com/?search=promise&x=0&y=0#docs/promise" target="_blank" rel="noopener">ES6 入门</a> 简单过一下 Promise 的基础及个人的一些见解补充，同时尝试实现一个符合 PromiseA+ 规范的 Promise。</p>
+          <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>Promise 是异步编程的一种解决方案，可以解决前端的回调地狱。以下根据 <a target="_blank" rel="noopener" href="https://es6.ruanyifeng.com/?search=promise&x=0&y=0#docs/promise">ES6 入门</a> 简单过一下 Promise 的基础及个人的一些见解补充，同时尝试实现一个符合 PromiseA+ 规范的 Promise。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/08/25/%E4%B8%8D%E5%8F%98%E7%9A%84%E6%89%BF%E8%AF%BA%20Promise/#more" rel="contents">
@@ -901,14 +931,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>3.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -1001,14 +1031,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.5k</span>
+              <span>7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
+              <span>12 分钟</span>
             </span>
 
         </div>
@@ -1096,7 +1126,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
+              <span>2.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1259,12 +1289,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

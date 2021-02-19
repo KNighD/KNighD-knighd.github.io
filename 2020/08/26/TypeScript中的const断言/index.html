@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -245,14 +245,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.7k</span>
+              <span>4.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -267,34 +267,80 @@
         <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>最近在使用 ant design 的 Table 组件，遇到一个问题，定义 Table 的 columns 属性如下：</p>
 <a id="more"></a>
 
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> columns: ColumnProps&lt;MyRecord&gt;[] = [&#123;</span><br><span class="line">  title: <span class="string">'ID'</span>,</span><br><span class="line">  dataIndex: <span class="string">'id'</span>,</span><br><span class="line">  align: <span class="string">'center'</span>,</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">const columns: ColumnProps&lt;MyRecord&gt;[] &#x3D; [&#123;
+  title: &#39;ID&#39;,
+  dataIndex: &#39;id&#39;,
+  align: &#39;center&#39;,
+&#125;]</code></pre>
 
 <p>此时 TS 提示：</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Types of property <span class="string">'align'</span> are incompatible.</span><br><span class="line">       <span class="built_in"> Type </span><span class="string">'string'</span> is <span class="keyword">not</span> assignable <span class="keyword">to</span><span class="built_in"> type </span><span class="string">'"right" | "left" | "center" | undefined'</span>.  TS2322</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">Types of property &#39;align&#39; are incompatible.
+        Type &#39;string&#39; is not assignable to type &#39;&quot;right&quot; | &quot;left&quot; | &quot;center&quot; | undefined&#39;.  TS2322</code></pre>
 
 <h4 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h4><p>经过查看代码发现， ColumnProps 的 align 属性的实际继承自 ColumnSharedType：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ColumnSharedType&lt;RecordType&gt; &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    align?: AlignType;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">declare</span> <span class="keyword">type</span> AlignType = <span class="string">'left'</span> | <span class="string">'center'</span> | <span class="string">'right'</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">interface ColumnSharedType&lt;RecordType&gt; &#123;
+    &#x2F;&#x2F; ...
+    align?: AlignType;
+&#125;
+export declare type AlignType &#x3D; &#39;left&#39; | &#39;center&#39; | &#39;right&#39;;</code></pre>
 
 <p>也就是 column 中的 align 的类型为 string，而 string 无法 cast 到 AlignType。即：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> AlignType = <span class="string">'left'</span> | <span class="string">'center'</span> | <span class="string">'right'</span>;</span><br><span class="line"><span class="keyword">let</span> align: AlignType | <span class="literal">undefined</span></span><br><span class="line"><span class="keyword">let</span> myAlign = <span class="string">"center"</span></span><br><span class="line"><span class="comment">// Type 'string' is not assignable to type '"left" | "right" | "center" | undefined'.ts(2322)</span></span><br><span class="line">align = myAlign</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">type AlignType &#x3D; &#39;left&#39; | &#39;center&#39; | &#39;right&#39;;
+let align: AlignType | undefined
+let myAlign &#x3D; &quot;center&quot;
+&#x2F;&#x2F; Type &#39;string&#39; is not assignable to type &#39;&quot;left&quot; | &quot;right&quot; | &quot;center&quot; | undefined&#39;.ts(2322)
+align &#x3D; myAlign</code></pre>
 
 <h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>TypeScript 3.4 版本以上提供了 const 断言，可以通过 as const 来消除以上报错：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> columns: ColumnProps&lt;MyRecord&gt;[] = [&#123;</span><br><span class="line">  title: <span class="string">'ID'</span>,</span><br><span class="line">  dataIndex: <span class="string">'id'</span>,</span><br><span class="line">  align: <span class="string">'center'</span> <span class="keyword">as</span> <span class="keyword">const</span>,</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">const columns: ColumnProps&lt;MyRecord&gt;[] &#x3D; [&#123;
+  title: &#39;ID&#39;,
+  dataIndex: &#39;id&#39;,
+  align: &#39;center&#39; as const,
+&#125;]</code></pre>
 
-<h4 id="const-assertions"><a href="#const-assertions" class="headerlink" title="const assertions"></a>const assertions</h4><p>以下内容翻译自 <a href="https://devblogs.microsoft.com/typescript/announcing-typescript-3-4-rc/" target="_blank" rel="noopener">https://devblogs.microsoft.com/typescript/announcing-typescript-3-4-rc/</a> 中的 <code>const</code> assertions。(翻译不动的地方会贴上原文)</p>
+<h4 id="const-assertions"><a href="#const-assertions" class="headerlink" title="const assertions"></a>const assertions</h4><p>以下内容翻译自 <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-3-4-rc/">https://devblogs.microsoft.com/typescript/announcing-typescript-3-4-rc/</a> 中的 <code>const</code> assertions。(翻译不动的地方会贴上原文)</p>
 <p>当声明一个可变的变量或者属性时，TypeScript 经常拓宽值以确保我们可以在不写明确切的类型的情况下进行赋值。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="string">"hello"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 我们可以给 x 赋值</span></span><br><span class="line">x = <span class="string">"world"</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">let x &#x3D; &quot;hello&quot;;
+
+&#x2F;&#x2F; 我们可以给 x 赋值
+x &#x3D; &quot;world&quot;;</code></pre>
 
 <p>严格来说，每一个字面量都有其字面类型。上面的 x 在类型推断时，由 <code>&quot;hello&quot;</code> 类型转为更为 widen 的 <code>string</code> 类型。</p>
 <p>相对而言，如果 x 原始字面量类型为 “hello”， 那么我们就无法将 x 赋值为 “world”:</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x: <span class="string">"hello"</span> = <span class="string">"hello"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// error!</span></span><br><span class="line">x = <span class="string">"world"</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">let x: &quot;hello&quot; &#x3D; &quot;hello&quot;;
+
+&#x2F;&#x2F; error!
+x &#x3D; &quot;world&quot;;</code></pre>
 
 <p>上面的情况看起来比较极端，但是在一些情况下比较有用的，例如，我们经常创建一个联合属性的对象：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape =</span><br><span class="line">    | &#123; kind: <span class="string">"circle"</span>, radius: <span class="built_in">number</span> &#125;</span><br><span class="line">    | &#123; kind: <span class="string">"square"</span>, sideLength: <span class="built_in">number</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getShapes</span>(<span class="params"></span>): <span class="title">readonly</span> <span class="title">Shape</span>[] </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> result = [</span><br><span class="line">        &#123; kind: <span class="string">"circle"</span>, radius: <span class="number">100</span>, &#125;,</span><br><span class="line">        &#123; kind: <span class="string">"square"</span>, sideLength: <span class="number">50</span>, &#125;,</span><br><span class="line">    ];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Some terrible error message because TypeScript inferred</span></span><br><span class="line">    <span class="comment">// 'kind' to have the type 'string' instead of</span></span><br><span class="line">    <span class="comment">// either '"circle"' or '"square"'.</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">type Shape &#x3D;
+    | &#123; kind: &quot;circle&quot;, radius: number &#125;
+    | &#123; kind: &quot;square&quot;, sideLength: number &#125;
+
+function getShapes(): readonly Shape[] &#123;
+    let result &#x3D; [
+        &#123; kind: &quot;circle&quot;, radius: 100, &#125;,
+        &#123; kind: &quot;square&quot;, sideLength: 50, &#125;,
+    ];
+    
+    &#x2F;&#x2F; Some terrible error message because TypeScript inferred
+    &#x2F;&#x2F; &#39;kind&#39; to have the type &#39;string&#39; instead of
+    &#x2F;&#x2F; either &#39;&quot;circle&quot;&#39; or &#39;&quot;square&quot;&#39;.
+    return result;
+&#125;</code></pre>
 
 <p>可修改性是 TypeScript 断定什么时候 widen 类型的重要因素，而非分析所有代码。（Mutability is one of the best heuristics of intent which TypeScript can use to determine when to widen (rather than analyzing our entire program).）</p>
 <p>正如上述例子，不幸的是，JavaScript 中的属性默认可修改。这意味着经常会有不必要的 widen 类型，我们需要在特定的地方对类型进行确切的声明：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getShapes</span>(<span class="params"></span>): <span class="title">readonly</span> <span class="title">Shape</span>[] </span>&#123;</span><br><span class="line">  <span class="comment">// This explicit annotation gives a hint</span></span><br><span class="line">  <span class="comment">// to avoid widening in the first place.</span></span><br><span class="line">  <span class="keyword">let</span> result: readonly Shape[] = [</span><br><span class="line">  &#123; kind: <span class="string">"circle"</span>, radius: <span class="number">100</span>, &#125;,</span><br><span class="line">  &#123; kind: <span class="string">"square"</span>, sideLength: <span class="number">50</span>, &#125;,</span><br><span class="line">  ];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">function getShapes(): readonly Shape[] &#123;
+  &#x2F;&#x2F; This explicit annotation gives a hint
+  &#x2F;&#x2F; to avoid widening in the first place.
+  let result: readonly Shape[] &#x3D; [
+  &#123; kind: &quot;circle&quot;, radius: 100, &#125;,
+  &#123; kind: &quot;square&quot;, sideLength: 50, &#125;,
+  ];
+
+  return result;
+&#125;</code></pre>
 
 <p>上述的方法可以解决问题，但是当数据结构越来越复杂的时候，这种方式将会显的笨重。</p>
 <p>为了解决这个问题，TypeScript 3.4 为字面值引入了 const 断言。它的语法是一种类型断言，例如 <code>123 as const</code>。当我们这么使用的时候，意味着：</p>
@@ -303,20 +349,70 @@
 <li>对象字面量的属性值为只读</li>
 <li>数组字面量变成只读元组</li>
 </ol>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Type '10'</span></span><br><span class="line"><span class="keyword">let</span> x = <span class="number">10</span> <span class="keyword">as</span> <span class="keyword">const</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type 'readonly [10, 20]'</span></span><br><span class="line"><span class="keyword">let</span> y = [<span class="number">10</span>, <span class="number">20</span>] <span class="keyword">as</span> <span class="keyword">const</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type '&#123; readonly text: "hello" &#125;'</span></span><br><span class="line"><span class="keyword">let</span> z = &#123; text: <span class="string">"hello"</span> &#125; <span class="keyword">as</span> <span class="keyword">const</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">&#x2F;&#x2F; Type &#39;10&#39;
+let x &#x3D; 10 as const;
+
+&#x2F;&#x2F; Type &#39;readonly [10, 20]&#39;
+let y &#x3D; [10, 20] as const;
+
+&#x2F;&#x2F; Type &#39;&#123; readonly text: &quot;hello&quot; &#125;&#39;
+let z &#x3D; &#123; text: &quot;hello&quot; &#125; as const;</code></pre>
 
 <p>在 tsx 文件以外，还可以这么使用：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Type '10'</span></span><br><span class="line"><span class="keyword">let</span> x = &lt;<span class="keyword">const</span>&gt;<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type 'readonly [10, 20]'</span></span><br><span class="line"><span class="keyword">let</span> y = &lt;<span class="keyword">const</span>&gt;[<span class="number">10</span>, <span class="number">20</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type '&#123; readonly text: "hello" &#125;'</span></span><br><span class="line"><span class="keyword">let</span> z = &lt;<span class="keyword">const</span>&gt;&#123; text: <span class="string">"hello"</span> &#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">&#x2F;&#x2F; Type &#39;10&#39;
+let x &#x3D; &lt;const&gt;10;
+
+&#x2F;&#x2F; Type &#39;readonly [10, 20]&#39;
+let y &#x3D; &lt;const&gt;[10, 20];
+
+&#x2F;&#x2F; Type &#39;&#123; readonly text: &quot;hello&quot; &#125;&#39;
+let z &#x3D; &lt;const&gt;&#123; text: &quot;hello&quot; &#125;;</code></pre>
 
 <p>This feature often means that types that would otherwise be used just to hint immutability to the compiler can often be omitted.</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Works with no types referenced or declared.</span></span><br><span class="line"><span class="comment">// We only needed a single const assertion.</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getShapes</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> result = [</span><br><span class="line">        &#123; kind: <span class="string">"circle"</span>, radius: <span class="number">100</span>, &#125;,</span><br><span class="line">        &#123; kind: <span class="string">"square"</span>, sideLength: <span class="number">50</span>, &#125;,</span><br><span class="line">    ] <span class="keyword">as</span> <span class="keyword">const</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> shape of getShapes()) &#123;</span><br><span class="line">    <span class="comment">// Narrows perfectly!</span></span><br><span class="line">    <span class="keyword">if</span> (shape.kind === <span class="string">"circle"</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Circle radius"</span>, shape.radius);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Square side length"</span>, shape.sideLength);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">&#x2F;&#x2F; Works with no types referenced or declared.
+&#x2F;&#x2F; We only needed a single const assertion.
+function getShapes() &#123;
+    let result &#x3D; [
+        &#123; kind: &quot;circle&quot;, radius: 100, &#125;,
+        &#123; kind: &quot;square&quot;, sideLength: 50, &#125;,
+    ] as const;
+    
+    return result;
+&#125;
+
+for (const shape of getShapes()) &#123;
+    &#x2F;&#x2F; Narrows perfectly!
+    if (shape.kind &#x3D;&#x3D;&#x3D; &quot;circle&quot;) &#123;
+        console.log(&quot;Circle radius&quot;, shape.radius);
+    &#125;
+    else &#123;
+        console.log(&quot;Square side length&quot;, shape.sideLength);
+    &#125;
+&#125;</code></pre>
 
 <p>注意上面无需类型声明，const 断言允许 ts 使用最精确的表达式类型。</p>
 <h5 id="警告"><a href="#警告" class="headerlink" title="警告"></a>警告</h5><p>需要注意的是，const 断言只能使用在简单的字面表达式：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Error!</span></span><br><span class="line"><span class="comment">//   A 'const' assertion can only be applied to a string, number, boolean, array, or object literal.</span></span><br><span class="line"><span class="keyword">let</span> a = (<span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span> ? <span class="number">0</span> : <span class="number">1</span>) <span class="keyword">as</span> <span class="keyword">const</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Works!</span></span><br><span class="line"><span class="keyword">let</span> b = <span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span> ?</span><br><span class="line">    <span class="number">0</span> <span class="keyword">as</span> <span class="keyword">const</span> :</span><br><span class="line">    <span class="number">1</span> <span class="keyword">as</span> <span class="keyword">const</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">&#x2F;&#x2F; Error!
+&#x2F;&#x2F;   A &#39;const&#39; assertion can only be applied to a string, number, boolean, array, or object literal.
+let a &#x3D; (Math.random() &lt; 0.5 ? 0 : 1) as const;
+
+&#x2F;&#x2F; Works!
+let b &#x3D; Math.random() &lt; 0.5 ?
+    0 as const :
+    1 as const;</code></pre>
 
 <p>另外需要注意的是，const 不会将表达式转变为完全不可变：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">et arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> foo = &#123;</span><br><span class="line">    name: <span class="string">"foo"</span>,</span><br><span class="line">    contents: arr,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">foo.name = <span class="string">"bar"</span>;   <span class="comment">// error!</span></span><br><span class="line">foo.contents = [];  <span class="comment">// error!</span></span><br><span class="line"></span><br><span class="line">foo.contents.push(<span class="number">5</span>); <span class="comment">// ...works!</span></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">et arr &#x3D; [1, 2, 3, 4];
+
+let foo &#x3D; &#123;
+    name: &quot;foo&quot;,
+    contents: arr,
+&#125;;
+
+foo.name &#x3D; &quot;bar&quot;;   &#x2F;&#x2F; error!
+foo.contents &#x3D; [];  &#x2F;&#x2F; error!
+
+foo.contents.push(5); &#x2F;&#x2F; ...works!</code></pre>
 
 
 
@@ -403,7 +499,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#const-assertions"><span class="nav-number">4.</span> <span class="nav-text">const assertions</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#警告"><span class="nav-number">4.1.</span> <span class="nav-text">警告</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#const-assertions"><span class="nav-number">4.</span> <span class="nav-text">const assertions</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AD%A6%E5%91%8A"><span class="nav-number">4.1.</span> <span class="nav-text">警告</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -468,12 +564,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

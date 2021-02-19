@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="背景测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的： 1234const handleSearch &#x3D; () &#x3D;&gt; &amp;#123;	&#x2F;&#x2F; ...请求接口&amp;#125;&lt;Input onChange&#x3D;&amp;#123;handleSearch&amp;#125; &#x2F;&gt;  解决方法是通过 debounce 来控制输">
+  <meta name="description" content="背景测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的： const handleSearch &#x3D; () &#x3D;&gt; &amp;#123; 	&#x2F;&#x2F; ...请求接口 &amp;#125; &lt;Input onChange&#x3D;&amp;#123;handleSearch&amp;#125; &amp;#x2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="debounce与throttle">
 <meta property="og:url" content="https://knighd.gitee.io/2020/08/06/debounce%E4%B8%8Ethrottle/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的： 1234const handleSearch &#x3D; () &#x3D;&gt; &amp;#123;	&#x2F;&#x2F; ...请求接口&amp;#125;&lt;Input onChange&#x3D;&amp;#123;handleSearch&amp;#125; &#x2F;&gt;  解决方法是通过 debounce 来控制输">
+<meta property="og:description" content="背景测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的： const handleSearch &#x3D; () &#x3D;&gt; &amp;#123; 	&#x2F;&#x2F; ...请求接口 &amp;#125; &lt;Input onChange&#x3D;&amp;#123;handleSearch&amp;#125; &amp;#x2">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-06T07:18:31.000Z">
 <meta property="article:modified_time" content="2020-12-14T02:31:46.519Z">
@@ -245,7 +245,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
+              <span>2.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -265,42 +265,114 @@
 
       
         <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>测试同学提了个 bug，在搜索框中疯狂输入文字，不一会儿接口就报错了。这个 bug 实际上就是由于每输入一个字符时，就去请求接口引起的：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handleSearch = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">	<span class="comment">// ...请求接口</span></span><br><span class="line">&#125;</span><br><span class="line">&lt;Input onChange=&#123;handleSearch&#125; /&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const handleSearch &#x3D; () &#x3D;&gt; &#123;
+	&#x2F;&#x2F; ...请求接口
+&#125;
+&lt;Input onChange&#x3D;&#123;handleSearch&#125; &#x2F;&gt;</code></pre>
 
 <p>解决方法是通过 <code>debounce</code> 来控制输入的频率。</p>
 <p>实际上 <code>debounce</code> 和 <code>throttle</code> 这两个概念经常是一起出现，在工作中也常常使用到。在早年接触前端的时候，项目里有 <code>lodash</code>，因此直接使用其提供的  <code>debounce</code> 和 <code>throttle</code> 。而在一些简单的项目里，往往不引入 <code>lodash</code>，这个时候就需要自己实现，于此做个记录。</p>
 <a id="more"></a>
 
 <h4 id="debounce"><a href="#debounce" class="headerlink" title="debounce"></a>debounce</h4><p><code>debounce</code> 也就是防抖，看看 lodash 中 debounce 的定义：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_.debounce(func, [wait=<span class="number">0</span>], [options=&#123;&#125;])</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">_.debounce(func, [wait&#x3D;0], [options&#x3D;&#123;&#125;])</code></pre>
 
 <p>返回一个函数，该函数会距离上次调用后，延迟 <code>wait</code> 毫秒后调用<code>func</code>。</p>
 <p>在上面的 bug 中，对原搜索方法进行防抖处理后，仅当用户停止输入 300 毫秒后，才请求接口进行搜索：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 停止输入 300 ms 后，进行搜索</span></span><br><span class="line">_.debounce(handleSearch, <span class="number">300</span>)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 停止输入 300 ms 后，进行搜索
+_.debounce(handleSearch, 300)</code></pre>
 
 <p>####throttle</p>
 <p><code>throttle</code> 我们称之为截流，同样看看 loads 中 throttle 的定义：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_.throttle(func, [wait=<span class="number">0</span>], [options=&#123;&#125;])</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">_.throttle(func, [wait&#x3D;0], [options&#x3D;&#123;&#125;])</code></pre>
 
 <p>返回一个函数，该函数最多每 <code>wait</code> 毫秒调用一次 <code>func</code>。</p>
 <p>如果对搜索方法进行截流，则无论用户输入多快，每 1 秒仅请求一次：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 停止输入 300 ms 后，进行搜索</span></span><br><span class="line">_.debounce(handleSearch, <span class="number">1000</span>)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 停止输入 300 ms 后，进行搜索
+_.debounce(handleSearch, 1000)</code></pre>
 
-<h4 id="手写一个-debounce"><a href="#手写一个-debounce" class="headerlink" title="手写一个 debounce"></a>手写一个 debounce</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">func, wait = <span class="number">0</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> timeout</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(timeout) &#123;</span><br><span class="line">      clearTimeout(timeout)</span><br><span class="line">    &#125;</span><br><span class="line">    timeout = setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> func.call(<span class="keyword">this</span>, ...args), wait)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="手写一个-debounce"><a href="#手写一个-debounce" class="headerlink" title="手写一个 debounce"></a>手写一个 debounce</h4><pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">function debounce(func, wait &#x3D; 0) &#123;
+  let timeout
+  return function(...args) &#123;
+    if(timeout) &#123;
+      clearTimeout(timeout)
+    &#125;
+    timeout &#x3D; setTimeout(() &#x3D;&gt; func.call(this, ...args), wait)
+  &#125;
+&#125;</code></pre>
 
 <p>由于 func 被当作是参数传递进来，注意上面的 func 需要绑定 this。并且在使用时如果有 this 指向，需要显式指明 this，如：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> o = &#123;</span><br><span class="line">  a: <span class="number">1</span>,</span><br><span class="line">  b: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>.a);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> c = debounce(o.b).bind(o);</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const o &#x3D; &#123;
+  a: 1,
+  b: function() &#123;
+      console.log(this.a);
+  &#125;
+&#125;
+const c &#x3D; debounce(o.b).bind(o);</code></pre>
 
 <p>对 debounce 进一步拓展，如果需要在调用时立刻执行一次，则可以：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">func, wait = <span class="number">0</span>, head</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> timeout;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> callNow = head &amp;&amp; !timeout;</span><br><span class="line">    timeout &amp;&amp; clearTimeout(timeout);</span><br><span class="line">    timeout = setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span>(!callNow) &#123;</span><br><span class="line">        func.call(<span class="keyword">this</span>, ...args);</span><br><span class="line">      &#125;</span><br><span class="line">      timeout = <span class="literal">null</span></span><br><span class="line">    &#125;, wait);</span><br><span class="line">    <span class="keyword">if</span> (callNow) &#123;</span><br><span class="line">      func.call(<span class="keyword">this</span>, ...args)</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">function debounce(func, wait &#x3D; 0, head) &#123;
+  let timeout;
+  return function (...args) &#123;
+    const callNow &#x3D; head &amp;&amp; !timeout;
+    timeout &amp;&amp; clearTimeout(timeout);
+    timeout &#x3D; setTimeout(() &#x3D;&gt; &#123;
+      if(!callNow) &#123;
+        func.call(this, ...args);
+      &#125;
+      timeout &#x3D; null
+    &#125;, wait);
+    if (callNow) &#123;
+      func.call(this, ...args)
+    &#125;;
+  &#125;;
+&#125;</code></pre>
 
-<h4 id="手写一个-throttle"><a href="#手写一个-throttle" class="headerlink" title="手写一个 throttle"></a>手写一个 throttle</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">func, timeFrame = <span class="number">0</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> lastTime = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> now = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">      <span class="keyword">if</span> (now - lastTime &gt;= timeFrame) &#123;</span><br><span class="line">          func.call(<span class="keyword">this</span>, ...args);</span><br><span class="line">          lastTime = now;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="手写一个-throttle"><a href="#手写一个-throttle" class="headerlink" title="手写一个 throttle"></a>手写一个 throttle</h4><pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">function throttle(func, timeFrame &#x3D; 0) &#123;
+  let lastTime &#x3D; 0;
+  return function () &#123;
+      const now &#x3D; new Date();
+      if (now - lastTime &gt;&#x3D; timeFrame) &#123;
+          func.call(this, ...args);
+          lastTime &#x3D; now;
+      &#125;
+  &#125;;
+&#125;</code></pre>
 
 <h4 id="what’s-more-rxjs"><a href="#what’s-more-rxjs" class="headerlink" title="what’s more: rxjs"></a>what’s more: rxjs</h4><p>截流和防抖很多时候是出现在事件中的，使用 rxjs 则可以使用 debounceTime 和 throttleTime：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; fromEvent &#125; <span class="keyword">from</span> <span class="string">'rxjs'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; debounceTime &#125; <span class="keyword">from</span> <span class="string">'rxjs/operators'</span>;</span><br><span class="line">	</span><br><span class="line"><span class="keyword">const</span> inputEle = <span class="built_in">document</span>.getElementById(<span class="string">'input'</span>)</span><br><span class="line"><span class="keyword">const</span> inputs = fromEvent(inputEle, <span class="string">'input'</span>);</span><br><span class="line"><span class="keyword">const</span> result = inputs.pipe(debounceTime(<span class="number">1000</span>));</span><br><span class="line"><span class="comment">// 如果是节流可使用 throttleTime</span></span><br><span class="line"><span class="comment">// const result = inputs.pipe(throttleTime(1000));</span></span><br><span class="line">result.subscribe(<span class="function"><span class="params">x</span> =&gt;</span> <span class="built_in">console</span>.log(x));</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">import &#123; fromEvent &#125; from &#39;rxjs&#39;;
+import &#123; debounceTime &#125; from &#39;rxjs&#x2F;operators&#39;;
+	
+const inputEle &#x3D; document.getElementById(&#39;input&#39;)
+const inputs &#x3D; fromEvent(inputEle, &#39;input&#39;);
+const result &#x3D; inputs.pipe(debounceTime(1000));
+&#x2F;&#x2F; 如果是节流可使用 throttleTime
+&#x2F;&#x2F; const result &#x3D; inputs.pipe(throttleTime(1000));
+result.subscribe(x &#x3D;&gt; console.log(x));</code></pre>
 
 <h4 id="rxjs-react"><a href="#rxjs-react" class="headerlink" title="rxjs + react"></a>rxjs + react</h4><p>如果是 react 中的事件需要防抖，那么可以通过 <code>Subject</code> 来实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; useEffect &#125; from &quot;react&quot;;</span><br><span class="line">import &#123; Subject &#125; from &quot;rxjs&quot;;</span><br><span class="line">import &quot;rxjs&#x2F;add&#x2F;operator&#x2F;debounceTime&quot;;</span><br><span class="line"></span><br><span class="line">const value$ &#x3D; new Subject().debounceTime(300);</span><br><span class="line"></span><br><span class="line">export default function App() &#123;</span><br><span class="line">  useEffect(() &#x3D;&gt; &#123;</span><br><span class="line">    const subscription &#x3D; value$.subscribe(console.log)</span><br><span class="line">      return () &#x3D;&gt; subscription.unsubscribe()</span><br><span class="line">  &#125;, [])</span><br><span class="line"></span><br><span class="line">  const onChange &#x3D; e &#x3D;&gt; &#123;</span><br><span class="line">    value$.next(e.target.value);</span><br><span class="line">  &#125;;</span><br><span class="line">  return (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;input onChange&#x3D;&#123;onChange&#125; &#x2F;&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">import React, &#123; useEffect &#125; from &quot;react&quot;;
+import &#123; Subject &#125; from &quot;rxjs&quot;;
+import &quot;rxjs&#x2F;add&#x2F;operator&#x2F;debounceTime&quot;;
+
+const value$ &#x3D; new Subject().debounceTime(300);
+
+export default function App() &#123;
+  useEffect(() &#x3D;&gt; &#123;
+    const subscription &#x3D; value$.subscribe(console.log)
+      return () &#x3D;&gt; subscription.unsubscribe()
+  &#125;, [])
+
+  const onChange &#x3D; e &#x3D;&gt; &#123;
+    value$.next(e.target.value);
+  &#125;;
+  return (
+    &lt;div&gt;
+      &lt;input onChange&#x3D;&#123;onChange&#125; &#x2F;&gt;
+    &lt;&#x2F;div&gt;
+  );
+&#125;
+</code></pre>
 
 
     </div>
@@ -385,7 +457,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#debounce"><span class="nav-number">2.</span> <span class="nav-text">debounce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手写一个-debounce"><span class="nav-number">3.</span> <span class="nav-text">手写一个 debounce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手写一个-throttle"><span class="nav-number">4.</span> <span class="nav-text">手写一个 throttle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#what’s-more-rxjs"><span class="nav-number">5.</span> <span class="nav-text">what’s more: rxjs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rxjs-react"><span class="nav-number">6.</span> <span class="nav-text">rxjs + react</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#debounce"><span class="nav-number">2.</span> <span class="nav-text">debounce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA-debounce"><span class="nav-number">3.</span> <span class="nav-text">手写一个 debounce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA-throttle"><span class="nav-number">4.</span> <span class="nav-text">手写一个 throttle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#what%E2%80%99s-more-rxjs"><span class="nav-number">5.</span> <span class="nav-text">what’s more: rxjs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rxjs-react"><span class="nav-number">6.</span> <span class="nav-text">rxjs + react</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -450,12 +522,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

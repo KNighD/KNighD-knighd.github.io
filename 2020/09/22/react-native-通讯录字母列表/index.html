@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -247,14 +247,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8.9k</span>
+              <span>8.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
+              <span>14 分钟</span>
             </span>
 
         </div>
@@ -280,26 +280,135 @@
 </ol>
 <p>搜索了目前已有的开源组件，要么最后一次更新的时间也比较久远，要么不适用于我们的场景，要么 star 数量不多 😂。因此打算重新造个轮子，即使将来有什么问题，也能自行维护。</p>
 <h4 id="AlphabetList"><a href="#AlphabetList" class="headerlink" title="AlphabetList"></a>AlphabetList</h4><p>将我们的组件命名为 AlphabetList，它将接收一个 dataSource ：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;AlphabetList dataSource&#x3D;&#123;dataSource&#125; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">&lt;AlphabetList dataSource&#x3D;&#123;dataSource&#125; &#x2F;&gt;</code></pre>
 
 <p>dataSource 的结构如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> IListItem &#123;</span><br><span class="line">  name: <span class="built_in">string</span>;</span><br><span class="line">  value: <span class="built_in">string</span> | <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> ISectionItem &#123;</span><br><span class="line">	sectionKey: <span class="built_in">string</span>;</span><br><span class="line">	data: &#123;</span><br><span class="line">		name: <span class="built_in">string</span>;</span><br><span class="line">		value: <span class="built_in">string</span></span><br><span class="line">	&#125;[]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> DataSource: SectionItem[]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">interface IListItem &#123;
+  name: string;
+  value: string | number;
+&#125;
+interface ISectionItem &#123;
+	sectionKey: string;
+	data: &#123;
+		name: string;
+		value: string
+	&#125;[]
+&#125;
+interface DataSource: SectionItem[]</code></pre>
 
 <p>例如：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    sectionKey: <span class="string">'常'</span>,</span><br><span class="line">    data: [</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'顺丰物流'</span>,</span><br><span class="line">        value: <span class="string">'1'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'京东快递'</span>,</span><br><span class="line">        value: <span class="string">'2'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    sectionKey: <span class="string">'A'</span>,</span><br><span class="line">    data: [</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'安能物流'</span>,</span><br><span class="line">        value: <span class="string">'3'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        name: <span class="string">'澳大利亚邮政'</span>,</span><br><span class="line">        value: <span class="string">'4'</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">[
+  &#123;
+    sectionKey: &#39;常&#39;,
+    data: [
+      &#123;
+        name: &#39;顺丰物流&#39;,
+        value: &#39;1&#39;,
+      &#125;,
+      &#123;
+        name: &#39;京东快递&#39;,
+        value: &#39;2&#39;,
+      &#125;,
+    ],
+  &#125;,
+  &#123;
+    sectionKey: &#39;A&#39;,
+    data: [
+      &#123;
+        name: &#39;安能物流&#39;,
+        value: &#39;3&#39;,
+      &#125;,
+      &#123;
+        name: &#39;澳大利亚邮政&#39;,
+        value: &#39;4&#39;,
+      &#125;,
+    ],
+  &#125;
+]</code></pre>
 
 <p>AlphabetList 的结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;View&gt;</span><br><span class="line">  &#123;&#x2F;* 主列表 *&#x2F;&#125;</span><br><span class="line">  &lt;MainList &#x2F;&gt;</span><br><span class="line">  &#123;&#x2F;* 右侧字母列表 *&#x2F;&#125;</span><br><span class="line">  &lt;SideBar &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;View&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">&lt;View&gt;
+  &#123;&#x2F;* 主列表 *&#x2F;&#125;
+  &lt;MainList &#x2F;&gt;
+  &#123;&#x2F;* 右侧字母列表 *&#x2F;&#125;
+  &lt;SideBar &#x2F;&gt;
+&lt;&#x2F;View&gt;</code></pre>
 
 <h4 id="MainList"><a href="#MainList" class="headerlink" title="MainList"></a>MainList</h4><p>主列表分组 Main，那么使用 SectionList 是一个不错的选择（当然也可以用 FlatList 来实现）</p>
 <p>当滚动 MainList 时，通过 <code>onListViewableItemsChanged</code> 的回调可以得到当前窗口可视的分组，从而改变当前选中的字母</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">const MainList &#x3D; (&#123;</span><br><span class="line">    dataSource,</span><br><span class="line">    onMainListViewableItemsChanged,</span><br><span class="line">  &#125;) &#x3D;&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;SectionList</span><br><span class="line">      renderItem&#x3D;&#123;(&#123; item &#125;) &#x3D;&gt; (&lt;ListItem item&#x3D;&#123;item&#125; &#x2F;&gt;)&#125;</span><br><span class="line">      renderSectionHeader&#x3D;&#123;(&#123; section &#125;) &#x3D;&gt; &lt;SectionHeader section&#x3D;&#123;section&#125; &#x2F;&gt;&#125;</span><br><span class="line">      keyExtractor&#x3D;&#123;(item) &#x3D;&gt; &#96;$&#123;item.value&#125;&#96;&#125;</span><br><span class="line">      sections&#x3D;&#123;dataSource&#125;</span><br><span class="line">      stickySectionHeadersEnabled&#x3D;&#123;false&#125;</span><br><span class="line">      onViewableItemsChanged&#x3D;&#123;onMainListViewableItemsChanged&#125;</span><br><span class="line">    &#x2F;&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default MainList;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const MainList &#x3D; (&#123;
+    dataSource,
+    onMainListViewableItemsChanged,
+  &#125;) &#x3D;&gt; &#123;
+  return (
+    &lt;SectionList
+      renderItem&#x3D;&#123;(&#123; item &#125;) &#x3D;&gt; (&lt;ListItem item&#x3D;&#123;item&#125; &#x2F;&gt;)&#125;
+      renderSectionHeader&#x3D;&#123;(&#123; section &#125;) &#x3D;&gt; &lt;SectionHeader section&#x3D;&#123;section&#125; &#x2F;&gt;&#125;
+      keyExtractor&#x3D;&#123;(item) &#x3D;&gt; &#96;$&#123;item.value&#125;&#96;&#125;
+      sections&#x3D;&#123;dataSource&#125;
+      stickySectionHeadersEnabled&#x3D;&#123;false&#125;
+      onViewableItemsChanged&#x3D;&#123;onMainListViewableItemsChanged&#125;
+    &#x2F;&gt;
+  );
+&#125;;
+
+export default MainList;</code></pre>
 
 <p>在 AlphabetList 中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">const AlphabetList &#x3D; (&#123; dataSource &#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  &#x2F;&#x2F; 右侧字母表列表</span><br><span class="line">  const letterlist &#x3D; dataSource.map((item) &#x3D;&gt; &#123;</span><br><span class="line">    return item.sectionKey;</span><br><span class="line">  &#125;);</span><br><span class="line">  const [currentSectionKey, setCurrentSectionKey] &#x3D; useState(letterlist);</span><br><span class="line">  const onMainListViewableItemsChanged &#x3D; (info: &#123;</span><br><span class="line">    viewableItems: ViewToken[];</span><br><span class="line">  &#125;) &#x3D;&gt; &#123;</span><br><span class="line">    &#x2F;&#x2F; 将选中的字母设置为当前第一个可见 section 的 sectionKey</span><br><span class="line">    setCurrentSectionKey(info.viewableItems[0].section.sectionKey);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View style&#x3D;&#123;styles.container&#125;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 start *&#x2F;&#125;</span><br><span class="line">      &lt;MainList</span><br><span class="line">        dataSource&#x3D;&#123;dataSource&#125;</span><br><span class="line">        onMainListTouchStart&#x3D;&#123;() &#x3D;&gt; setCurrentResponder(&#39;mainList&#39;)&#125;</span><br><span class="line">        onMainListViewableItemsChanged&#x3D;&#123;onMainListViewableItemsChanged&#125;</span><br><span class="line">      &#x2F;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 end *&#x2F;&#125;</span><br><span class="line">      &#123;&#x2F;* 右侧字母列表 start *&#x2F;&#125;</span><br><span class="line">      &lt;SideBar &#x2F;&gt;</span><br><span class="line">      &#123;&#x2F;* 右侧字母列表 end *&#x2F;&#125;</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default AlphabetList;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const AlphabetList &#x3D; (&#123; dataSource &#125;: IProps) &#x3D;&gt; &#123;
+  &#x2F;&#x2F; 右侧字母表列表
+  const letterlist &#x3D; dataSource.map((item) &#x3D;&gt; &#123;
+    return item.sectionKey;
+  &#125;);
+  const [currentSectionKey, setCurrentSectionKey] &#x3D; useState(letterlist);
+  const onMainListViewableItemsChanged &#x3D; (info: &#123;
+    viewableItems: ViewToken[];
+  &#125;) &#x3D;&gt; &#123;
+    &#x2F;&#x2F; 将选中的字母设置为当前第一个可见 section 的 sectionKey
+    setCurrentSectionKey(info.viewableItems[0].section.sectionKey);
+  &#125;;
+
+  return (
+    &lt;View style&#x3D;&#123;styles.container&#125;&gt;
+      &#123;&#x2F;* 主列表 start *&#x2F;&#125;
+      &lt;MainList
+        dataSource&#x3D;&#123;dataSource&#125;
+        onMainListTouchStart&#x3D;&#123;() &#x3D;&gt; setCurrentResponder(&#39;mainList&#39;)&#125;
+        onMainListViewableItemsChanged&#x3D;&#123;onMainListViewableItemsChanged&#125;
+      &#x2F;&gt;
+      &#123;&#x2F;* 主列表 end *&#x2F;&#125;
+      &#123;&#x2F;* 右侧字母列表 start *&#x2F;&#125;
+      &lt;SideBar &#x2F;&gt;
+      &#123;&#x2F;* 右侧字母列表 end *&#x2F;&#125;
+    &lt;&#x2F;View&gt;
+  );
+&#125;;
+
+export default AlphabetList;</code></pre>
 
 <h4 id="SideBar"><a href="#SideBar" class="headerlink" title="SideBar"></a>SideBar</h4><p>侧边栏的实现比起来则要复杂一些，这里使用一个绝对定位的 FlatList，实际上简单使用 View 去实现也是可以的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const SideBar &#x3D; (&#123;</span><br><span class="line">  letterlist,</span><br><span class="line">  &#x2F;&#x2F; 回调</span><br><span class="line">  handleSideBarItemRespond,</span><br><span class="line">  currentSectionKey</span><br><span class="line">&#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;FlatList</span><br><span class="line">      style&#x3D;&#123;styles.wrap&#125;</span><br><span class="line">      scrollEnabled&#x3D;&#123;false&#125;</span><br><span class="line">      data&#x3D;&#123;letterlist&#125;</span><br><span class="line">      renderItem&#x3D;&#123;(&#123; item, index &#125;) &#x3D;&gt; (</span><br><span class="line">        &lt;Item</span><br><span class="line">          item&#x3D;&#123;item&#125;</span><br><span class="line">          handleSideBarItemRespond&#x3D;&#123;handleSideBarItemRespond&#125;</span><br><span class="line">          letterlist&#x3D;&#123;letterlist&#125;</span><br><span class="line">        &#x2F;&gt;</span><br><span class="line">      )&#125;</span><br><span class="line">      keyExtractor&#x3D;&#123;item &#x3D;&gt; item&#125;</span><br><span class="line">    &#x2F;&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const SideBar &#x3D; (&#123;
+  letterlist,
+  &#x2F;&#x2F; 回调
+  handleSideBarItemRespond,
+  currentSectionKey
+&#125;: IProps) &#x3D;&gt; &#123;
+  return (
+    &lt;FlatList
+      style&#x3D;&#123;styles.wrap&#125;
+      scrollEnabled&#x3D;&#123;false&#125;
+      data&#x3D;&#123;letterlist&#125;
+      renderItem&#x3D;&#123;(&#123; item, index &#125;) &#x3D;&gt; (
+        &lt;Item
+          item&#x3D;&#123;item&#125;
+          handleSideBarItemRespond&#x3D;&#123;handleSideBarItemRespond&#125;
+          letterlist&#x3D;&#123;letterlist&#125;
+        &#x2F;&gt;
+      )&#125;
+      keyExtractor&#x3D;&#123;item &#x3D;&gt; item&#125;
+    &#x2F;&gt;
+  );
+&#125;;</code></pre>
 
 <p>一开始我的想法是通过监听 Item 的 onPress | onPressIn ，从一项滑动到另一项的时候，依次触发事件，实验后发现，在释放手势之前，仅会有一个响应的元素。</p>
 <p>这里就得提一下 RN 的手势系统了。</p>
@@ -316,23 +425,180 @@
 <p>通过上述这些 API 我们就能很容易的实现一些手势。初次之外，RN 还提供了更高级的抽象 PanResponder，它可以给我们提供更多手势信息，这里不展开解释。</p>
 <p>不过当我尝试在每个 Item 上设置手势响应，并且设置  onResponderTerminationRequest 为 <code>() =&gt; true</code>，手势依然没有在切换 Item 时释放原 responder。</p>
 <p>因此只能通过计算高度来获取滑动时当前的字母</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// evt.nativeEvent.pageY: 触摸事件的 pageY</span></span><br><span class="line"><span class="comment">// sideBarTop: SideBar 的 pageY</span></span><br><span class="line"><span class="comment">// letterHeight：每个字母的高度</span></span><br><span class="line"><span class="keyword">const</span> index = <span class="built_in">Math</span>.floor((evt.nativeEvent.pageY - sideBarTop) / letterHeight);</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; evt.nativeEvent.pageY: 触摸事件的 pageY
+&#x2F;&#x2F; sideBarTop: SideBar 的 pageY
+&#x2F;&#x2F; letterHeight：每个字母的高度
+const index &#x3D; Math.floor((evt.nativeEvent.pageY - sideBarTop) &#x2F; letterHeight);</code></pre>
 
 <p>要获取元素距离屏幕的高度，可以在 onLayout 的时候，调用 measure 来获取：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">const SideBar &#x3D; (&#123;</span><br><span class="line">  letterlist,</span><br><span class="line">  handleSideBarItemRespond,</span><br><span class="line">  currentSectionKey,</span><br><span class="line">  letterHeight,</span><br><span class="line">&#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  const [sideBarTop, setSideBarTop] &#x3D; useState(0);</span><br><span class="line">  const sideBarRef &#x3D; useRef&lt;View&gt;(null);</span><br><span class="line">  const measure &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">    if (sideBarRef.current) &#123;</span><br><span class="line">      sideBarRef.current.measure((x, y, width, height, pageX, pageY) &#x3D;&gt; &#123;</span><br><span class="line">        setSideBarTop(pageY);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  return (</span><br><span class="line">    &lt;View onLayout&#x3D;&#123;measure&#125; ref&#x3D;&#123;sideBarRef&#125;&gt;</span><br><span class="line">      &lt;FlatList&lt;string&gt;</span><br><span class="line">        &#x2F;&#x2F; ...</span><br><span class="line">      &#x2F;&gt;</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const SideBar &#x3D; (&#123;
+  letterlist,
+  handleSideBarItemRespond,
+  currentSectionKey,
+  letterHeight,
+&#125;: IProps) &#x3D;&gt; &#123;
+  const [sideBarTop, setSideBarTop] &#x3D; useState(0);
+  const sideBarRef &#x3D; useRef&lt;View&gt;(null);
+  const measure &#x3D; () &#x3D;&gt; &#123;
+    if (sideBarRef.current) &#123;
+      sideBarRef.current.measure((x, y, width, height, pageX, pageY) &#x3D;&gt; &#123;
+        setSideBarTop(pageY);
+      &#125;);
+    &#125;
+  &#125;;
+  return (
+    &lt;View onLayout&#x3D;&#123;measure&#125; ref&#x3D;&#123;sideBarRef&#125;&gt;
+      &lt;FlatList&lt;string&gt;
+        &#x2F;&#x2F; ...
+      &#x2F;&gt;
+    &lt;&#x2F;View&gt;
+  );
+&#125;;</code></pre>
 
 <p>然后就是 Item 的实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">const Item &#x3D; (&#123;</span><br><span class="line">  item,</span><br><span class="line">  handleSideBarItemRespond,</span><br><span class="line">  isCurrentSectionKey,</span><br><span class="line">  letterlist,</span><br><span class="line">  letterHeight,</span><br><span class="line">  sideBarTop,</span><br><span class="line">&#125;: &#123;</span><br><span class="line">  item: string;</span><br><span class="line">  isFirst: boolean;</span><br><span class="line">  handleSideBarItemRespond: (item: string) &#x3D;&gt; void;</span><br><span class="line">  letterlist: string[];</span><br><span class="line">  letterHeight: number;</span><br><span class="line">  sideBarTop?: number;</span><br><span class="line">&#125;) &#x3D;&gt; &#123;</span><br><span class="line">  const panResponder &#x3D; PanResponder.create(&#123;</span><br><span class="line">    onStartShouldSetPanResponderCapture: () &#x3D;&gt; true,</span><br><span class="line">    onStartShouldSetPanResponder: () &#x3D;&gt; true,</span><br><span class="line">    &#x2F;&#x2F; 尝试通过 onResponderTerminationRequest 来终止手势，发现不生效，只能通过计算偏移量来获取当前选中</span><br><span class="line">    onPanResponderTerminationRequest: () &#x3D;&gt; true,</span><br><span class="line">    onPanResponderGrant: () &#x3D;&gt; &#123;</span><br><span class="line">      handleSideBarItemRespond(item);</span><br><span class="line">    &#125;,</span><br><span class="line">    onPanResponderMove: (evt, gs) &#x3D;&gt; &#123;</span><br><span class="line">      if (!sideBarTop) &#123;</span><br><span class="line">        return;</span><br><span class="line">      &#125;</span><br><span class="line">      const index &#x3D; Math.floor(</span><br><span class="line">        (evt.nativeEvent.pageY - sideBarTop) &#x2F; letterHeight,</span><br><span class="line">      );</span><br><span class="line">      if (index &gt;&#x3D; 0 &amp;&amp; index &lt; letterlist.length) &#123;</span><br><span class="line">        &#x2F;&#x2F; 触发侧边字母选中的回调</span><br><span class="line">        handleSideBarItemRespond(letterlist[index]);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View &#123;...panResponder.panHandlers&#125;&gt;</span><br><span class="line">      &lt;Text&gt;</span><br><span class="line">        &#123;item&#125;</span><br><span class="line">      &lt;&#x2F;Text&gt;</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const Item &#x3D; (&#123;
+  item,
+  handleSideBarItemRespond,
+  isCurrentSectionKey,
+  letterlist,
+  letterHeight,
+  sideBarTop,
+&#125;: &#123;
+  item: string;
+  isFirst: boolean;
+  handleSideBarItemRespond: (item: string) &#x3D;&gt; void;
+  letterlist: string[];
+  letterHeight: number;
+  sideBarTop?: number;
+&#125;) &#x3D;&gt; &#123;
+  const panResponder &#x3D; PanResponder.create(&#123;
+    onStartShouldSetPanResponderCapture: () &#x3D;&gt; true,
+    onStartShouldSetPanResponder: () &#x3D;&gt; true,
+    &#x2F;&#x2F; 尝试通过 onResponderTerminationRequest 来终止手势，发现不生效，只能通过计算偏移量来获取当前选中
+    onPanResponderTerminationRequest: () &#x3D;&gt; true,
+    onPanResponderGrant: () &#x3D;&gt; &#123;
+      handleSideBarItemRespond(item);
+    &#125;,
+    onPanResponderMove: (evt, gs) &#x3D;&gt; &#123;
+      if (!sideBarTop) &#123;
+        return;
+      &#125;
+      const index &#x3D; Math.floor(
+        (evt.nativeEvent.pageY - sideBarTop) &#x2F; letterHeight,
+      );
+      if (index &gt;&#x3D; 0 &amp;&amp; index &lt; letterlist.length) &#123;
+        &#x2F;&#x2F; 触发侧边字母选中的回调
+        handleSideBarItemRespond(letterlist[index]);
+      &#125;
+    &#125;,
+  &#125;);
+
+  return (
+    &lt;View &#123;...panResponder.panHandlers&#125;&gt;
+      &lt;Text&gt;
+        &#123;item&#125;
+      &lt;&#x2F;Text&gt;
+    &lt;&#x2F;View&gt;
+  );
+&#125;;</code></pre>
 
 <p>到此为止，侧边栏的逻辑已经完成。现在处理侧边栏事件的回调逻辑, 主要通过 scrollToLocation 来实现列表滚动到对应的位置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">const AlphabetList &#x3D; (&#123; dataSource, companyList, onCompanySelect &#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  &#x2F;&#x2F; ...</span><br><span class="line">  const mainListRef &#x3D; useRef&lt;SectionList&lt;IListItem&gt;&gt;(null);</span><br><span class="line">  const handleSideBarItemRespond &#x3D; (item: string) &#x3D;&gt; &#123;</span><br><span class="line">    if (!mainListRef.current) &#123;</span><br><span class="line">      return;</span><br><span class="line">    &#125;</span><br><span class="line">  	&#x2F;&#x2F; 记录当前选中的字母</span><br><span class="line">    setCurrentSectionKey(item);</span><br><span class="line">    mainListRef.current.scrollToLocation(&#123;</span><br><span class="line">      sectionIndex: dataSource.findIndex((data) &#x3D;&gt; data.sectionKey &#x3D;&#x3D;&#x3D; item),</span><br><span class="line">      itemIndex: 0,</span><br><span class="line">      animated: false,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View style&#x3D;&#123;styles.container&#125;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 start *&#x2F;&#125;</span><br><span class="line">      &lt;MainList</span><br><span class="line">        &#x2F;&#x2F; ...</span><br><span class="line">        ref&#x3D;&#123;mainListRef&#125;</span><br><span class="line">      &#x2F;&gt;</span><br><span class="line">      &#x2F;&#x2F; ...</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const AlphabetList &#x3D; (&#123; dataSource, companyList, onCompanySelect &#125;: IProps) &#x3D;&gt; &#123;
+  &#x2F;&#x2F; ...
+  const mainListRef &#x3D; useRef&lt;SectionList&lt;IListItem&gt;&gt;(null);
+  const handleSideBarItemRespond &#x3D; (item: string) &#x3D;&gt; &#123;
+    if (!mainListRef.current) &#123;
+      return;
+    &#125;
+  	&#x2F;&#x2F; 记录当前选中的字母
+    setCurrentSectionKey(item);
+    mainListRef.current.scrollToLocation(&#123;
+      sectionIndex: dataSource.findIndex((data) &#x3D;&gt; data.sectionKey &#x3D;&#x3D;&#x3D; item),
+      itemIndex: 0,
+      animated: false,
+    &#125;);
+  &#125;;
+
+  return (
+    &lt;View style&#x3D;&#123;styles.container&#125;&gt;
+      &#123;&#x2F;* 主列表 start *&#x2F;&#125;
+      &lt;MainList
+        &#x2F;&#x2F; ...
+        ref&#x3D;&#123;mainListRef&#125;
+      &#x2F;&gt;
+      &#x2F;&#x2F; ...
+    &lt;&#x2F;View&gt;
+  );
+&#125;;</code></pre>
 
 <p>这里需要通过 React.forwardRef 获取到 MainList 的 ref</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const MainList: React.ForwardRefRenderFunction&lt;</span><br><span class="line">  SectionList&lt;IListItem&gt;,</span><br><span class="line">  IProps</span><br><span class="line">&gt; &#x3D; (</span><br><span class="line">  &#123;</span><br><span class="line">    dataSource,</span><br><span class="line">    &#x2F;&#x2F; ...</span><br><span class="line">  &#125;,</span><br><span class="line">  ref,</span><br><span class="line">) &#x3D;&gt; &#123;</span><br><span class="line"> 	&#x2F;&#x2F; ...</span><br><span class="line">  return (</span><br><span class="line">    &lt;SectionList</span><br><span class="line">      &#x2F;&#x2F; ...</span><br><span class="line">      ref&#x3D;&#123;ref&#125;</span><br><span class="line">    &#x2F;&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line">export default React.forwardRef(MainList)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const MainList: React.ForwardRefRenderFunction&lt;
+  SectionList&lt;IListItem&gt;,
+  IProps
+&gt; &#x3D; (
+  &#123;
+    dataSource,
+    &#x2F;&#x2F; ...
+  &#125;,
+  ref,
+) &#x3D;&gt; &#123;
+ 	&#x2F;&#x2F; ...
+  return (
+    &lt;SectionList
+      &#x2F;&#x2F; ...
+      ref&#x3D;&#123;ref&#125;
+    &#x2F;&gt;
+  );
+&#125;;
+export default React.forwardRef(MainList)</code></pre>
 
 <p>到这一步，已经基本完成了一个通讯录字母列表。</p>
 <h4 id="其他细节"><a href="#其他细节" class="headerlink" title="其他细节"></a>其他细节</h4><p>在完成上述功能后，由于点击侧边栏会滚动主列表，此时也会触发 MainList 的 onViewableItemsChanged，因此需要一个标识来区分是什么动作触发的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">const AlphabetList &#x3D; (&#123; dataSource, companyList, onCompanySelect &#125;: IProps) &#x3D;&gt; &#123;</span><br><span class="line">  &#x2F;&#x2F; 标识位：用于区分当前的操作是由什么触发的</span><br><span class="line">  const [currentResponder, setCurrentResponder] &#x3D; useState(&#39;&#39;);</span><br><span class="line">  const mainListRef &#x3D; useRef&lt;SectionList&lt;IListItem&gt;&gt;(null);</span><br><span class="line">  &#x2F;&#x2F; 右侧字母表列表</span><br><span class="line">  const letterlist &#x3D; dataSource.map((item) &#x3D;&gt; &#123;</span><br><span class="line">    return item.sectionKey;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  const [currentSectionKey, setCurrentSectionKey] &#x3D; useState(letterlist[0]);</span><br><span class="line"></span><br><span class="line">  const handleSideBarItemRespond &#x3D; (item: string) &#x3D;&gt; &#123;</span><br><span class="line">    if (!mainListRef.current) &#123;</span><br><span class="line">      return;</span><br><span class="line">    &#125;</span><br><span class="line">    setCurrentResponder(&#39;sideBar&#39;);</span><br><span class="line">  	&#x2F;&#x2F; ...</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  const onMainListViewableItemsChanged &#x3D; (info: &#123;</span><br><span class="line">    viewableItems: ViewToken[];</span><br><span class="line">  &#125;) &#x3D;&gt; &#123;</span><br><span class="line">    if (</span><br><span class="line">      &#x2F;&#x2F; 侧边栏触发的滚动则不触发</span><br><span class="line">      currentResponder &#x3D;&#x3D;&#x3D; &#39;sideBar&#39; ||</span><br><span class="line">      !info.viewableItems[0].section.sectionKey</span><br><span class="line">    ) &#123;</span><br><span class="line">      return;</span><br><span class="line">    &#125;</span><br><span class="line">    setCurrentSectionKey(info.viewableItems[0].section.sectionKey);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View style&#x3D;&#123;styles.container&#125;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 start *&#x2F;&#125;</span><br><span class="line">      &lt;MainList</span><br><span class="line">	       &#x2F;&#x2F; ...</span><br><span class="line">        onMainListTouchStart&#x3D;&#123;() &#x3D;&gt; setCurrentResponder(&#39;mainList&#39;)&#125;</span><br><span class="line">        &#x2F;&#x2F; ...</span><br><span class="line">      &#x2F;&gt;</span><br><span class="line">      &#123;&#x2F;* 主列表 end *&#x2F;&#125;</span><br><span class="line">      &#x2F;&#x2F; ...</span><br><span class="line">    &lt;&#x2F;View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">const AlphabetList &#x3D; (&#123; dataSource, companyList, onCompanySelect &#125;: IProps) &#x3D;&gt; &#123;
+  &#x2F;&#x2F; 标识位：用于区分当前的操作是由什么触发的
+  const [currentResponder, setCurrentResponder] &#x3D; useState(&#39;&#39;);
+  const mainListRef &#x3D; useRef&lt;SectionList&lt;IListItem&gt;&gt;(null);
+  &#x2F;&#x2F; 右侧字母表列表
+  const letterlist &#x3D; dataSource.map((item) &#x3D;&gt; &#123;
+    return item.sectionKey;
+  &#125;);
+
+  const [currentSectionKey, setCurrentSectionKey] &#x3D; useState(letterlist[0]);
+
+  const handleSideBarItemRespond &#x3D; (item: string) &#x3D;&gt; &#123;
+    if (!mainListRef.current) &#123;
+      return;
+    &#125;
+    setCurrentResponder(&#39;sideBar&#39;);
+  	&#x2F;&#x2F; ...
+  &#125;;
+
+  const onMainListViewableItemsChanged &#x3D; (info: &#123;
+    viewableItems: ViewToken[];
+  &#125;) &#x3D;&gt; &#123;
+    if (
+      &#x2F;&#x2F; 侧边栏触发的滚动则不触发
+      currentResponder &#x3D;&#x3D;&#x3D; &#39;sideBar&#39; ||
+      !info.viewableItems[0].section.sectionKey
+    ) &#123;
+      return;
+    &#125;
+    setCurrentSectionKey(info.viewableItems[0].section.sectionKey);
+  &#125;;
+
+  return (
+    &lt;View style&#x3D;&#123;styles.container&#125;&gt;
+      &#123;&#x2F;* 主列表 start *&#x2F;&#125;
+      &lt;MainList
+	       &#x2F;&#x2F; ...
+        onMainListTouchStart&#x3D;&#123;() &#x3D;&gt; setCurrentResponder(&#39;mainList&#39;)&#125;
+        &#x2F;&#x2F; ...
+      &#x2F;&gt;
+      &#123;&#x2F;* 主列表 end *&#x2F;&#125;
+      &#x2F;&#x2F; ...
+    &lt;&#x2F;View&gt;
+  );
+&#125;;</code></pre>
 
 <h4 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h4><p>功能是基本上完成了，然而由于这里的数据量比较多，大概有 600 条数据，且由于 SectionList 也是基于 VirtualList，因此导致了以下长列表固有的几个问题：</p>
 <ol>
@@ -424,7 +690,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AlphabetList"><span class="nav-number">2.</span> <span class="nav-text">AlphabetList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MainList"><span class="nav-number">3.</span> <span class="nav-text">MainList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SideBar"><span class="nav-number">4.</span> <span class="nav-text">SideBar</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Responder"><span class="nav-number">4.1.</span> <span class="nav-text">Responder</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他细节"><span class="nav-number">5.</span> <span class="nav-text">其他细节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#踩坑"><span class="nav-number">6.</span> <span class="nav-text">踩坑</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AlphabetList"><span class="nav-number">2.</span> <span class="nav-text">AlphabetList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MainList"><span class="nav-number">3.</span> <span class="nav-text">MainList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SideBar"><span class="nav-number">4.</span> <span class="nav-text">SideBar</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Responder"><span class="nav-number">4.1.</span> <span class="nav-text">Responder</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BB%86%E8%8A%82"><span class="nav-number">5.</span> <span class="nav-text">其他细节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B8%A9%E5%9D%91"><span class="nav-number">6.</span> <span class="nav-text">踩坑</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -489,12 +755,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

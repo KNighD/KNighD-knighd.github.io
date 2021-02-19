@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -252,7 +252,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5k</span>
+              <span>4.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -271,11 +271,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>本文翻译自 <a href="https://medium.com/@ryardley/react-hooks-not-magic-just-arrays-cd4f1857236e" target="_blank" rel="noopener">React hooks: not magic, just arrays</a>，该文章很好的阐释了 react hooks 原理，我将保持原文的意思进行翻译，如有自己感觉不清楚的地方将会在括号中注明。以下为翻译内容。</p>
-<p>我是 hooks api 的忠实粉丝。然而 hooks 在使用时却有一些<a href="https://reactjs.org/docs/hooks-rules.html" target="_blank" rel="noopener">奇怪的约束</a>。在这里，我给尝试去理解这些规则由来的人提供一个了模型，用于思考如何去使用这些新 api。</p>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>本文翻译自 <a target="_blank" rel="noopener" href="https://medium.com/@ryardley/react-hooks-not-magic-just-arrays-cd4f1857236e">React hooks: not magic, just arrays</a>，该文章很好的阐释了 react hooks 原理，我将保持原文的意思进行翻译，如有自己感觉不清楚的地方将会在括号中注明。以下为翻译内容。</p>
+<p>我是 hooks api 的忠实粉丝。然而 hooks 在使用时却有一些<a target="_blank" rel="noopener" href="https://reactjs.org/docs/hooks-rules.html">奇怪的约束</a>。在这里，我给尝试去理解这些规则由来的人提供一个了模型，用于思考如何去使用这些新 api。</p>
 <a id="more"></a>
 
-<h4 id="hooks-的规则"><a href="#hooks-的规则" class="headerlink" title="hooks 的规则"></a>hooks 的规则</h4><p>在 <a href="https://reactjs.org/docs/hooks-rules.html" target="_blank" rel="noopener">hooks proposal documentation</a> 的提纲中，React 核心团队规定了两条开发者在使用 hooks 时需要遵守的主要规则：</p>
+<h4 id="hooks-的规则"><a href="#hooks-的规则" class="headerlink" title="hooks 的规则"></a>hooks 的规则</h4><p>在 <a target="_blank" rel="noopener" href="https://reactjs.org/docs/hooks-rules.html">hooks proposal documentation</a> 的提纲中，React 核心团队规定了两条开发者在使用 hooks 时需要遵守的主要规则：</p>
 <ul>
 <li>不要在循环，条件或者是嵌套函数中使用 hooks</li>
 <li>只能在 React Functions 中才能使用 hooks</li>
@@ -286,7 +286,14 @@
 <p><strong>注意这只是 API 的一种可能的实现方式及猜想，用于让你理解，而非 API 真正的内部实现方式</strong></p>
 <h4 id="我们如何实现-useState"><a href="#我们如何实现-useState" class="headerlink" title="我们如何实现 useState?"></a>我们如何实现 <code>useState</code>?</h4><p>让我们打开一个实例来演示如何实现一个 state hook。</p>
 <p>首先，我们定义一个组件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function RenderFunctionComponent() &#123;</span><br><span class="line">  const [firstName, setFirstName] &#x3D; useState(&quot;Rudi&quot;);</span><br><span class="line">  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">function RenderFunctionComponent() &#123;
+  const [firstName, setFirstName] &#x3D; useState(&quot;Rudi&quot;);
+  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;);
+
+  return (
+    &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;
+  );
+&#125;</code></pre>
 
 <p>这个 Hooks api 背后的思想是，你可以用 hook 函数返回的数组的第二个元素作为 setter 方法，这个 setter 方法可以控制被 hook 管理的状态。</p>
 <h4 id="那么-React-是如何做到这个的呢？"><a href="#那么-React-是如何做到这个的呢？" class="headerlink" title="那么 React 是如何做到这个的呢？"></a>那么 React 是如何做到这个的呢？</h4><p>让我们看看这个在 React 内部是如何运作的。以下内容将在特定组件的上下文中运行。这就是说数据存储在要渲染的组件的上一层。这个 state 不与其他组件共享，但是维护在一个可以用于该组件后续渲染的作用域内。（原文：The following would work within the execution context for rendering a particular component. That means that the data stored here lives one level outside of the component being rendered. This state is not shared with other components but it is maintained in a scope that is accessible to subsequent rendering of the specific component）</p>
@@ -312,11 +319,79 @@
 </ol>
 <h4 id="简单的实现-And-the-naive-implementation"><a href="#简单的实现-And-the-naive-implementation" class="headerlink" title="简单的实现(And the naive implementation)"></a>简单的实现(And the naive implementation)</h4><p>下面是简单的代码演示：</p>
 <p><strong>注意：这不代表 hooks 的实际实现，但是应该能给你一个理解 hooks 工作原理的思路。这就是我为什么使用块级变量的原因（原文： That is why we are using module level vars etc）</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">let state &#x3D; [];</span><br><span class="line">let setters &#x3D; [];</span><br><span class="line">let firstRun &#x3D; true;</span><br><span class="line">let cursor &#x3D; 0;</span><br><span class="line"></span><br><span class="line">function createSetter(cursor) &#123;</span><br><span class="line">  return function setterWithCursor(newVal) &#123;</span><br><span class="line">    state[cursor] &#x3D; newVal;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; This is the pseudocode for the useState helper</span><br><span class="line">export function useState(initVal) &#123;</span><br><span class="line">  if (firstRun) &#123;</span><br><span class="line">    state.push(initVal);</span><br><span class="line">    setters.push(createSetter(cursor));</span><br><span class="line">    firstRun &#x3D; false;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const setter &#x3D; setters[cursor];</span><br><span class="line">  const value &#x3D; state[cursor];</span><br><span class="line"></span><br><span class="line">  cursor++;</span><br><span class="line">  return [value, setter];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Our component code that uses hooks</span><br><span class="line">function RenderFunctionComponent() &#123;</span><br><span class="line">  const [firstName, setFirstName] &#x3D; useState(&quot;Rudi&quot;); &#x2F;&#x2F; cursor: 0</span><br><span class="line">  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;); &#x2F;&#x2F; cursor: 1</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Richard&quot;)&#125;&gt;Richard&lt;&#x2F;Button&gt;</span><br><span class="line">      &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; This is sort of simulating Reacts rendering cycle</span><br><span class="line">function MyComponent() &#123;</span><br><span class="line">  cursor &#x3D; 0; &#x2F;&#x2F; resetting the cursor</span><br><span class="line">  return &lt;RenderFunctionComponent &#x2F;&gt;; &#x2F;&#x2F; render</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">console.log(state); &#x2F;&#x2F; Pre-render: []</span><br><span class="line">MyComponent();</span><br><span class="line">console.log(state); &#x2F;&#x2F; First-render: [&#39;Rudi&#39;, &#39;Yardley&#39;]</span><br><span class="line">MyComponent();</span><br><span class="line">console.log(state); &#x2F;&#x2F; Subsequent-render: [&#39;Rudi&#39;, &#39;Yardley&#39;]</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; click the &#39;Fred&#39; button</span><br><span class="line"></span><br><span class="line">console.log(state); &#x2F;&#x2F; After-click: [&#39;Fred&#39;, &#39;Yardley&#39;]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">let state &#x3D; [];
+let setters &#x3D; [];
+let firstRun &#x3D; true;
+let cursor &#x3D; 0;
+
+function createSetter(cursor) &#123;
+  return function setterWithCursor(newVal) &#123;
+    state[cursor] &#x3D; newVal;
+  &#125;;
+&#125;
+
+&#x2F;&#x2F; This is the pseudocode for the useState helper
+export function useState(initVal) &#123;
+  if (firstRun) &#123;
+    state.push(initVal);
+    setters.push(createSetter(cursor));
+    firstRun &#x3D; false;
+  &#125;
+
+  const setter &#x3D; setters[cursor];
+  const value &#x3D; state[cursor];
+
+  cursor++;
+  return [value, setter];
+&#125;
+
+&#x2F;&#x2F; Our component code that uses hooks
+function RenderFunctionComponent() &#123;
+  const [firstName, setFirstName] &#x3D; useState(&quot;Rudi&quot;); &#x2F;&#x2F; cursor: 0
+  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;); &#x2F;&#x2F; cursor: 1
+
+  return (
+    &lt;div&gt;
+      &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Richard&quot;)&#125;&gt;Richard&lt;&#x2F;Button&gt;
+      &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;
+    &lt;&#x2F;div&gt;
+  );
+&#125;
+
+&#x2F;&#x2F; This is sort of simulating Reacts rendering cycle
+function MyComponent() &#123;
+  cursor &#x3D; 0; &#x2F;&#x2F; resetting the cursor
+  return &lt;RenderFunctionComponent &#x2F;&gt;; &#x2F;&#x2F; render
+&#125;
+
+console.log(state); &#x2F;&#x2F; Pre-render: []
+MyComponent();
+console.log(state); &#x2F;&#x2F; First-render: [&#39;Rudi&#39;, &#39;Yardley&#39;]
+MyComponent();
+console.log(state); &#x2F;&#x2F; Subsequent-render: [&#39;Rudi&#39;, &#39;Yardley&#39;]
+
+&#x2F;&#x2F; click the &#39;Fred&#39; button
+
+console.log(state); &#x2F;&#x2F; After-click: [&#39;Fred&#39;, &#39;Yardley&#39;]</code></pre>
 
 <h4 id="为什么顺序很重要？"><a href="#为什么顺序很重要？" class="headerlink" title="为什么顺序很重要？"></a>为什么顺序很重要？</h4><p>现在如果在一个生命周期里，我们基于外部的因素或者组件状态改变了 hooks 的顺序，将会发生什么事情？</p>
 <p>让我们试试看 react 不建议我们做的事情：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">let firstRender &#x3D; true;</span><br><span class="line"></span><br><span class="line">function RenderFunctionComponent() &#123;</span><br><span class="line">  let initName;</span><br><span class="line"></span><br><span class="line">  if(firstRender)&#123;</span><br><span class="line">    [initName] &#x3D; useState(&quot;Rudi&quot;);</span><br><span class="line">    firstRender &#x3D; false;</span><br><span class="line">  &#125;</span><br><span class="line">  const [firstName, setFirstName] &#x3D; useState(initName);</span><br><span class="line">  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">let firstRender &#x3D; true;
+
+function RenderFunctionComponent() &#123;
+  let initName;
+
+  if(firstRender)&#123;
+    [initName] &#x3D; useState(&quot;Rudi&quot;);
+    firstRender &#x3D; false;
+  &#125;
+  const [firstName, setFirstName] &#x3D; useState(initName);
+  const [lastName, setLastName] &#x3D; useState(&quot;Yardley&quot;);
+
+  return (
+    &lt;Button onClick&#x3D;&#123;() &#x3D;&gt; setFirstName(&quot;Fred&quot;)&#125;&gt;Fred&lt;&#x2F;Button&gt;
+  );
+&#125;</code></pre>
 
 <p>我们在一个条件语句中使用了 <code>useState</code>，让我们看看造成了什么样的破坏：</p>
 <h4 id="坏组件的第一次渲染"><a href="#坏组件的第一次渲染" class="headerlink" title="坏组件的第一次渲染"></a>坏组件的第一次渲染</h4><p><img src="https://miro.medium.com/max/1270/1*C4IA_Y7v6eoptZTBspRszQ.png" alt="Image for post"></p>
@@ -414,7 +489,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hooks-的规则"><span class="nav-number">2.</span> <span class="nav-text">hooks 的规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hooks-的状态管理都是基于数组"><span class="nav-number">3.</span> <span class="nav-text">hooks 的状态管理都是基于数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们如何实现-useState"><span class="nav-number">4.</span> <span class="nav-text">我们如何实现 useState?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#那么-React-是如何做到这个的呢？"><span class="nav-number">5.</span> <span class="nav-text">那么 React 是如何做到这个的呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单的实现-And-the-naive-implementation"><span class="nav-number">6.</span> <span class="nav-text">简单的实现(And the naive implementation)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么顺序很重要？"><span class="nav-number">7.</span> <span class="nav-text">为什么顺序很重要？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#坏组件的第一次渲染"><span class="nav-number">8.</span> <span class="nav-text">坏组件的第一次渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#坏组件的第二次渲染"><span class="nav-number">9.</span> <span class="nav-text">坏组件的第二次渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#想想-hooks-操作一系列的数组，那么你就不会打破规则了（Think-about-hooks-manipulating-a-set-of-arrays-and-you-wont-break-the-rules）"><span class="nav-number">10.</span> <span class="nav-text">想想 hooks 操作一系列的数组，那么你就不会打破规则了（Think about hooks manipulating a set of arrays and you wont break the rules）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结论"><span class="nav-number">11.</span> <span class="nav-text">结论</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hooks-%E7%9A%84%E8%A7%84%E5%88%99"><span class="nav-number">2.</span> <span class="nav-text">hooks 的规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hooks-%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E9%83%BD%E6%98%AF%E5%9F%BA%E4%BA%8E%E6%95%B0%E7%BB%84"><span class="nav-number">3.</span> <span class="nav-text">hooks 的状态管理都是基于数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-useState"><span class="nav-number">4.</span> <span class="nav-text">我们如何实现 useState?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%82%A3%E4%B9%88-React-%E6%98%AF%E5%A6%82%E4%BD%95%E5%81%9A%E5%88%B0%E8%BF%99%E4%B8%AA%E7%9A%84%E5%91%A2%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">那么 React 是如何做到这个的呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E5%AE%9E%E7%8E%B0-And-the-naive-implementation"><span class="nav-number">6.</span> <span class="nav-text">简单的实现(And the naive implementation)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%BA%E5%BA%8F%E5%BE%88%E9%87%8D%E8%A6%81%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">为什么顺序很重要？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%8F%E7%BB%84%E4%BB%B6%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%B8%B2%E6%9F%93"><span class="nav-number">8.</span> <span class="nav-text">坏组件的第一次渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%8F%E7%BB%84%E4%BB%B6%E7%9A%84%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93"><span class="nav-number">9.</span> <span class="nav-text">坏组件的第二次渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%83%B3%E6%83%B3-hooks-%E6%93%8D%E4%BD%9C%E4%B8%80%E7%B3%BB%E5%88%97%E7%9A%84%E6%95%B0%E7%BB%84%EF%BC%8C%E9%82%A3%E4%B9%88%E4%BD%A0%E5%B0%B1%E4%B8%8D%E4%BC%9A%E6%89%93%E7%A0%B4%E8%A7%84%E5%88%99%E4%BA%86%EF%BC%88Think-about-hooks-manipulating-a-set-of-arrays-and-you-wont-break-the-rules%EF%BC%89"><span class="nav-number">10.</span> <span class="nav-text">想想 hooks 操作一系列的数组，那么你就不会打破规则了（Think about hooks manipulating a set of arrays and you wont break the rules）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">11.</span> <span class="nav-text">结论</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -479,12 +554,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

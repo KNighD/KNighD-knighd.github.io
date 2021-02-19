@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -283,7 +283,24 @@
 <li><p>接收 data 时，判断每一项应该属于哪一列， 如果项的高度不能提前获得，那么要在项的 onLayout 时获取高度，之后判断下一项属于哪一列</p>
 </li>
 <li><p>下拉采用 RN 提供的 RefreshControl 就可以完成，而上拉的事件，单列表可以通过 onReachEnd 触发，而对于我们这种实现方式则只能通过 onScroll 自行判断是否到达底部</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 由于 onEndReached 在渲染 data 项时会多次触发，且 props 及 state 未变化时不会触发，因此自行实现</span></span><br><span class="line"><span class="keyword">const</span> handleScroll = <span class="function">(<span class="params">event: NativeSyntheticEvent&lt;NativeScrollEvent&gt;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123;</span><br><span class="line">    nativeEvent: &#123;</span><br><span class="line">      contentOffset: &#123; <span class="attr">y</span>: scrollTop &#125;,</span><br><span class="line">      contentSize: &#123; <span class="attr">height</span>: scrollHeight &#125;,</span><br><span class="line">      layoutMeasurement: &#123; height &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125; = event;</span><br><span class="line">  <span class="keyword">if</span> (scrollHeight - height - scrollTop &lt;= onEndReachedThreshold) &#123;</span><br><span class="line">    <span class="keyword">if</span> (onEndReached) &#123;</span><br><span class="line">      onEndReached(event);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (props.onScroll) &#123;</span><br><span class="line">    props.onScroll(event);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 由于 onEndReached 在渲染 data 项时会多次触发，且 props 及 state 未变化时不会触发，因此自行实现
+const handleScroll &#x3D; (event: NativeSyntheticEvent&lt;NativeScrollEvent&gt;) &#x3D;&gt; &#123;
+  const &#123;
+    nativeEvent: &#123;
+      contentOffset: &#123; y: scrollTop &#125;,
+      contentSize: &#123; height: scrollHeight &#125;,
+      layoutMeasurement: &#123; height &#125;,
+    &#125;,
+  &#125; &#x3D; event;
+  if (scrollHeight - height - scrollTop &lt;&#x3D; onEndReachedThreshold) &#123;
+    if (onEndReached) &#123;
+      onEndReached(event);
+    &#125;
+  &#125;
+  if (props.onScroll) &#123;
+    props.onScroll(event);
+  &#125;
+&#125;;</code></pre>
 
 </li>
 </ol>
@@ -371,7 +388,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需求"><span class="nav-number">2.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#思路"><span class="nav-number">3.</span> <span class="nav-text">思路</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">思路</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -436,12 +453,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

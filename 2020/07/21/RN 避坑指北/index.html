@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -28,7 +28,7 @@
 <meta property="og:description" content="记录平时开发 rn 时遇到的问题，特指 0.59 版本，不同版本可能情况不同，仅供参考。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-21T06:16:53.000Z">
-<meta property="article:modified_time" content="2020-11-06T07:03:52.640Z">
+<meta property="article:modified_time" content="2021-02-19T07:32:29.547Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="ReactNative">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-06 15:03:52" itemprop="dateModified" datetime="2020-11-06T15:03:52+08:00">2020-11-06</time>
+                <time title="修改时间：2021-02-19 15:32:29" itemprop="dateModified" datetime="2021-02-19T15:32:29+08:00">2021-02-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -245,7 +245,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.4k</span>
+              <span>6.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -269,15 +269,21 @@
 
 <h5 id="一像素问题"><a href="#一像素问题" class="headerlink" title="一像素问题"></a>一像素问题</h5><p>rn 解决一像素很简单，只需要  <code>StyleSheet.hairlineWidth</code> 即可解决。</p>
 <h5 id="TextInput-组件"><a href="#TextInput-组件" class="headerlink" title="TextInput  组件"></a>TextInput  组件</h5><p>自带内边距，多行文字时文字居中展示，想要消除需要设置样式如下：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 文字向上对齐</span><br><span class="line">textAlignVertical: 'top'</span><br><span class="line">// 消除内边距</span><br><span class="line"><span class="selector-tag">padding</span>: 0</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-css" data-language="css"><code class="language-css">&#x2F;&#x2F; 文字向上对齐
+textAlignVertical: &#39;top&#39;
+&#x2F;&#x2F; 消除内边距
+padding: 0</code></pre>
 <p>Placeholder 在 ios 和 android 下默认颜色表现不一致，可以通过 <code>placeholderTextColor</code>  属性进行设置：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">placeholderTextColor=<span class="string">"#CCCCCC"</span></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">placeholderTextColor&#x3D;&quot;#CCCCCC&quot;</code></pre>
 
 <h5 id="阴影"><a href="#阴影" class="headerlink" title="阴影"></a>阴影</h5><p>因为设计理念的问题，android 下几乎无法实现和 ios 一致的阴影效果。而 flutter 基于 skia 引擎渲染，应该会有比较好的表现？有空尝试下。 🤔</p>
-<h5 id="border-虚线"><a href="#border-虚线" class="headerlink" title="border 虚线"></a>border 虚线</h5><p>border 虚线也是一个比较棘手的问题, android 上实测无效，详情看 <a href="https://github.com/facebook/react-native/issues/17251" target="_blank" rel="noopener">issue</a>。解决方案是循环一个 pattern 然后 overhidden 掉，又多了一个让我想尝试 flutter 的理由 😂</p>
+<h5 id="border-虚线"><a href="#border-虚线" class="headerlink" title="border 虚线"></a>border 虚线</h5><p>border 虚线也是一个比较棘手的问题, android 上实测无效，详情看 <a target="_blank" rel="noopener" href="https://github.com/facebook/react-native/issues/17251">issue</a>。解决方案是循环一个 pattern 然后 overhidden 掉，又多了一个让我想尝试 flutter 的理由 😂</p>
 <h5 id="多行文字"><a href="#多行文字" class="headerlink" title="多行文字"></a>多行文字</h5><p>多行文字在 android 机型下有可能会出现高度不够导致文字被截掉的问题，解决方法：设置  <code>lineHeight</code></p>
 <h5 id="实现不同字号的文字底部对齐"><a href="#实现不同字号的文字底部对齐" class="headerlink" title="实现不同字号的文字底部对齐"></a>实现不同字号的文字底部对齐</h5><p>例如 ¥500 想要 ¥ 字号小一点，而 500 字号大一点，但是需要底部对齐，则可以用 Text 包裹起来，如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;Text&gt;</span><br><span class="line">  &lt;Text style&#x3D;&#123;&#123; fontSize: 12 &#125;&#125;&gt;¥&lt;&#x2F;Text&gt;</span><br><span class="line">  &lt;Text style&#x3D;&#123;&#123; fontSize: 20 &#125;&#125;&gt;500&lt;&#x2F;Text&gt;</span><br><span class="line">&lt;&#x2F;Text&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">&lt;Text&gt;
+  &lt;Text style&#x3D;&#123;&#123; fontSize: 12 &#125;&#125;&gt;¥&lt;&#x2F;Text&gt;
+  &lt;Text style&#x3D;&#123;&#123; fontSize: 20 &#125;&#125;&gt;500&lt;&#x2F;Text&gt;
+&lt;&#x2F;Text&gt;</code></pre>
 
 <h5 id="Text-组件样式继承"><a href="#Text-组件样式继承" class="headerlink" title="Text 组件样式继承"></a>Text 组件样式继承</h5><p>众所周知，css 如果想设置默认的全局样式相当简单，比如字体颜色默认为 ‘#323232’ , 只要在 body 上设置一下 <code>color: #323232</code> 即可 ，然而对于 RN 来说则有两种解决方案：</p>
 <ol>
@@ -285,29 +291,115 @@
 <blockquote>
 <p>The recommended way to use consistent fonts and sizes across your application is to create a component <code>MyAppText</code> that includes them and use this component across your app</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import React from &#39;react&#39;;</span><br><span class="line">import &#123; TextProps, StyleSheet, Text &#125; from &#39;react-native&#39;;</span><br><span class="line"></span><br><span class="line">const styles &#x3D; StyleSheet.create(&#123;</span><br><span class="line">  defaultStyle: &#123;</span><br><span class="line">    color: &#39;#323232&#39;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">export default function CustomText(props: TextProps &amp; &#123; children?: any &#125;) &#123;</span><br><span class="line">  const &#123; style, ...restProps &#125; &#x3D; props;</span><br><span class="line">  return (</span><br><span class="line">    &lt;Text style&#x3D;&#123;[styles.defaultStyle, style]&#125; &#123;...restProps&#125;&gt;</span><br><span class="line">      &#123;props.children&#125;</span><br><span class="line">    &lt;&#x2F;Text&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">import React from &#39;react&#39;;
+import &#123; TextProps, StyleSheet, Text &#125; from &#39;react-native&#39;;
+
+const styles &#x3D; StyleSheet.create(&#123;
+  defaultStyle: &#123;
+    color: &#39;#323232&#39;,
+  &#125;,
+&#125;);
+
+export default function CustomText(props: TextProps &amp; &#123; children?: any &#125;) &#123;
+  const &#123; style, ...restProps &#125; &#x3D; props;
+  return (
+    &lt;Text style&#x3D;&#123;[styles.defaultStyle, style]&#125; &#123;...restProps&#125;&gt;
+      &#123;props.children&#125;
+    &lt;&#x2F;Text&gt;
+  );
+&#125;</code></pre>
 </li>
-<li><p>参考 <a href="https://github.com/Ajackster" target="_blank" rel="noopener">Ajackster</a>/<strong><a href="https://github.com/Ajackster/react-native-global-props" target="_blank" rel="noopener">react-native-global-props</a></strong> 的实现，在项目入口位置，修改组件的 render 方法。</p>
+<li><p>参考 <a target="_blank" rel="noopener" href="https://github.com/Ajackster">Ajackster</a>/<strong><a target="_blank" rel="noopener" href="https://github.com/Ajackster/react-native-global-props">react-native-global-props</a></strong> 的实现，在项目入口位置，修改组件的 render 方法。</p>
 </li>
 </ol>
 <p>方案二虽然方便，但不是官方解法，万一有坑就 GG 了。而方案一如果是已有项目，则需要批量修改代码。<br>这里顺便提一下在 vscode 里批量替换的方法：</p>
-<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 将正则，大小写，全匹配 三个按钮点亮</span><br><span class="line">find: Text(,|\s)(.*react-nativ<span class="string">e';)</span></span><br><span class="line"><span class="string">replace: $2\nimport Text from '</span>Your/<span class="type">Text</span><span class="string">';</span></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; 将正则，大小写，全匹配 三个按钮点亮
+find: Text(,|\s)(.*react-native&#39;;)
+replace: $2\nimport Text from &#39;Your&#x2F;Text&#39;;</code></pre>
 <p>一开始我是这么写的，只考虑到了单行，结果下面这种情况没有替换掉：</p>
-<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import &#123;</span><br><span class="line"><span class="built_in">  StyleSheet,</span></span><br><span class="line"><span class="built_in">  ViewStyle,</span></span><br><span class="line"><span class="built_in">  View,</span></span><br><span class="line"><span class="built_in">  Text,</span></span><br><span class="line"><span class="built_in">  Image,</span></span><br><span class="line"><span class="built_in">  TouchableOpacity,</span></span><br><span class="line">&#125; from 'react-native'<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">import &#123;
+  StyleSheet,
+  ViewStyle,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+&#125; from &#39;react-native&#39;;</code></pre>
 <p>后面换成 <code>\sText[,|\s]\n?([\s\S]*&#39;react-native&#39;;)</code> 在浏览器里可以匹配上，但是 vscode 无法匹配 🤔。 最后简单写个脚本补全上面的漏网之鱼:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">const</span> util = <span class="built_in">require</span>(<span class="string">'util'</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"><span class="keyword">const</span> glob = <span class="built_in">require</span>(<span class="string">'glob'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> replace = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    glob(<span class="string">'src/**/*.tsx'</span>, &#123;&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">er, files</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> reg = <span class="regexp">/\sText[,|\s]\n?([\s\S]*'react-native';)/</span>;</span><br><span class="line">      files.forEach(<span class="keyword">async</span> (file) =&gt; &#123;</span><br><span class="line">        <span class="keyword">const</span> content = <span class="keyword">await</span> util.promisify(fs.readFile)(file, <span class="string">'utf8'</span>);</span><br><span class="line">        <span class="keyword">const</span> newContent = content.replace(reg, (m, p1) =&gt; &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="string">` <span class="subst">$&#123;p1.trim()&#125;</span></span></span><br><span class="line"><span class="string">import Text from '@/components/Text';`</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">await</span> util.promisify(fs.writeFile)(file, newContent, <span class="string">'utf8'</span>);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(error);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">replace();</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const fs &#x3D; require(&#39;fs&#39;);
+const util &#x3D; require(&#39;util&#39;);
+const path &#x3D; require(&#39;path&#39;);
+const glob &#x3D; require(&#39;glob&#39;);
+
+const replace &#x3D; async () &#x3D;&gt; &#123;
+  try &#123;
+    glob(&#39;src&#x2F;**&#x2F;*.tsx&#39;, &#123;&#125;, function (er, files) &#123;
+      const reg &#x3D; &#x2F;\sText[,|\s]\n?([\s\S]*&#39;react-native&#39;;)&#x2F;;
+      files.forEach(async (file) &#x3D;&gt; &#123;
+        const content &#x3D; await util.promisify(fs.readFile)(file, &#39;utf8&#39;);
+        const newContent &#x3D; content.replace(reg, (m, p1) &#x3D;&gt; &#123;
+          return &#96; $&#123;p1.trim()&#125;
+import Text from &#39;@&#x2F;components&#x2F;Text&#39;;&#96;;
+        &#125;);
+        await util.promisify(fs.writeFile)(file, newContent, &#39;utf8&#39;);
+      &#125;);
+    &#125;);
+  &#125; catch (error) &#123;
+    console.log(error);
+  &#125;
+&#125;;
+
+replace();</code></pre>
 
 <p>🤔 上面 CustomText 的写法有一个问题，即嵌套 Text 的样式如果是自定义组件中默认的样式，将不会被继承:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;Text style&#x3D;&#123;&#123; color: &#39;red&#39; &#125;&#125;&gt;</span><br><span class="line">  &lt;Text&gt;red&lt;&#x2F;Text&gt;</span><br><span class="line">  &lt;Text&gt;red&lt;&#x2F;Text&gt;</span><br><span class="line">&lt;&#x2F;Text&gt;</span><br><span class="line"></span><br><span class="line">&lt;CustomText style&#x3D;&#123;&#123; color: &#39;red&#39; &#125;&#125;&gt;</span><br><span class="line">  &lt;CustomText&gt;not red&lt;&#x2F;Text&gt;</span><br><span class="line">  &lt;CustomText&gt;not red&lt;&#x2F;Text&gt;</span><br><span class="line">&lt;&#x2F;CustomText&gt;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">&lt;Text style&#x3D;&#123;&#123; color: &#39;red&#39; &#125;&#125;&gt;
+  &lt;Text&gt;red&lt;&#x2F;Text&gt;
+  &lt;Text&gt;red&lt;&#x2F;Text&gt;
+&lt;&#x2F;Text&gt;
+
+&lt;CustomText style&#x3D;&#123;&#123; color: &#39;red&#39; &#125;&#125;&gt;
+  &lt;CustomText&gt;not red&lt;&#x2F;Text&gt;
+  &lt;CustomText&gt;not red&lt;&#x2F;Text&gt;
+&lt;&#x2F;CustomText&gt;</code></pre>
 
 <p>改良版： </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; Children, isValidElement, cloneElement &#125; from &#39;react&#39;;</span><br><span class="line">import &#123; TextProps, StyleSheet, Text &#125; from &#39;react-native&#39;;</span><br><span class="line"></span><br><span class="line">const styles &#x3D; StyleSheet.create(&#123;</span><br><span class="line">  defaultStyle: &#123;</span><br><span class="line">    color: &#39;#323232&#39;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">export default function CustomText(</span><br><span class="line">  props: TextProps &amp; &#123; children?: any; useDefaultStyle?: boolean &#125;,</span><br><span class="line">) &#123;</span><br><span class="line">  const &#123; style, useDefaultStyle &#x3D; true, ...restProps &#125; &#x3D; props;</span><br><span class="line">  const newStyle &#x3D; useDefaultStyle ? [styles.defaultStyle, style] : style;</span><br><span class="line"></span><br><span class="line">  const childrenWithProps &#x3D; Children.map(props.children, (child) &#x3D;&gt; &#123; </span><br><span class="line">   if (isValidElement(child)) &#123;</span><br><span class="line">     &#x2F;&#x2F; 如果子元素是个组件，则子组件不使用默认 style</span><br><span class="line">      return cloneElement(child as React.ReactElement&lt;any&gt;, &#123;</span><br><span class="line">        useDefaultStyle: false,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    return child;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;Text style&#x3D;&#123;newStyle&#125; &#123;...restProps&#125;&gt;</span><br><span class="line">      &#123;childrenWithProps&#125;</span><br><span class="line">    &lt;&#x2F;Text&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">import React, &#123; Children, isValidElement, cloneElement &#125; from &#39;react&#39;;
+import &#123; TextProps, StyleSheet, Text &#125; from &#39;react-native&#39;;
+
+const styles &#x3D; StyleSheet.create(&#123;
+  defaultStyle: &#123;
+    color: &#39;#323232&#39;,
+  &#125;,
+&#125;);
+
+export default function CustomText(
+  props: TextProps &amp; &#123; children?: any; useDefaultStyle?: boolean &#125;,
+) &#123;
+  const &#123; style, useDefaultStyle &#x3D; true, ...restProps &#125; &#x3D; props;
+  const newStyle &#x3D; useDefaultStyle ? [styles.defaultStyle, style] : style;
+
+  const childrenWithProps &#x3D; Children.map(props.children, (child) &#x3D;&gt; &#123; 
+   if (isValidElement(child)) &#123;
+     &#x2F;&#x2F; 如果子元素是个组件，则子组件不使用默认 style
+      return cloneElement(child as React.ReactElement&lt;any&gt;, &#123;
+        useDefaultStyle: false,
+      &#125;);
+    &#125;
+    return child;
+  &#125;);
+
+  return (
+    &lt;Text style&#x3D;&#123;newStyle&#125; &#123;...restProps&#125;&gt;
+      &#123;childrenWithProps&#125;
+    &lt;&#x2F;Text&gt;
+  );
+&#125;</code></pre>
 
 <ul>
-<li><p><a href="https://github.com/ptomasroos/react-native-scrollable-tab-view" target="_blank" rel="noopener">react-native-scrollable-tab-view</a></p>
-<p><a href="https://github.com/ptomasroos/react-native-scrollable-tab-view" target="_blank" rel="noopener">react-native-scrollable-tab-view</a> 组件作为 ScrollView 的子组件时不可用，会出现 tab 选中不一致，tab content 无法撑开的现象，详情看：<a href="https://github.com/ptomasroos/react-native-scrollable-tab-view/issues/982" target="_blank" rel="noopener">https://github.com/ptomasroos/react-native-scrollable-tab-view/issues/982</a></p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ptomasroos/react-native-scrollable-tab-view">react-native-scrollable-tab-view</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ptomasroos/react-native-scrollable-tab-view">react-native-scrollable-tab-view</a> 组件作为 ScrollView 的子组件时不可用，会出现 tab 选中不一致，tab content 无法撑开的现象，详情看：<a target="_blank" rel="noopener" href="https://github.com/ptomasroos/react-native-scrollable-tab-view/issues/982">https://github.com/ptomasroos/react-native-scrollable-tab-view/issues/982</a></p>
 </li>
-<li><p>设置环境变量<br>通常我们的 web 项目可以在 npm script 里通过设置 NODE_ENV 来设置不同的环境变量。比如 <code>NODE_ENV=develope node index.js</code>, 之后可以在代码中通过 <code>process.env.NODE_ENV</code> 来判断具体是哪个环境。rn 项目要达到同样的目的，则需要额外安装 babel 插件 <a href="https://www.npmjs.com/package/babel-plugin-transform-inline-environment-variables" target="_blank" rel="noopener">babel-plugin-transform-inline-environment-variables</a>（或者可以通过 <a href="https://github.com/luggit/react-native-config" target="_blank" rel="noopener">react-native-config</a>，不过这个方法没有去验证，因为低于 6.x 版本的需要客户端 link）</p>
+<li><p>设置环境变量<br>通常我们的 web 项目可以在 npm script 里通过设置 NODE_ENV 来设置不同的环境变量。比如 <code>NODE_ENV=develope node index.js</code>, 之后可以在代码中通过 <code>process.env.NODE_ENV</code> 来判断具体是哪个环境。rn 项目要达到同样的目的，则需要额外安装 babel 插件 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/babel-plugin-transform-inline-environment-variables">babel-plugin-transform-inline-environment-variables</a>（或者可以通过 <a target="_blank" rel="noopener" href="https://github.com/luggit/react-native-config">react-native-config</a>，不过这个方法没有去验证，因为低于 6.x 版本的需要客户端 link）</p>
 </li>
 </ul>
 <h5 id="ScrollView-与-Keyboard"><a href="#ScrollView-与-Keyboard" class="headerlink" title="ScrollView 与 Keyboard"></a>ScrollView 与 Keyboard</h5><p>场景： 当 ScrollView / FlatList / SectionList 中包含输入框时，点击输入框唤起键盘。如果此时输入框右侧有清除输入的按钮，点击时首先会将键盘收起，之后再次点击才会执行 onPress。</p>
@@ -316,23 +408,27 @@
 <h5 id="Border"><a href="#Border" class="headerlink" title="Border"></a>Border</h5><p>RN 的盒模型是 border-box, 即 宽高包括了 padding 和 border。</p>
 <p>在开发中发现如果容器具有 backgroundColor 与 borderRadius 后，设置一个不同颜色的 border, 该容器外围会有一层浅浅的 backgroundColor 描边（目前仅 ios 有这种情况）解决方案：在容器外层再包一个 View，设置 border 样式</p>
 <h5 id="FlatList-的-onViewableItemsChanged"><a href="#FlatList-的-onViewableItemsChanged" class="headerlink" title="FlatList 的 onViewableItemsChanged"></a>FlatList 的 onViewableItemsChanged</h5><p>onViewableItemsChanged 的方法在 FlatList 的生命周期中不可以改变，否则报错：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Invariant Violation: Changing onViewableItemsChanged <span class="keyword">on</span> <span class="keyword">the</span> fly <span class="keyword">is</span> <span class="keyword">not</span> supported</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">Invariant Violation: Changing onViewableItemsChanged on the fly is not supported</code></pre>
 
 <p>如果是类组件，可以在 constructor 中定义该方法，如果是函数组件，可以通过 useRef 包裹该方法。</p>
-<h5 id="等宽字体"><a href="#等宽字体" class="headerlink" title="等宽字体"></a>等宽字体</h5><p>如果字体不是等宽的话，倒计时组件会产生宽度抖动。ios 和 安卓平台的字体并不通用，参考 <a href="https://github.com/react-native-training/react-native-fonts。想要设置等宽字体可以设置" target="_blank" rel="noopener">https://github.com/react-native-training/react-native-fonts。想要设置等宽字体可以设置</a> Text 如下样式属性：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">fontVariant:</span> [<span class="string">'tabular-nums'</span>] <span class="comment">// 仅 IOS</span></span><br><span class="line"><span class="string">fontFamily:</span> Platform.OS === <span class="string">'android'</span> ? 'monospace' : undefined <span class="comment">// 如果是安卓则设置字体为 monospace</span></span><br></pre></td></tr></table></figure>
+<h5 id="等宽字体"><a href="#等宽字体" class="headerlink" title="等宽字体"></a>等宽字体</h5><p>如果字体不是等宽的话，倒计时组件会产生宽度抖动。ios 和 安卓平台的字体并不通用，参考 <a target="_blank" rel="noopener" href="https://github.com/react-native-training/react-native-fonts。">https://github.com/react-native-training/react-native-fonts。</a> 想要设置等宽字体可以设置 Text 如下样式属性：</p>
+<pre class="line-numbers language-none"><code class="language-none">fontVariant: [&#39;tabular-nums&#39;] &#x2F;&#x2F; 仅 IOS
+fontFamily: Platform.OS &#x3D;&#x3D;&#x3D; &#39;android&#39; ? &#39;monospace&#39; : undefined &#x2F;&#x2F; 如果是安卓则设置字体为 monospace</code></pre>
 
 <p>注意如果 fontFamily 指定的字体不存在，则页面将报错</p>
-<h5 id="轮播图"><a href="#轮播图" class="headerlink" title="轮播图"></a>轮播图</h5><p>轮播图一开始用的是社区里 star 数比较高的 <a href="https://github.com/leecade/react-native-swiper/issues/932，" target="_blank" rel="noopener">https://github.com/leecade/react-native-swiper/issues/932，</a></p>
-<p>☠️ 但是这个组件存在一个坑：如果 loop 为 true，rerender 的时候，会先展示最后一项，再闪回到第一项。这个 bug 存在好几年了，提了很多 issue，都没有解决掉，例如 <a href="https://github.com/leecade/react-native-swiper/issues/932" target="_blank" rel="noopener">https://github.com/leecade/react-native-swiper/issues/932</a> </p>
-<p>由于项目比较紧张，又没有时间自己去实现一个，后面发现 <a href="https://github.com/f111fei/react-native-banner-carousel" target="_blank" rel="noopener">https://github.com/f111fei/react-native-banner-carousel</a> 这个仓库不存在该问题。后续还是需要自己去研究一下 rn 的轮播图实现方案。</p>
+<h5 id="轮播图"><a href="#轮播图" class="headerlink" title="轮播图"></a>轮播图</h5><p>轮播图一开始用的是社区里 star 数比较高的 <a target="_blank" rel="noopener" href="https://github.com/leecade/react-native-swiper/issues/932">https://github.com/leecade/react-native-swiper/issues/932</a> ，</p>
+<p>☠️ 但是这个组件存在一个坑：如果 loop 为 true，rerender 的时候，会先展示最后一项，再闪回到第一项。这个 bug 存在好几年了，提了很多 issue，都没有解决掉，例如 <a target="_blank" rel="noopener" href="https://github.com/leecade/react-native-swiper/issues/932">https://github.com/leecade/react-native-swiper/issues/932</a> </p>
+<p>由于项目比较紧张，又没有时间自己去实现一个，后面发现 <a target="_blank" rel="noopener" href="https://github.com/f111fei/react-native-banner-carousel">https://github.com/f111fei/react-native-banner-carousel</a> 这个仓库不存在该问题。后续还是需要自己去研究一下 rn 的轮播图实现方案。</p>
 <h5 id="stickyHeaderIndices"><a href="#stickyHeaderIndices" class="headerlink" title="stickyHeaderIndices"></a>stickyHeaderIndices</h5><p>ScrollView 提供 stickyHeaderIndices 可以指定滚动时吸顶的组件索引</p>
-<p>☠️ 这个属性如果是动态的会导致 ScrollView 无法正常渲染，见 // <a href="https://github.com/facebook/react-native/issues/25157" target="_blank" rel="noopener">https://github.com/facebook/react-native/issues/25157</a> ，解决的方法是将 removeClippedSubviews 设置成 false </p>
+<p>☠️ 这个属性如果是动态的会导致 ScrollView 无法正常渲染，见 // <a target="_blank" rel="noopener" href="https://github.com/facebook/react-native/issues/25157">https://github.com/facebook/react-native/issues/25157</a> ，解决的方法是将 removeClippedSubviews 设置成 false </p>
 <h5 id="关闭弹窗与跳转新页面"><a href="#关闭弹窗与跳转新页面" class="headerlink" title="关闭弹窗与跳转新页面"></a>关闭弹窗与跳转新页面</h5><p>在我们的 ios 客户端发现一个问题：点击一个 Modal 中的内容后，关闭该 modal 并打开一个新的 webview，此时有很大概率无法打开新 webview。</p>
 <p>猜测是由于关闭 modal 的动画影响到打开新 webview（不清楚是否 ios 原生就是如此）</p>
 <p>解决方案就是延迟 300ms 后再打开新 webview</p>
 <h4 id="SectionList-scrollToLocation"><a href="#SectionList-scrollToLocation" class="headerlink" title="SectionList scrollToLocation"></a>SectionList scrollToLocation</h4><p>在 stickySectionHeadersEnabled 为 true 的时候，以下代码的作用是滚动到第一个 section 的第一个元素。但是在 ios 和 android 平台表现不一致，ios 会认为 sticky 元素需要占位置，而安卓则不占位，导致安卓下列表会被遮挡。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sectionListRef.current.scrollToLocation(&#123;</span><br><span class="line">  sectionIndex: <span class="number">0</span>,</span><br><span class="line">  itemIndex: <span class="number">0</span>,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">sectionListRef.current.scrollToLocation(&#123;
+  sectionIndex: 0,
+  itemIndex: 0,
+&#125;);</code></pre>
 
 <p>解决方案：根据平台添加 viewOffset 属性，设置滚动偏移量。</p>
 <h4 id="FlatList-性能优化"><a href="#FlatList-性能优化" class="headerlink" title="FlatList 性能优化"></a>FlatList 性能优化</h4><p>RN 的长列表性能一向不太好，即使用了 FlatList 依然要注意性能优化。比如列表项中如果有图片，那么要注意压缩大小等。</p>
@@ -420,7 +516,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#一像素问题"><span class="nav-number">1.</span> <span class="nav-text">一像素问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TextInput-组件"><span class="nav-number">2.</span> <span class="nav-text">TextInput  组件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#阴影"><span class="nav-number">3.</span> <span class="nav-text">阴影</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#border-虚线"><span class="nav-number">4.</span> <span class="nav-text">border 虚线</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#多行文字"><span class="nav-number">5.</span> <span class="nav-text">多行文字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现不同字号的文字底部对齐"><span class="nav-number">6.</span> <span class="nav-text">实现不同字号的文字底部对齐</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Text-组件样式继承"><span class="nav-number">7.</span> <span class="nav-text">Text 组件样式继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ScrollView-与-Keyboard"><span class="nav-number">8.</span> <span class="nav-text">ScrollView 与 Keyboard</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iOS-Text"><span class="nav-number">9.</span> <span class="nav-text">iOS Text</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Border"><span class="nav-number">10.</span> <span class="nav-text">Border</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FlatList-的-onViewableItemsChanged"><span class="nav-number">11.</span> <span class="nav-text">FlatList 的 onViewableItemsChanged</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#等宽字体"><span class="nav-number">12.</span> <span class="nav-text">等宽字体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#轮播图"><span class="nav-number">13.</span> <span class="nav-text">轮播图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#stickyHeaderIndices"><span class="nav-number">14.</span> <span class="nav-text">stickyHeaderIndices</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关闭弹窗与跳转新页面"><span class="nav-number">15.</span> <span class="nav-text">关闭弹窗与跳转新页面</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SectionList-scrollToLocation"><span class="nav-number"></span> <span class="nav-text">SectionList scrollToLocation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlatList-性能优化"><span class="nav-number"></span> <span class="nav-text">FlatList 性能优化</span></a></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E5%83%8F%E7%B4%A0%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">一像素问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TextInput-%E7%BB%84%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">TextInput  组件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%98%B4%E5%BD%B1"><span class="nav-number">3.</span> <span class="nav-text">阴影</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#border-%E8%99%9A%E7%BA%BF"><span class="nav-number">4.</span> <span class="nav-text">border 虚线</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%9A%E8%A1%8C%E6%96%87%E5%AD%97"><span class="nav-number">5.</span> <span class="nav-text">多行文字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%8D%E5%90%8C%E5%AD%97%E5%8F%B7%E7%9A%84%E6%96%87%E5%AD%97%E5%BA%95%E9%83%A8%E5%AF%B9%E9%BD%90"><span class="nav-number">6.</span> <span class="nav-text">实现不同字号的文字底部对齐</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Text-%E7%BB%84%E4%BB%B6%E6%A0%B7%E5%BC%8F%E7%BB%A7%E6%89%BF"><span class="nav-number">7.</span> <span class="nav-text">Text 组件样式继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ScrollView-%E4%B8%8E-Keyboard"><span class="nav-number">8.</span> <span class="nav-text">ScrollView 与 Keyboard</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iOS-Text"><span class="nav-number">9.</span> <span class="nav-text">iOS Text</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Border"><span class="nav-number">10.</span> <span class="nav-text">Border</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FlatList-%E7%9A%84-onViewableItemsChanged"><span class="nav-number">11.</span> <span class="nav-text">FlatList 的 onViewableItemsChanged</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AD%89%E5%AE%BD%E5%AD%97%E4%BD%93"><span class="nav-number">12.</span> <span class="nav-text">等宽字体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AE%E6%92%AD%E5%9B%BE"><span class="nav-number">13.</span> <span class="nav-text">轮播图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#stickyHeaderIndices"><span class="nav-number">14.</span> <span class="nav-text">stickyHeaderIndices</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E5%BC%B9%E7%AA%97%E4%B8%8E%E8%B7%B3%E8%BD%AC%E6%96%B0%E9%A1%B5%E9%9D%A2"><span class="nav-number">15.</span> <span class="nav-text">关闭弹窗与跳转新页面</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SectionList-scrollToLocation"><span class="nav-number"></span> <span class="nav-text">SectionList scrollToLocation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlatList-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number"></span> <span class="nav-text">FlatList 性能优化</span></a></div>
       </div>
       <!--/noindex-->
 
@@ -485,12 +581,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         

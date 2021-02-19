@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.2.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -245,14 +245,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.8k</span>
+              <span>6.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -268,7 +268,7 @@
 <p>这里不对 webpack 或者这些打包工具的使用进行具体说明，本文想探究的是打包的本质。</p>
 <a id="more"></a>
 
-<h4 id="从模块化说起"><a href="#从模块化说起" class="headerlink" title="从模块化说起"></a>从模块化说起</h4><p>在没有模块化之前，前端开发时需要格外注意命名冲突以及文件之间的相互依赖，参考 <a href="https://github.com/seajs/seajs/issues/547#issue-11105836。" target="_blank" rel="noopener">https://github.com/seajs/seajs/issues/547#issue-11105836。</a></p>
+<h4 id="从模块化说起"><a href="#从模块化说起" class="headerlink" title="从模块化说起"></a>从模块化说起</h4><p>在没有模块化之前，前端开发时需要格外注意命名冲突以及文件之间的相互依赖，参考 <a target="_blank" rel="noopener" href="https://github.com/seajs/seajs/issues/547#issue-11105836。">https://github.com/seajs/seajs/issues/547#issue-11105836。</a></p>
 <p>模块化实际上就是将程序分解成离散的功能块，使代码易于复用，维护和测试。如 less 中通过 @import 引入的样式，ES6 Module / CommonJs 引入的 Js 等都可以称为模块。</p>
 <p>然而浏览器不支持模块化，因此我们需要一个打包工具，将代码中诸如 require, @import, import 进来的模块打包成一个或者多个文件(即 bundle)。</p>
 <h4 id="打包的本质"><a href="#打包的本质" class="headerlink" title="打包的本质"></a>打包的本质</h4><p>参考 webpack 的定义：</p>
@@ -285,8 +285,12 @@
 <li>完成编译：经过上述步骤后得到每个模块编译后的内容以及相互之间的依赖关系</li>
 <li>输出：根据依赖关系，将模块组合成一个个代码块（Chunk），最后输出成文件</li>
 </ol>
-<h4 id="实现一个简易的打包工具"><a href="#实现一个简易的打包工具" class="headerlink" title="实现一个简易的打包工具"></a>实现一个简易的打包工具</h4><p>参考 <a href="https://github.com/ronami" target="_blank" rel="noopener">ronami</a>/<strong><a href="https://github.com/ronami/minipack" target="_blank" rel="noopener">minipack</a></strong> 实现一个支持 ES Module 的简易打包工具（这里不考虑循环依赖等情况）：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="keyword">const</span> babylon = <span class="built_in">require</span>(<span class="string">'babylon'</span>)</span><br><span class="line"><span class="keyword">const</span> traverse = <span class="built_in">require</span>(<span class="string">'babel-traverse'</span>).default</span><br><span class="line"><span class="keyword">const</span> &#123; transformFromAst &#125; = <span class="built_in">require</span>(<span class="string">'babel-core'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="实现一个简易的打包工具"><a href="#实现一个简易的打包工具" class="headerlink" title="实现一个简易的打包工具"></a>实现一个简易的打包工具</h4><p>参考 <a target="_blank" rel="noopener" href="https://github.com/ronami">ronami</a>/<strong><a target="_blank" rel="noopener" href="https://github.com/ronami/minipack">minipack</a></strong> 实现一个支持 ES Module 的简易打包工具（这里不考虑循环依赖等情况）：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const fs &#x3D; require(&#39;fs&#39;)
+const path &#x3D; require(&#39;path&#39;)
+const babylon &#x3D; require(&#39;babylon&#39;)
+const traverse &#x3D; require(&#39;babel-traverse&#39;).default
+const &#123; transformFromAst &#125; &#x3D; require(&#39;babel-core&#39;)</code></pre>
 
 <p>引入上述相关依赖：</p>
 <ul>
@@ -295,28 +299,234 @@
 <li>transformFromAst：将 AST 转为 ES5</li>
 </ul>
 <p><strong>首先</strong> 定义一个函数用于读取文件的内容和依赖：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 读取文件内容和依赖</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createAsset</span>(<span class="params">filePath</span>) </span>&#123;</span><br><span class="line">	<span class="comment">// 读取文件内容</span></span><br><span class="line">  <span class="keyword">const</span> content = fs.readFileSync(filePath, <span class="string">'utf-8'</span>)</span><br><span class="line">  <span class="comment">// 生成 AST</span></span><br><span class="line">  <span class="keyword">const</span> ast = babylon.parse(content, &#123;</span><br><span class="line">    sourceType: <span class="string">'module'</span>,</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="comment">// 当前文件的依赖关系</span></span><br><span class="line">  <span class="keyword">const</span> dependencies = []</span><br><span class="line">  traverse(ast, &#123;</span><br><span class="line">    <span class="comment">// 当遇到导入的声明时，将其内容 push 到 dependencies 里</span></span><br><span class="line">    ImportDeclaration: <span class="function">(<span class="params">&#123; node &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">      dependencies.push(node.source.value)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="comment">// 将 AST 转为 ES5</span></span><br><span class="line">  <span class="keyword">const</span> &#123; code &#125; = transformFromAst(ast, <span class="literal">null</span>, &#123;</span><br><span class="line">    presets: [<span class="string">'env'</span>],</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    filePath,</span><br><span class="line">    dependencies,</span><br><span class="line">    code,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;**
+ * 读取文件内容和依赖
+ *&#x2F;
+function createAsset(filePath) &#123;
+	&#x2F;&#x2F; 读取文件内容
+  const content &#x3D; fs.readFileSync(filePath, &#39;utf-8&#39;)
+  &#x2F;&#x2F; 生成 AST
+  const ast &#x3D; babylon.parse(content, &#123;
+    sourceType: &#39;module&#39;,
+  &#125;)
+  &#x2F;&#x2F; 当前文件的依赖关系
+  const dependencies &#x3D; []
+  traverse(ast, &#123;
+    &#x2F;&#x2F; 当遇到导入的声明时，将其内容 push 到 dependencies 里
+    ImportDeclaration: (&#123; node &#125;) &#x3D;&gt; &#123;
+      dependencies.push(node.source.value)
+    &#125;,
+  &#125;)
+  &#x2F;&#x2F; 将 AST 转为 ES5
+  const &#123; code &#125; &#x3D; transformFromAst(ast, null, &#123;
+    presets: [&#39;env&#39;],
+  &#125;)
+  return &#123;
+    filePath,
+    dependencies,
+    code,
+  &#125;
+&#125;</code></pre>
 
 <p>Asset 接口如下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Assets &#123;</span><br><span class="line">	<span class="comment">// 文件路径</span></span><br><span class="line">  filePath: <span class="built_in">string</span>;</span><br><span class="line">  <span class="comment">// 文件的依赖</span></span><br><span class="line">  dependencies: <span class="built_in">string</span>[];</span><br><span class="line">  <span class="comment">// 转为 ES5 后的文件内容</span></span><br><span class="line">  code: <span class="built_in">string</span>;</span><br><span class="line">  <span class="comment">// 相对路径</span></span><br><span class="line">  relativePath?: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">interface Assets &#123;
+	&#x2F;&#x2F; 文件路径
+  filePath: string;
+  &#x2F;&#x2F; 文件的依赖
+  dependencies: string[];
+  &#x2F;&#x2F; 转为 ES5 后的文件内容
+  code: string;
+  &#x2F;&#x2F; 相对路径
+  relativePath?: string;
+&#125;</code></pre>
 
 <p>例如，我们现在有个文件 entry.js ，内容如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry.js</span></span><br><span class="line"><span class="keyword">import</span> a <span class="keyword">from</span> <span class="string">'./a.js'</span></span><br><span class="line"><span class="built_in">console</span>.log(a)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; entry.js
+import a from &#39;.&#x2F;a.js&#39;
+console.log(a)</code></pre>
 
 <p>运行 <code>createAsset(&#39;./entry.js&#39;)</code> 将会返回：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  filePath: <span class="string">'./entry.js'</span>,</span><br><span class="line">  dependencies: [ <span class="string">'./a.js'</span> ],</span><br><span class="line">  code: <span class="string">`"use strict";</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var _a = require("./a.js");</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var _a2 = _interopRequireDefault(_a);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;; &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">console.log(_a2.default);`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#123;
+  filePath: &#39;.&#x2F;entry.js&#39;,
+  dependencies: [ &#39;.&#x2F;a.js&#39; ],
+  code: &#96;&quot;use strict&quot;;
+
+var _a &#x3D; require(&quot;.&#x2F;a.js&quot;);
+
+var _a2 &#x3D; _interopRequireDefault(_a);
+
+function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;; &#125;
+
+console.log(_a2.default);&#96;
+&#125;</code></pre>
 
 <p><strong>接着</strong>定义一个函数用于构建依赖关系图( dependency graph )：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 构建依赖关系图</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createGraph</span>(<span class="params">entry</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 从入口文件开始</span></span><br><span class="line">  <span class="keyword">const</span> entryAsset = createAsset(entry);</span><br><span class="line">  <span class="comment">// 初始时，queue 中只有 entryAsset, 之后分析依赖关系，会将新的 Asset push 到 queue 中用于分析，直到分析完全部依赖</span></span><br><span class="line">  <span class="keyword">const</span> queue = [entryAsset]</span><br><span class="line">  <span class="comment">// 遍历所有文件依赖关系</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> asset <span class="keyword">of</span> queue) &#123;</span><br><span class="line">    <span class="comment">// 获得文件目录</span></span><br><span class="line">    <span class="keyword">const</span> dirname = path.dirname(asset.filePath)</span><br><span class="line">    <span class="comment">// 遍历当前文件依赖关系</span></span><br><span class="line">    asset.dependencies.forEach(<span class="function">(<span class="params">relativePath</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 获得绝对路径</span></span><br><span class="line">      <span class="keyword">const</span> absolutePath = path.join(dirname, relativePath)</span><br><span class="line">      <span class="keyword">const</span> childAsset = createAsset(absolutePath)</span><br><span class="line">      childAsset.relativePath = relativePath</span><br><span class="line">      <span class="comment">// 将当前文件所依赖的文件的 Asset 也 push 到 queue 中用于遍历</span></span><br><span class="line">      queue.push(childAsset)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> queue</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;**
+ * 构建依赖关系图
+ *&#x2F;
+function createGraph(entry) &#123;
+  &#x2F;&#x2F; 从入口文件开始
+  const entryAsset &#x3D; createAsset(entry);
+  &#x2F;&#x2F; 初始时，queue 中只有 entryAsset, 之后分析依赖关系，会将新的 Asset push 到 queue 中用于分析，直到分析完全部依赖
+  const queue &#x3D; [entryAsset]
+  &#x2F;&#x2F; 遍历所有文件依赖关系
+  for (const asset of queue) &#123;
+    &#x2F;&#x2F; 获得文件目录
+    const dirname &#x3D; path.dirname(asset.filePath)
+    &#x2F;&#x2F; 遍历当前文件依赖关系
+    asset.dependencies.forEach((relativePath) &#x3D;&gt; &#123;
+      &#x2F;&#x2F; 获得绝对路径
+      const absolutePath &#x3D; path.join(dirname, relativePath)
+      const childAsset &#x3D; createAsset(absolutePath)
+      childAsset.relativePath &#x3D; relativePath
+      &#x2F;&#x2F; 将当前文件所依赖的文件的 Asset 也 push 到 queue 中用于遍历
+      queue.push(childAsset)
+    &#125;)
+  &#125;
+  return queue
+&#125;</code></pre>
 
 <p>例如，在上面的基础上，有个 a.js 以及 b.js 文件, 运行 <code>createGraph</code>会返回：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.js</span></span><br><span class="line"><span class="keyword">import</span> b <span class="keyword">from</span> <span class="string">'./b.js'</span></span><br><span class="line"><span class="keyword">const</span> a = <span class="string">'1'</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> a</span><br><span class="line"></span><br><span class="line"><span class="comment">// b.js</span></span><br><span class="line"><span class="keyword">const</span> b = <span class="string">'2'</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> b</span><br><span class="line"></span><br><span class="line"><span class="comment">// createGraph('./entry.js')</span></span><br><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    filePath: <span class="string">'./entry.js'</span>,</span><br><span class="line">    dependencies: [ <span class="string">'./a.js'</span> ],</span><br><span class="line">    code: <span class="string">`"use strict";</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var _a = require("./a.js");</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var _a2 = _interopRequireDefault(_a);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;; &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">console.log(_a2.default);`</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    filePath: <span class="string">'a.js'</span>,</span><br><span class="line">    dependencies: [ <span class="string">'./b.js'</span> ],</span><br><span class="line">    code: <span class="string">`"use strict";</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Object.defineProperty(exports, "__esModule", &#123;</span></span><br><span class="line"><span class="string">  value: true</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var _b = require("./b.js");</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var _b2 = _interopRequireDefault(_b);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;; &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var a = '1';</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exports.default = a;`</span>,</span><br><span class="line">    relativePath: <span class="string">'./a.js'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    filePath: <span class="string">'b.js'</span>,</span><br><span class="line">    dependencies: [],</span><br><span class="line">    code: <span class="string">`"use strict";</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Object.defineProperty(exports, "__esModule", &#123;</span></span><br><span class="line"><span class="string">  value: true</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">var b = '2';</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exports.default = b;`</span>,</span><br><span class="line">    relativePath: <span class="string">'./b.js'</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; a.js
+import b from &#39;.&#x2F;b.js&#39;
+const a &#x3D; &#39;1&#39;
+export default a
+
+&#x2F;&#x2F; b.js
+const b &#x3D; &#39;2&#39;
+export default b
+
+&#x2F;&#x2F; createGraph(&#39;.&#x2F;entry.js&#39;)
+[
+  &#123;
+    filePath: &#39;.&#x2F;entry.js&#39;,
+    dependencies: [ &#39;.&#x2F;a.js&#39; ],
+    code: &#96;&quot;use strict&quot;;
+
+var _a &#x3D; require(&quot;.&#x2F;a.js&quot;);
+
+var _a2 &#x3D; _interopRequireDefault(_a);
+
+function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;; &#125;
+
+console.log(_a2.default);&#96;
+  &#125;,
+  &#123;
+    filePath: &#39;a.js&#39;,
+    dependencies: [ &#39;.&#x2F;b.js&#39; ],
+    code: &#96;&quot;use strict&quot;;
+
+Object.defineProperty(exports, &quot;__esModule&quot;, &#123;
+  value: true
+&#125;);
+
+var _b &#x3D; require(&quot;.&#x2F;b.js&quot;);
+
+var _b2 &#x3D; _interopRequireDefault(_b);
+
+function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;; &#125;
+
+var a &#x3D; &#39;1&#39;;
+
+exports.default &#x3D; a;&#96;,
+    relativePath: &#39;.&#x2F;a.js&#39;
+  &#125;,
+  &#123;
+    filePath: &#39;b.js&#39;,
+    dependencies: [],
+    code: &#96;&quot;use strict&quot;;
+
+Object.defineProperty(exports, &quot;__esModule&quot;, &#123;
+  value: true
+&#125;);
+var b &#x3D; &#39;2&#39;;
+
+exports.default &#x3D; b;&#96;,
+    relativePath: &#39;.&#x2F;b.js&#39;
+  &#125;
+]</code></pre>
 
 <p><strong>最后</strong>实现一个打包函数：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bundle</span>(<span class="params">entry</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> graph = createGraph(entry)</span><br><span class="line">  <span class="keyword">let</span> modules = <span class="string">''</span></span><br><span class="line">  <span class="comment">// 构建函数参数</span></span><br><span class="line">  graph.forEach(<span class="function">(<span class="params">mod</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> filePath = mod.relativePath || entry</span><br><span class="line">    <span class="comment">// 拼装成 modules</span></span><br><span class="line">    modules += <span class="string">`'<span class="subst">$&#123;filePath&#125;</span>': (</span></span><br><span class="line"><span class="string">      function (module, exports, require) &#123; <span class="subst">$&#123;mod.code&#125;</span> &#125;</span></span><br><span class="line"><span class="string">    ),`</span></span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="comment">// 最终结果</span></span><br><span class="line">  <span class="keyword">const</span> result = <span class="string">`</span></span><br><span class="line"><span class="string">    (function(modules) &#123;</span></span><br><span class="line"><span class="string">			// ast 转 es5 的代码是 commonjs 风格，而浏览器不支持 commonjs，因此自定义 require，以文件名作为 id</span></span><br><span class="line"><span class="string">      function require(id) &#123;</span></span><br><span class="line"><span class="string">        const module = &#123; exports : &#123;&#125; &#125;</span></span><br><span class="line"><span class="string">        modules[id](module, module.exports, require)</span></span><br><span class="line"><span class="string">        return module.exports</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">			// 引入入口文件代码</span></span><br><span class="line"><span class="string">      require('<span class="subst">$&#123;entry&#125;</span>')</span></span><br><span class="line"><span class="string">    &#125;)(&#123;<span class="subst">$&#123;modules&#125;</span>&#125;)</span></span><br><span class="line"><span class="string">  `</span></span><br><span class="line">  <span class="comment">// 当生成的内容写入到文件中</span></span><br><span class="line">  fs.writeFileSync(<span class="string">'./bundle.js'</span>, result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">function bundle(entry) &#123;
+  const graph &#x3D; createGraph(entry)
+  let modules &#x3D; &#39;&#39;
+  &#x2F;&#x2F; 构建函数参数
+  graph.forEach((mod) &#x3D;&gt; &#123;
+    const filePath &#x3D; mod.relativePath || entry
+    &#x2F;&#x2F; 拼装成 modules
+    modules +&#x3D; &#96;&#39;$&#123;filePath&#125;&#39;: (
+      function (module, exports, require) &#123; $&#123;mod.code&#125; &#125;
+    ),&#96;
+  &#125;)
+  &#x2F;&#x2F; 最终结果
+  const result &#x3D; &#96;
+    (function(modules) &#123;
+			&#x2F;&#x2F; ast 转 es5 的代码是 commonjs 风格，而浏览器不支持 commonjs，因此自定义 require，以文件名作为 id
+      function require(id) &#123;
+        const module &#x3D; &#123; exports : &#123;&#125; &#125;
+        modules[id](module, module.exports, require)
+        return module.exports
+      &#125;
+			&#x2F;&#x2F; 引入入口文件代码
+      require(&#39;$&#123;entry&#125;&#39;)
+    &#125;)(&#123;$&#123;modules&#125;&#125;)
+  &#96;
+  &#x2F;&#x2F; 当生成的内容写入到文件中
+  fs.writeFileSync(&#39;.&#x2F;bundle.js&#39;, result)
+&#125;　</code></pre>
 
 <p>最终输出一个 IIFE：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">;(<span class="function"><span class="keyword">function</span> (<span class="params">modules</span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">require</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="built_in">module</span> = &#123; <span class="attr">exports</span>: &#123;&#125; &#125;</span><br><span class="line">    modules[id](<span class="built_in">module</span>, <span class="built_in">module</span>.exports, <span class="built_in">require</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">module</span>.exports</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">require</span>(<span class="string">'./entry.js'</span>)</span><br><span class="line">&#125;)(&#123;</span><br><span class="line">  <span class="string">'./entry.js'</span>: <span class="function"><span class="keyword">function</span> (<span class="params">module, exports, require</span>) </span>&#123;</span><br><span class="line"><span class="meta">    'use strict'</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> _a = <span class="built_in">require</span>(<span class="string">'./a.js'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> _a2 = _interopRequireDefault(_a)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">_interopRequireDefault</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> obj &amp;&amp; obj.__esModule ? obj : &#123; <span class="attr">default</span>: obj &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(_a2.default)</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">'./a.js'</span>: <span class="function"><span class="keyword">function</span> (<span class="params">module, exports, require</span>) </span>&#123;</span><br><span class="line"><span class="meta">    'use strict'</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(exports, <span class="string">'__esModule'</span>, &#123;</span><br><span class="line">      value: <span class="literal">true</span>,</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> _b = <span class="built_in">require</span>(<span class="string">'./b.js'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> _b2 = _interopRequireDefault(_b)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">_interopRequireDefault</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> obj &amp;&amp; obj.__esModule ? obj : &#123; <span class="attr">default</span>: obj &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> a = <span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">    exports.default = a</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">'./b.js'</span>: <span class="function"><span class="keyword">function</span> (<span class="params">module, exports, require</span>) </span>&#123;</span><br><span class="line"><span class="meta">    'use strict'</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(exports, <span class="string">'__esModule'</span>, &#123;</span><br><span class="line">      value: <span class="literal">true</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="string">'2'</span></span><br><span class="line"></span><br><span class="line">    exports.default = b</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">;(function (modules) &#123;
+  function require(id) &#123;
+    const module &#x3D; &#123; exports: &#123;&#125; &#125;
+    modules[id](module, module.exports, require)
+    return module.exports
+  &#125;
+  require(&#39;.&#x2F;entry.js&#39;)
+&#125;)(&#123;
+  &#39;.&#x2F;entry.js&#39;: function (module, exports, require) &#123;
+    &#39;use strict&#39;
+
+    var _a &#x3D; require(&#39;.&#x2F;a.js&#39;)
+
+    var _a2 &#x3D; _interopRequireDefault(_a)
+
+    function _interopRequireDefault(obj) &#123;
+      return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;
+    &#125;
+
+    console.log(_a2.default)
+  &#125;,
+  &#39;.&#x2F;a.js&#39;: function (module, exports, require) &#123;
+    &#39;use strict&#39;
+
+    Object.defineProperty(exports, &#39;__esModule&#39;, &#123;
+      value: true,
+    &#125;)
+
+    var _b &#x3D; require(&#39;.&#x2F;b.js&#39;)
+
+    var _b2 &#x3D; _interopRequireDefault(_b)
+
+    function _interopRequireDefault(obj) &#123;
+      return obj &amp;&amp; obj.__esModule ? obj : &#123; default: obj &#125;
+    &#125;
+
+    var a &#x3D; &#39;1&#39;
+
+    exports.default &#x3D; a
+  &#125;,
+  &#39;.&#x2F;b.js&#39;: function (module, exports, require) &#123;
+    &#39;use strict&#39;
+
+    Object.defineProperty(exports, &#39;__esModule&#39;, &#123;
+      value: true,
+    &#125;)
+    var b &#x3D; &#39;2&#39;
+
+    exports.default &#x3D; b
+  &#125;,
+&#125;)</code></pre>
 
 
 
@@ -403,7 +613,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从模块化说起"><span class="nav-number">2.</span> <span class="nav-text">从模块化说起</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打包的本质"><span class="nav-number">3.</span> <span class="nav-text">打包的本质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打包的过程"><span class="nav-number">4.</span> <span class="nav-text">打包的过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现一个简易的打包工具"><span class="nav-number">5.</span> <span class="nav-text">实现一个简易的打包工具</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E6%A8%A1%E5%9D%97%E5%8C%96%E8%AF%B4%E8%B5%B7"><span class="nav-number">2.</span> <span class="nav-text">从模块化说起</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%93%E5%8C%85%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">3.</span> <span class="nav-text">打包的本质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%93%E5%8C%85%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">打包的过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E6%98%93%E7%9A%84%E6%89%93%E5%8C%85%E5%B7%A5%E5%85%B7"><span class="nav-number">5.</span> <span class="nav-text">实现一个简易的打包工具</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -468,12 +678,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">97k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:42</span>
 </div>
 
         
