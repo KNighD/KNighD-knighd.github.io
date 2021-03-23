@@ -23,16 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta property="og:type" content="website">
-<meta property="og:title" content="前端见闻录">
-<meta property="og:url" content="https://knighd.gitee.io/archives/2020/08/index.html">
+<meta name="description" content="早在 TypeScript 3.0 中就新增加了一种 unkown 类型 New unknown top type，然而目前中文文档似乎还没有相关的说明，而英文文档中也仅有简短的一点说明。那么 unknown 的应用场景是什么，为什么需要新增这个类型呢？以下为结合官方 wiki，就比较常见的应用场景做的个人笔记总结。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypeScript 中的 unknown 类型">
+<meta property="og:url" content="https://knighd.gitee.io/2021/03/20/TypeScript-%E4%B8%AD%E7%9A%84-unknown-%E7%B1%BB%E5%9E%8B/index.html">
 <meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="早在 TypeScript 3.0 中就新增加了一种 unkown 类型 New unknown top type，然而目前中文文档似乎还没有相关的说明，而英文文档中也仅有简短的一点说明。那么 unknown 的应用场景是什么，为什么需要新增这个类型呢？以下为结合官方 wiki，就比较常见的应用场景做的个人笔记总结。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-20T15:02:58.000Z">
+<meta property="article:modified_time" content="2021-03-23T06:45:11.253Z">
 <meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="TypeScript">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/archives/2020/08/">
+<link rel="canonical" href="https://knighd.gitee.io/2021/03/20/TypeScript-%E4%B8%AD%E7%9A%84-unknown-%E7%B1%BB%E5%9E%8B/">
 
 
 <script class="page-configurations">
@@ -40,11 +45,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
-<title>归档 | 前端见闻录</title>
+<title>TypeScript 中的 unknown 类型 | 前端见闻录</title>
   
 
 
@@ -238,149 +243,205 @@
 </noscript>
 
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 28 篇日志。 继续努力。</span>
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/03/20/TypeScript-%E4%B8%AD%E7%9A%84-unknown-%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TypeScript 中的 unknown 类型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-20 23:02:58" itemprop="dateCreated datePublished" datetime="2021-03-20T23:02:58+08:00">2021-03-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-23 14:45:11" itemprop="dateModified" datetime="2021-03-23T14:45:11+08:00">2021-03-23</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
       </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>早在 TypeScript 3.0 中就新增加了一种 unkown 类型 <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type">New <code>unknown</code> top type</a>，然而目前中文文档似乎还没有相关的说明，而<a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown">英文文档</a>中也仅有简短的一点说明。那么 unknown 的应用场景是什么，为什么需要新增这个类型呢？以下为结合官方 wiki，就比较常见的应用场景做的个人笔记总结。</p>
+<a id="more"></a>
+
+<p>如果将类型看作一个集合的话，那么顶部类型则包含了所有其他类型，而底部类型则不包含其他所有类型。在 typescript 中，底部类型则是 never。而 unknown  类型与 any 非常相似，都是顶部类型。</p>
+<p>我们知道如果使用了 any，那就几乎意味着放弃了类型保护，我们可以使用 any 做任何事情，而 unknown 却恰恰相反，我们几乎无法利用 unknown 来做任何事情。</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">function f1(a: any) &#123;
+  a.b(); &#x2F;&#x2F; OK
+&#125;
+function f2(a: unknown) &#123;
+  a.b();
+  &#x2F;&#x2F; error: Object is of type &#39;unknown&#39;.
+&#125;</code></pre>
+
+<p>要使用 unknown 前须通过类型断言等方式确定类型，因此在面对未知类型时，使用 unknown 比 any 更加安全。</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">declare interface A &#123;
+  b: Function;
+&#125;
+
+declare function isA(x: unknown): x is A;
+
+function func(x: unknown) &#123;
+  &#x2F;&#x2F; 类型断言
+  (x as number).toFixed(2);
+  
+  &#x2F;&#x2F; 相等
+  if(x &#x3D;&#x3D;&#x3D; 123) &#123;
+    x; &#x2F;&#x2F; 123
+  &#125;
+  
+  &#x2F;&#x2F; 类型防护
+  if (typeof x &#x3D;&#x3D;&#x3D; &#39;string&#39; || typeof x &#x3D;&#x3D;&#x3D; &#39;number&#39;) &#123;
+    x; &#x2F;&#x2F; string | number
+  &#125;
+  if (x instanceof Error) &#123;
+    x; &#x2F;&#x2F; Error
+  &#125;
+  
+  &#x2F;&#x2F; 断言函数
+  if (isA(x)) &#123;
+    x.b();
+  &#125;
+&#125;</code></pre>
+
+<p>那么 unknown 与 any 具体还有哪些区别呢？</p>
+<ol>
+<li><p>作为顶部类型，则意味着所有的类型都可以赋值给 unknown，然而 unknown 只能赋值给 any 或者 unknown。</p>
+</li>
+<li><p>在联合类型中，any 交叉(&amp;)或者联合(|)任何类型, 除了 never 外都为 any，而 unknown 交叉(&amp;)任何类型都为其所交叉类型，联合(|)任何类型(除了 any 外)都为 unknown</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">type T00 &#x3D; unknown &amp; null; &#x2F;&#x2F; null
+type T03 &#x3D; unknown &amp; string; &#x2F;&#x2F; string
+type T06 &#x3D; unknown &amp; any; &#x2F;&#x2F; any
+
+type T00 &#x3D; any &amp; null; &#x2F;&#x2F; any
+type T02 &#x3D; any &amp; null &amp; undefined; &#x2F;&#x2F; null &amp; undefined (which becomes never)
+type T03 &#x3D; any &amp; string; &#x2F;&#x2F; any</code></pre>
+
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">type T10 &#x3D; unknown | null; &#x2F;&#x2F; unknown
+type T13 &#x3D; unknown | string; &#x2F;&#x2F; unknown
+type T16 &#x3D; unknown | any; &#x2F;&#x2F; any
+
+type T10 &#x3D; any | null; &#x2F;&#x2F; any
+type T12 &#x3D; any | null | undefined; &#x2F;&#x2F; any
+type T13 &#x3D; any | string; &#x2F;&#x2F; any</code></pre>
+</li>
+<li><p>在之前泛型类型默认为 <code>&#123;&#125;</code>, 现在则默认为 unknown。</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">function foo&lt;T&gt;(x: T): [T, string] &#123;
+    return [x, x.toString()]
+    &#x2F;&#x2F;           ~~~~~~~~ TypeScript 3.5 之后将会报错：error! Property &#39;toString&#39; does not exist on type &#39;T&#39;.
+&#125;</code></pre>
+
+<p>如果要不报错，可以这么写</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">function foo&lt;T extends &#123;&#125;&gt;(x: T): [T, string] &#123;
+    return [x, x.toString()]
+&#125;</code></pre>
+</li>
+<li><p>function 如果返回的是 unknown ，则可以没有返回语句</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">function f27(): unknown &#123;&#125;</code></pre>
+
+</li>
+</ol>
+<p>总之，如果有使用 any 的场景下，先考虑使用 unknown 来替代。</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-26T14:21:41+08:00"
-              content="2020-08-26">
-          08-26
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/26/TypeScript%E4%B8%AD%E7%9A%84const%E6%96%AD%E8%A8%80/" itemprop="url">
-            <span itemprop="name">TypeScript中的const断言</span>
-          </a>
-      </div>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TypeScript/" rel="tag"># TypeScript</a>
+          </div>
 
-      
-    </header>
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/19/JavaScript-OOP/" rel="prev" title="JavaScript-OOP.md">
+                  <i class="fa fa-chevron-left"></i> JavaScript-OOP.md
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
   </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-25T22:38:51+08:00"
-              content="2020-08-25">
-          08-25
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/25/%E4%B8%8D%E5%8F%98%E7%9A%84%E6%89%BF%E8%AF%BA%20Promise/" itemprop="url">
-            <span itemprop="name">不变的承诺 Promise</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-17T10:52:11+08:00"
-              content="2020-08-17">
-          08-17
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/17/svg%20%E5%9B%BE%E7%89%87%E7%9A%84%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD/" itemprop="url">
-            <span itemprop="name">svg 图片的上传下载</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-11T09:45:20+08:00"
-              content="2020-08-11">
-          08-11
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/11/%E6%BA%90%E7%A0%81%E5%B1%82%E9%9D%A2%E8%A7%A3%E8%AF%BBVue%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86/" itemprop="url">
-            <span itemprop="name">源码层面解读Vue响应式原理</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-08T22:00:28+08:00"
-              content="2020-08-08">
-          08-08
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/08/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-JS%E4%B8%AD%E7%9A%84%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E4%B8%8E%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/" itemprop="url">
-            <span itemprop="name">设计模式-JS中的观察者模式与发布订阅模式</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-06T15:18:31+08:00"
-              content="2020-08-06">
-          08-06
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/06/debounce%E4%B8%8Ethrottle/" itemprop="url">
-            <span itemprop="name">debounce与throttle</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
+</div>
 
 
-    </div>
-  </div>
-  
-  
-  
+
+
+
 
 
 <script>
