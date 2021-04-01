@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>inversify 初体验</title>
+      <link href="/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/"/>
+      <url>/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>谈谈 styled-components</title>
+      <link href="/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/"/>
+      <url>/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/</url>
+      
+        <content type="html"><![CDATA[<p>早在刚开始接触 React 的时候就有听闻过 <code>css in js</code> 的理念，中间也简单使用过 <code>styled-components</code>，但用到最后总因为各种原因放弃。这次刚好心血来潮又想重新试试，同时记录一下从个人角度来看 <code>styled-components</code> 的优缺点，以便将来选型时作为参考之用。</p><a id="more"></a><p>基于 create-react-app 搭建的 TypeScript 项目，至于如何加入 styled-components，这里不赘述，按照文档很简单就可以完成了。以下简称为 <code>sc</code>。</p><p>简单使用方法如下:</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import styled from &#39;styled-components&#39;const Title &#x3D; styled.h1&#96;  font-size: 1.5em;&#96;;render(  &lt;Title&gt;    Hello World!  &lt;&#x2F;Title&gt;);</code></pre><p>最终编译出来的是一个独特的 hash 值的样式名，这可以避免我们样式名称被覆盖，而在此之前我们往往需要配置 css modules， 如果是 create react app 创建的项目，往往会用 .module.css 来表示 css 模块。而 sc 则自带了这个特性，我觉得这是他的第一个优点。</p><p>styled-components 中的 <code>styled</code> 可以看作一个 HOC，接收一个组件后返回一个带样式的新组件。那既然是组件，就意味着可以传 props。</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import styled from &#39;styled-components&#39;const Title &#x3D; styled.h1&lt;&#123;isRed: boolean&#125;&gt;&#96;  font-size: 1.5em;color: $&#123;props &#x3D;&gt; props.isRed ? &#39;red&#39; : &#39;black&#39;&#125;&#96;;const isRed &#x3D; ...render(  &lt;Title isRed&#x3D;&#123;isRed&#125;&gt;    Hello World!  &lt;&#x2F;Title&gt;);</code></pre><p>而在使用 styled-components 之前，我们要做到这个效果往往是在 style 里处理，或者是通过样式名来控制</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; 在 style 里处理，不方便复用render(  &lt;h1 style&#x3D;&#123;&#123; color: isRed ? &#39;red&#39; : &#39;black&#39; &#125;&#125;&gt;    Hello World!  &lt;&#x2F;h1&gt;);&#x2F;&#x2F; 通过样式名控制较为繁琐.red &#123; color: &#39;red&#39; &#125;.black &#123; color: &#39;black&#39; &#125;render(  &lt;h1 className&#x3D;&#123;isRed ? &#39;red&#39; : &#39;black&#39;&#125;&gt;    Hello World!  &lt;&#x2F;h1&gt;);</code></pre><p>这是 styled-components 的第二个优点。</p><p>有个场景比较经常出现在维护旧代码的时候，往往有的组件不需要了，我们可以简单移除掉，但是这个组件所使用的样式名却不敢轻易删掉，因为鬼知道这个样式是不是别的地方用到了。而这个则是 sc 中样式组件则不存在这个问题，所以这是第三个优点：便于维护。</p><p>以上是我觉得感知比较强烈的优点，当然还有一些别的优点这里就不说了，具体可以查看文档。</p><p>说完了优点，说说开发时遇到的缺点吧</p><p>第一个就是由于 sc 实际上就是组件，而这个往往会让我分不清哪些是样式组件，哪些是 React 组件，就是显得不够直观。</p><p>第二个是有一些组件，实际上只是一行样式就解决了，那么每次都需要重新写一个 sc 组件，反而显得繁琐。官方是推荐可以使用 <code>css prop</code>  来解决</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123; css &#125; from &#39;styled-components&#x2F;macro&#39;render(  &lt;h1 css&#x3D;&#123;css&#96;font-size: 1.5em;&#96;&#125;&gt;    Hello World!  &lt;&#x2F;h1&gt;);</code></pre><p>这个功能需要有babel-plugin-styled-components 或者 babel-plugin-macro 的支持，create react app 默认支持了,详情看<a href="https://styled-components.com/docs/api#css-prop">文档</a>。</p><p>如果是 Typescript，由于原先的组件上并没有 css 这个属性，则需要额外在全局引入</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123;&#125; from &#39;styled-components&#x2F;cssprop&#39;</code></pre><p>文档中提到 <code>css prop</code> 实际上也是将组件转为样式组件，而如果是在 typescript 中需要传递自定义 prop，我不知道该如何定义类型?</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123; css &#125; from &#39;styled-components&#x2F;macro&#39;const Title &#x3D; css&#96;font-size: 1.5em;color: &#123;props &#x3D;&gt; props.color&#125;&#96;render(  &#x2F;&#x2F; 此时将提示 color 类型错误云云。。  &lt;h1 css&#x3D;&#123;Title&#125; color&#x3D;&quot;red&quot;&gt;    Hello World!  &lt;&#x2F;h1&gt;);</code></pre><p>第三个是样式复用，即如果我有相同的样式想要用在不同的组件上，sc 也是推荐使用 <code>css props</code>，而 css props 的体验是在是不敢说很好。</p><p>就我个人而言目前主要是这三点用着不爽。</p><p>后续：为了解决一两行代码也要用 <code>css prop</code> 的情况，我引入了 <code>tailwindcss</code>，这个 css 框架中的原子性类名理念非常契合我的问题。我觉得这两个框架搭配写起来还是比较顺畅的。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>在 react 中使用 rxjs</title>
       <link href="/2021/03/24/%E5%9C%A8-react-%E4%B8%AD%E4%BD%BF%E7%94%A8-rxjs/"/>
       <url>/2021/03/24/%E5%9C%A8-react-%E4%B8%AD%E4%BD%BF%E7%94%A8-rxjs/</url>

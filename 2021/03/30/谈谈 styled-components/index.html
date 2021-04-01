@@ -23,21 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="背景项目组中 RN 之前使用的状态管理是小伙伴自行封装 redux， redux-saga 的一个组件库，然而由于文档不全，使用起来不方便等原因，经过讨论，决定替换成 mobx。主要参考官方文档： https:&#x2F;&#x2F;mobx.js.org&#x2F;react-integration.html#react-integration。本文记录我将 mobx 加入 RN 的过程以及使用 mobx 的一些注意事项（实">
+<meta name="description" content="早在刚开始接触 React 的时候就有听闻过 css in js 的理念，中间也简单使用过 styled-components，但用到最后总因为各种原因放弃。这次刚好心血来潮又想重新试试，同时记录一下从个人角度来看 styled-components 的优缺点，以便将来选型时作为参考之用。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="给 RN 添加 mobx">
-<meta property="og:url" content="https://knighd.gitee.io/2020/12/14/%E7%BB%99-RN-%E6%B7%BB%E5%8A%A0-mobx/index.html">
+<meta property="og:title" content="谈谈 styled-components">
+<meta property="og:url" content="https://knighd.gitee.io/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景项目组中 RN 之前使用的状态管理是小伙伴自行封装 redux， redux-saga 的一个组件库，然而由于文档不全，使用起来不方便等原因，经过讨论，决定替换成 mobx。主要参考官方文档： https:&#x2F;&#x2F;mobx.js.org&#x2F;react-integration.html#react-integration。本文记录我将 mobx 加入 RN 的过程以及使用 mobx 的一些注意事项（实">
+<meta property="og:description" content="早在刚开始接触 React 的时候就有听闻过 css in js 的理念，中间也简单使用过 styled-components，但用到最后总因为各种原因放弃。这次刚好心血来潮又想重新试试，同时记录一下从个人角度来看 styled-components 的优缺点，以便将来选型时作为参考之用。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-12-14T02:26:15.000Z">
-<meta property="article:modified_time" content="2021-02-19T09:31:46.306Z">
+<meta property="article:published_time" content="2021-03-30T07:09:19.000Z">
+<meta property="article:modified_time" content="2021-04-01T10:26:01.646Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="JavaScript">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/2020/12/14/%E7%BB%99-RN-%E6%B7%BB%E5%8A%A0-mobx/">
+<link rel="canonical" href="https://knighd.gitee.io/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/">
 
 
 <script class="page-configurations">
@@ -49,7 +49,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>给 RN 添加 mobx | 前端见闻录</title>
+<title>谈谈 styled-components | 前端见闻录</title>
   
 
 
@@ -174,7 +174,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -187,7 +187,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">过程</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +254,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/12/14/%E7%BB%99-RN-%E6%B7%BB%E5%8A%A0-mobx/">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -268,7 +267,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          给 RN 添加 mobx
+          谈谈 styled-components
         </h1>
 
         <div class="post-meta-container">
@@ -279,14 +278,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-12-14 10:26:15" itemprop="dateCreated datePublished" datetime="2020-12-14T10:26:15+08:00">2020-12-14</time>
+      <time title="创建时间：2021-03-30 15:09:19" itemprop="dateCreated datePublished" datetime="2021-03-30T15:09:19+08:00">2021-03-30</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-19 17:31:46" itemprop="dateModified" datetime="2021-02-19T17:31:46+08:00">2021-02-19</time>
+        <time title="修改时间：2021-04-01 18:26:01" itemprop="dateModified" datetime="2021-04-01T18:26:01+08:00">2021-04-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -313,14 +312,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.9k</span>
+      <span>2.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -331,111 +330,92 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>项目组中 RN 之前使用的状态管理是小伙伴自行封装 redux， redux-saga 的一个组件库，然而由于文档不全，使用起来不方便等原因，经过讨论，决定替换成 mobx。主要参考官方文档： <a target="_blank" rel="noopener" href="https://mobx.js.org/react-integration.html#react-integration。本文记录我将">https://mobx.js.org/react-integration.html#react-integration。本文记录我将</a> mobx 加入 RN 的过程以及使用 mobx 的一些注意事项（实际上与普通的 React 项目差不多）</p>
+        <p>早在刚开始接触 React 的时候就有听闻过 <code>css in js</code> 的理念，中间也简单使用过 <code>styled-components</code>，但用到最后总因为各种原因放弃。这次刚好心血来潮又想重新试试，同时记录一下从个人角度来看 <code>styled-components</code> 的优缺点，以便将来选型时作为参考之用。</p>
 <a id="more"></a>
 
-<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ol>
-<li><p>在 src 目录下新增一个 stores 文件夹用于存放 mobx 相关的代码</p>
-</li>
-<li><p>编写 observable state，这里我写了一个 Counter.ts 并且新建 stores.ts 管理所有的状态：</p>
-<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">&#x2F;&#x2F; Counter.ts
-import &#123; makeAutoObservable &#125; from &#39;mobx&#39;;
+<p>基于 create-react-app 搭建的 TypeScript 项目，至于如何加入 styled-components，这里不赘述，按照文档很简单就可以完成了。以下简称为 <code>sc</code>。</p>
+<p>简单使用方法如下:</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import styled from &#39;styled-components&#39;
+const Title &#x3D; styled.h1&#96;
+  font-size: 1.5em;
+&#96;;
 
-class Counter &#123;
-  count &#x3D; 0;
+render(
+  &lt;Title&gt;
+    Hello World!
+  &lt;&#x2F;Title&gt;
+);</code></pre>
 
-  constructor() &#123;
-    makeAutoObservable(this);
-  &#125;
+<p>最终编译出来的是一个独特的 hash 值的样式名，这可以避免我们样式名称被覆盖，而在此之前我们往往需要配置 css modules， 如果是 create react app 创建的项目，往往会用 .module.css 来表示 css 模块。而 sc 则自带了这个特性，我觉得这是他的第一个优点。</p>
+<p>styled-components 中的 <code>styled</code> 可以看作一个 HOC，接收一个组件后返回一个带样式的新组件。那既然是组件，就意味着可以传 props。</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import styled from &#39;styled-components&#39;
 
-  &#x2F;&#x2F; 注意要使用箭头函数，否则需要用 action.bound 来绑定 this，否则指向 React 组件
-  increase &#x3D; () &#x3D;&gt; &#123;
-    this.count +&#x3D; 1;
-  &#125;;
+const Title &#x3D; styled.h1&lt;&#123;isRed: boolean&#125;&gt;&#96;
+  font-size: 1.5em;
+	color: $&#123;props &#x3D;&gt; props.isRed ? &#39;red&#39; : &#39;black&#39;&#125;
+&#96;;
 
-  decrease &#x3D; () &#x3D;&gt; &#123;
-    this.count -&#x3D; 1;
-  &#125;;
-&#125;
-export default Counter;
+const isRed &#x3D; ...
 
-&#x2F;&#x2F; stores.ts
-import Counter from &#39;.&#x2F;Counter&#39;;
+render(
+  &lt;Title isRed&#x3D;&#123;isRed&#125;&gt;
+    Hello World!
+  &lt;&#x2F;Title&gt;
+);</code></pre>
 
-export default &#123;
-  counter: new Counter(),
-&#125;;</code></pre>
-</li>
-<li><p>根据 mobx 文档，组件要使用外部状态有三种写法：</p>
-<ol>
-<li>通过 props 将 状态传递到组件</li>
-<li>直接通过 import 进来</li>
-<li>通过 React context 引入到组件</li>
-</ol>
-<p>为了方便使用，考虑 2，3 中写法，文档中推荐使用 context，那么就这里尝试使用 context。</p>
-</li>
-<li><p>编写 withStores.ts 函数，这是一个高阶组件，主要的作用是给根元素用 Provider 包裹起来，并且根元素通常也是需要 observe 的，因此这里也顺便将其转成可观测的组件：</p>
-<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">&#x2F;&#x2F; withStores.ts
-import React, &#123; createContext &#125; from &#39;react&#39;;
-import &#123; observer &#125; from &#39;mobx-react-lite&#39;;
-import stores from &#39;.&#x2F;stores&#39;;
+<p>而在使用 styled-components 之前，我们要做到这个效果往往是在 style 里处理，或者是通过样式名来控制</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; 在 style 里处理，不方便复用
+render(
+  &lt;h1 style&#x3D;&#123;&#123; color: isRed ? &#39;red&#39; : &#39;black&#39; &#125;&#125;&gt;
+    Hello World!
+  &lt;&#x2F;h1&gt;
+);
 
-&#x2F;&#x2F; 初始化 Context
-export const StoresContext &#x3D; createContext&lt;typeof stores&gt;(stores);
+&#x2F;&#x2F; 通过样式名控制较为繁琐
+.red &#123; color: &#39;red&#39; &#125;
+.black &#123; color: &#39;black&#39; &#125;
 
-const withStores &#x3D; &lt;P extends object&gt;(
-  WrappedComponent: React.FunctionComponent&lt;P&gt;,
-) &#x3D;&gt; (props: P) &#x3D;&gt; &#123;
-  &#x2F;&#x2F; 转成可观测的组件
-  const ObserverWrappedComponent &#x3D; observer(WrappedComponent);
-  return (
-    &lt;StoresContext.Provider value&#x3D;&#123;stores&#125;&gt;
-      &lt;ObserverWrappedComponent &#123;...props&#125; &#x2F;&gt;
-    &lt;&#x2F;StoresContext.Provider&gt;
-  );
-&#125;;
+render(
+  &lt;h1 className&#x3D;&#123;isRed ? &#39;red&#39; : &#39;black&#39;&#125;&gt;
+    Hello World!
+  &lt;&#x2F;h1&gt;
+);</code></pre>
 
-export default withStores;</code></pre>
-</li>
-<li><p>接下来的使用就简单了：</p>
-<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import React, &#123; useEffect, useContext &#125; from &#39;react&#39;;
-import &#123; TouchableOpacity, View, Text &#125; from &#39;react-native&#39;;
-import &#123; withStores, StoresContext &#125; from &#39;@&#x2F;stores&#39;;
-import Child from &#39;.&#x2F;Child&#39;;
+<p>这是 styled-components 的第二个优点。</p>
+<p>有个场景比较经常出现在维护旧代码的时候，往往有的组件不需要了，我们可以简单移除掉，但是这个组件所使用的样式名却不敢轻易删掉，因为鬼知道这个样式是不是别的地方用到了。而这个则是 sc 中样式组件则不存在这个问题，所以这是第三个优点：便于维护。</p>
+<p>以上是我觉得感知比较强烈的优点，当然还有一些别的优点这里就不说了，具体可以查看文档。</p>
+<p>说完了优点，说说开发时遇到的缺点吧</p>
+<p>第一个就是由于 sc 实际上就是组件，而这个往往会让我分不清哪些是样式组件，哪些是 React 组件，就是显得不够直观。</p>
+<p>第二个是有一些组件，实际上只是一行样式就解决了，那么每次都需要重新写一个 sc 组件，反而显得繁琐。官方是推荐可以使用 <code>css prop</code>  来解决</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123; css &#125; from &#39;styled-components&#x2F;macro&#39;
 
-const MobxDemo &#x3D; () &#x3D;&gt; &#123;
-  const &#123; counter &#125; &#x3D; useContext(StoresContext);
-  return (
-    &lt;View&gt;
-      &lt;Text&gt;count: &#123;counter.count&#125;&lt;&#x2F;Text&gt;
-      &lt;TouchableOpacity onPress&#x3D;&#123;counter.increase&#125;&gt;
-        &lt;Text&gt;increase: +&lt;&#x2F;Text&gt;
-      &lt;&#x2F;TouchableOpacity&gt;
-      &lt;TouchableOpacity onPress&#x3D;&#123;counter.decrease&#125;&gt;
-        &lt;Text&gt;decrease: -&lt;&#x2F;Text&gt;
-      &lt;&#x2F;TouchableOpacity&gt;
-      &lt;Child &#x2F;&gt;
-    &lt;&#x2F;View&gt;
-  );
-&#125;;
+render(
+  &lt;h1 css&#x3D;&#123;css&#96;font-size: 1.5em;&#96;&#125;&gt;
+    Hello World!
+  &lt;&#x2F;h1&gt;
+);</code></pre>
 
-export default withStores(MobxDemo);
+<p>这个功能需要有babel-plugin-styled-components 或者 babel-plugin-macro 的支持，create react app 默认支持了,详情看<a target="_blank" rel="noopener" href="https://styled-components.com/docs/api#css-prop">文档</a>。</p>
+<p>如果是 Typescript，由于原先的组件上并没有 css 这个属性，则需要额外在全局引入</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123;&#125; from &#39;styled-components&#x2F;cssprop&#39;</code></pre>
 
-&#x2F;&#x2F; Child.tsx
-import React, &#123; useContext &#125; from &#39;react&#39;;
-import &#123; observer &#125; from &#39;mobx-react-lite&#39;;
-import &#123; Text &#125; from &#39;react-native&#39;;
-import &#123; StoresContext &#125; from &#39;@&#x2F;stores&#39;;
+<p>文档中提到 <code>css prop</code> 实际上也是将组件转为样式组件，而如果是在 typescript 中需要传递自定义 prop，我不知道该如何定义类型?</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123; css &#125; from &#39;styled-components&#x2F;macro&#39;
+const Title &#x3D; css&#96;
+	font-size: 1.5em;
+	color: &#123;props &#x3D;&gt; props.color&#125;
+&#96;
 
-export const Child &#x3D; () &#x3D;&gt; &#123;
-  const &#123; counter &#125; &#x3D; useContext(StoresContext);
-  return &lt;Text&gt;child: &#123;counter.count&#125;&lt;&#x2F;Text&gt;;
-&#125;;
+render(
+  &#x2F;&#x2F; 此时将提示 color 类型错误云云。。
+  &lt;h1 css&#x3D;&#123;Title&#125; color&#x3D;&quot;red&quot;&gt;
+    Hello World!
+  &lt;&#x2F;h1&gt;
+);</code></pre>
 
-export default observer(Child);</code></pre>
-
-</li>
-</ol>
+<p>第三个是样式复用，即如果我有相同的样式想要用在不同的组件上，sc 也是推荐使用 <code>css props</code>，而 css props 的体验是在是不敢说很好。</p>
+<p>就我个人而言目前主要是这三点用着不爽。</p>
+<p>后续：为了解决一两行代码也要用 <code>css prop</code> 的情况，我引入了 <code>tailwindcss</code>，这个 css 框架中的原子性类名理念非常契合我的问题。我觉得这两个框架搭配写起来还是比较顺畅的。</p>
 
     </div>
 
@@ -452,13 +432,13 @@ export default observer(Child);</code></pre>
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/12/10/svg-%E4%B8%8E%E5%AD%97%E4%BD%93/" rel="prev" title="svg 与字体">
-                  <i class="fa fa-chevron-left"></i> svg 与字体
+                <a href="/2021/03/24/%E5%9C%A8-react-%E4%B8%AD%E4%BD%BF%E7%94%A8-rxjs/" rel="prev" title="在 react 中使用 rxjs">
+                  <i class="fa fa-chevron-left"></i> 在 react 中使用 rxjs
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/12/31/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%B8%A9%E5%9D%91%EF%BC%9Awebp%E4%B8%8Eios/" rel="next" title="记录一次踩坑：webp与ios">
-                  记录一次踩坑：webp与ios <i class="fa fa-chevron-right"></i>
+                <a href="/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="next" title="inversify 初体验">
+                  inversify 初体验 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
