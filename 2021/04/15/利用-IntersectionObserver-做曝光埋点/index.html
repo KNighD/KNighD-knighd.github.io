@@ -23,21 +23,23 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="背景电商项目需要搭建一个 h5 项目。这里简单记录一下搭建过程遇到的坑，作为总结。">
+<meta name="description" content="前些天接了个紧急的简单需求，有多简单呢，就是一张背景图，然后上面加上一个悬浮的按钮。果然简单！不过按惯例，不可能这么简单。果然第二天就说说加了个需求，需要在这个背景图底部继续增加两行，每行三个商品，需要统计点击和曝光事件。上报点击事件倒是简单，曝光则相对麻烦点。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记录一次搭建 react 项目遇到的坑">
-<meta property="og:url" content="https://knighd.gitee.io/2020/07/20/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%20react%20%E9%A1%B9%E7%9B%AE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/index.html">
+<meta property="og:title" content="利用 IntersectionObserver 做曝光埋点">
+<meta property="og:url" content="https://knighd.gitee.io/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景电商项目需要搭建一个 h5 项目。这里简单记录一下搭建过程遇到的坑，作为总结。">
+<meta property="og:description" content="前些天接了个紧急的简单需求，有多简单呢，就是一张背景图，然后上面加上一个悬浮的按钮。果然简单！不过按惯例，不可能这么简单。果然第二天就说说加了个需求，需要在这个背景图底部继续增加两行，每行三个商品，需要统计点击和曝光事件。上报点击事件倒是简单，曝光则相对麻烦点。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-20T07:21:54.000Z">
-<meta property="article:modified_time" content="2021-02-21T09:32:35.312Z">
+<meta property="og:image" content="https://i.loli.net/2021/04/15/SJXa9fkoCY1q3AE.png">
+<meta property="article:published_time" content="2021-04-15T03:05:58.000Z">
+<meta property="article:modified_time" content="2021-04-15T07:05:55.778Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="JavaScript">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/15/SJXa9fkoCY1q3AE.png">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/2020/07/20/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%20react%20%E9%A1%B9%E7%9B%AE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/">
+<link rel="canonical" href="https://knighd.gitee.io/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/">
 
 
 <script class="page-configurations">
@@ -49,7 +51,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>记录一次搭建 react 项目遇到的坑 | 前端见闻录</title>
+<title>利用 IntersectionObserver 做曝光埋点 | 前端见闻录</title>
   
 
 
@@ -187,7 +189,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#antd-mobile-%E6%8C%89%E9%9C%80%E5%8A%A0%E8%BD%BD"><span class="nav-number">2.</span> <span class="nav-text">antd-mobile 按需加载</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-antd-mobile-%E4%B8%BB%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">配置 antd-mobile 主题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#create-react-app"><span class="nav-number">4.</span> <span class="nav-text">create-react-app</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%AB%E5%90%8D"><span class="nav-number">5.</span> <span class="nav-text">别名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mini-css-extract-plugin"><span class="nav-number">6.</span> <span class="nav-text">mini-css-extract-plugin</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">兼容性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="nav-number">3.</span> <span class="nav-text">踩过的坑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">优点</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +257,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/07/20/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%20react%20%E9%A1%B9%E7%9B%AE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -268,7 +270,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          记录一次搭建 react 项目遇到的坑
+          利用 IntersectionObserver 做曝光埋点
         </h1>
 
         <div class="post-meta-container">
@@ -278,16 +280,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-07-20 15:21:54" itemprop="dateCreated datePublished" datetime="2020-07-20T15:21:54+08:00">2020-07-20</time>
+      <time title="创建时间：2021-04-15 11:05:58 / 修改时间：15:05:55" itemprop="dateCreated datePublished" datetime="2021-04-15T11:05:58+08:00">2021-04-15</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-21 17:32:35" itemprop="dateModified" datetime="2021-02-21T17:32:35+08:00">2021-02-21</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -313,14 +309,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.9k</span>
+      <span>3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -331,121 +327,113 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h5 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h5><p>电商项目需要搭建一个 h5 项目。这里简单记录一下搭建过程遇到的坑，作为总结。</p>
+        <p>前些天接了个紧急的简单需求，有多简单呢，就是一张背景图，然后上面加上一个悬浮的按钮。果然简单！不过按惯例，不可能这么简单。果然第二天就说说加了个需求，需要在这个背景图底部继续增加两行，每行三个商品，需要统计点击和曝光事件。上报点击事件倒是简单，曝光则相对麻烦点。</p>
 <a id="more"></a>
 
-<p>ui 框架：为了统一 ui 框架，因此选择使用 antd-mobile。<br>打包：parceljs 在此前的项目中已经使用过很多次了，打包速度较 cra 快，且配置简单，因此拟用 parcel。<br>ts：多人项目还是上 ts，没什么好说的。<br>很快就搭建好 demo，接着就开始遇到一些问题。</p>
-<h5 id="antd-mobile-按需加载"><a href="#antd-mobile-按需加载" class="headerlink" title="antd-mobile 按需加载"></a>antd-mobile 按需加载</h5><p>antd-mobile 按需加载推荐使用 <a target="_blank" rel="noopener" href="https://github.com/ant-design/babel-plugin-import">babel-plugin-import</a></p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#x2F;&#x2F; .babelrc or babel-loader option
-&#123;
-  &quot;plugins&quot;: [
-    [&quot;import&quot;, &#123; &quot;libraryName&quot;: &quot;antd-mobile&quot;, &quot;style&quot;: &quot;css&quot; &#125;] &#x2F;&#x2F; &#96;style: true&#96; 会加载 less 文件
-  ]
+<p>正如 mdn 上所说的</p>
+<blockquote>
+<p>过去，相交检测通常要用到事件监听，并且需要频繁调用<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Element/getBoundingClientRect"><code>Element.getBoundingClientRect()</code></a> 方法以获取相关元素的边界信息。事件监听和调用 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Element/getBoundingClientRect"><code>Element.getBoundingClientRect()</code></a> 都是在主线程上运行，因此频繁触发、调用可能会造成性能问题。这种检测方法极其怪异且不优雅。</p>
+</blockquote>
+<p>因此如今的浏览器提供了 IntersectionObserver  这个 api ，每当被监视的元素进入或者退出另外一个元素时(或者 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Viewport">viewport</a> )，或者两个元素的相交部分大小发生变化时，该回调方法会被触发执行。</p>
+<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>在了解如何使用之前，作为开发者我们往往比较关心的一个问题是：这个 API 的兼容性如何？</p>
+<p>在 <a target="_blank" rel="noopener" href="https://caniuse.com/?search=IntersectionObserver%20%20">can i use</a> 上看到大部分的浏览器是支持的</p>
+<p><img src="https://i.loli.net/2021/04/15/SJXa9fkoCY1q3AE.png" alt="image.png"></p>
+<p>那有人就问了，如果老板就是要兼容 IE 呢 😂 </p>
+<p>幸好 IntersectionObserver  提供了 <a target="_blank" rel="noopener" href="https://github.com/w3c/IntersectionObserver/tree/main/polyfill">polyfill</a> ，我们只需要按照文档引入<code>polyfill</code> 就好了。简单瞄了一下 polyfill 源码应该就是回退到 getBoundingClientRect 方案。</p>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>原先的代码是原生 js 写的，后来（惯例）又加了一些 AB 实验等需求，索性改成 vue 写反而更快了，页面结构大致如下所示。</p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;img class&#x3D;&quot;bg-img&quot; :src&#x3D;&quot;bg-img&quot; &#x2F;&gt;
+    &lt;img
+      v-for&#x3D;&quot;product in productList&quot;
+      :key&#x3D;&quot;product.id&quot;
+      :src&#x3D;&quot;product.src&quot;
+      class&#x3D;&quot;product-img&quot;
+    &#x2F;&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;template&gt;</code></pre>
+
+<p>第一步，我们需要创建一个 observer</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; 声明当观察到元素进出视口时触发的回调函数
+const callback &#x3D; (changes) &#x3D;&gt; &#123;
+  changes.forEach(function(change) &#123;
+    &#x2F;&#x2F; el 即为我们观察的元素
+    const el &#x3D; change.target;
+      &#x2F;&#x2F; 上报曝光
+    console.log(&quot;exposure&quot;, change);
+      &#x2F;&#x2F; 取消观察
+    observer.unobserve(el);
+  &#125;);
+&#125;
+&#x2F;&#x2F; IntersectionObserver 可以接收两个参数，第二个参数 opt 可以定义容器（默认为视口）等配置,这里不展开讲，详细可看 mdn 文档
+const observer &#x3D; new IntersectionObserver(callback，opt || &#123;&#125;);</code></pre>
+
+<p>第二步，我们需要在页面初始化的时候观察。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">mounted() &#123;
+	[...document.querySelectorAll(&quot;.product-img&quot;)].forEach(item &#x3D;&gt; &#123;
+    observer.observe(item);
+  &#125;);	
 &#125;</code></pre>
 
-<p>此前 parcel 实际上内置支持了 ts，直接转成 es5 了，因此此前没有额外再配置 babel。<br>🤔 babel-plugin-import 只支持 es6 module 写法的代码，看来需要先把 ts 转成 es6 然后在通过 babel 转成 es5， 没问题，安排～ 于是：</p>
+<p>大功告成？no.</p>
+<h3 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h3><p>实际上如果这么写的话会有几个问题。</p>
 <ol>
-<li><p>新增 .babelrc</p>
+<li><p>首先就是我们一打开页面，就会发现触发所有的了上报曝光事件。这个问题就出在当我们 observe 的时候，就会触发一次回调，即使元素并没有进出视口。那么我们要做的就是判断元素是否在视口中即可，调整 callback</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; 声明当观察到元素进出视口时触发的回调函数
+const callback &#x3D; (changes) &#x3D;&gt; &#123;
+  changes.forEach(function(change) &#123;
+    &#x2F;&#x2F; el 即为我们观察的元素
+    const el &#x3D; change.target;
+    if (change.intersectionRatio &gt; 0) &#123;
+    	&#x2F;&#x2F; 上报曝光
+    	console.log(&quot;exposure&quot;, change);
+	    &#x2F;&#x2F; 取消观察
+  	  observer.unobserve(el);
+    &#125;
+  &#125;);
+&#125;
+&#x2F;&#x2F; IntersectionObserver 可以接收两个参数，第二个参数 opt 可以定义容器（默认为视口）等配置,这里不展开讲，详细可看 mdn 文档
+const observer &#x3D; new IntersectionObserver(callback，opt || &#123;&#125;);</code></pre>
+
+<p>通过 change.intersectionRatio 可以知道元素在视口中交叉的比例是多少，如果大于 0 则证明元素是在视口中，此时才需要曝光。</p>
 </li>
-<li><p>修改 tsconfig 的 module 为 <code>es6</code></p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-  &quot;compilerOptions&quot;: &#123;
-    &quot;module&quot;: &quot;ES6&quot;
+<li><p>经过上述的修改，我们打开页面再看，emmm… 还是一开始就把所有的元素曝光都上报了啊。让我们来看看曝光时 change 的一些属性</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#123;
+  &#x2F;&#x2F; ...其他一些属性
+  &#x2F;&#x2F; 交叉比例
+  intersectionRatio: 1
+  &#x2F;&#x2F; 目标元素的属性
+  boundingClientRect: &#123;
+    bottom: 0
+    height: 0
+    left: 0
+    right: 375
+    top: 0
+    width: 375
+    x: 0
+    y: 0
   &#125;
 &#125;</code></pre>
 
-<p>项目启动，没问题。但是 vscode 开始报错：</p>
+<p>可以看到 intersectionRatio = 1 即说明元素确确实实在视口中了，而 boundingClientRect 中的 height 表示当时元素的高度还是 0，再一看 y 也是 0。瞬间想到：mounted 的时候，图片都还没加载好，那么此时页面还没有撑开，自然所有的产品卡片都是在视口中！也就是说我们 observe 的时机不正确。那么正确的时机应该是在页面 onload 之后，而非在组件的 mounted 事件中。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">mounted() &#123;
+	window.addEventListener(&#39;load&#39;, function() &#123;
+    [...document.querySelectorAll(&quot;.product-img&quot;)].forEach(item &#x3D;&gt; &#123;
+  	  observer.observe(item);
+	  &#125;);
+  &#125;)
+&#125;</code></pre>
+
+<p>至此就可以正常上报曝光。</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>总结，IntersectionObserver 有如下几个优点：</p>
+<ol>
+<li>提供的 Api 友好，使用起来简单</li>
+<li>兼容性不错，并且提供了 polyfill</li>
+<li>性能方面浏览器做了相关优化</li>
+<li>适用性广泛，应用场景则包括上述的曝光埋点，图片懒加载，无限滚动等等</li>
+</ol>
 </li>
 </ol>
-<pre class="line-numbers language-tsx" data-language="tsx"><code class="language-tsx">import React from &#39;react&#39;
-&#x2F;&#x2F; Module &#39;&quot;&#x2F;node_modules&#x2F;@types&#x2F;react&#x2F;index&quot;&#39; can only be default-imported using the &#39;allowSyntheticDefaultImports&#39; flag</code></pre>
-
-<p>根本原因是由于 react 导出如下：</p>
-<pre class="line-numbers language-js" data-language="js"><code class="language-js">module.exports &#x3D; require(&#39;react.development.js&#39;)</code></pre>
-
-<p>而非</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">module.exports.default &#x3D; require(&#39;react.development.js&#39;)</code></pre>
-
-<p>Babel 会在 commonjs 格式添加 default 导出，那我们要做的就是让 ts 不要提示这种类型的报错：</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-  &quot;compilerOptions&quot;: &#123;
-    &quot;allowSyntheticDefaultImports&quot;: true
-    &#x2F;&#x2F; ...
-  &#125;
-&#125;</code></pre>
-
-<p>🤔 不过为什么一开始 parcel 不会报错呢？</p>
-<p>接下来路由动态引入组件开始报错：</p>
-<pre class="line-numbers language-tsx" data-language="tsx"><code class="language-tsx">import React, &#123; Suspense, lazy &#125; from &#39;react&#39;
-
-const List &#x3D; lazy(() &#x3D;&gt; import(&#39;.&#x2F;modules&#x2F;List&#39;))
-&#x2F;&#x2F; Dynamic imports are only supported when the &#39;--module&#39; flag is set to &#39;es2020&#39;, &#39;esnext&#39;, &#39;commonjs&#39;, &#39;amd&#39;, &#39;system&#39;, or &#39;umd&#39;.</code></pre>
-
-<p>看来 <code>es6</code> 是不支持 import() 语法, 那好办，将 module 改成 <code>esnext</code>：</p>
-<pre class="line-numbers language-none"><code class="language-none">&#123;
-	&quot;compilerOptions&quot;: &#123;
-    &quot;module&quot;: &quot;ESNext&quot;,
-  &#125;
-&#125;</code></pre>
-
-<p>接下来引入 anti-mobile 组件</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">import &#123; List &#125; from &#39;antd-mobile&#39;
-&#x2F;&#x2F; Cannot find module &#39;antd-mobile&#39; or its corresponding type declarations.</code></pre>
-
-<p>此时提示找不到对应的模块声明， 此时我的内心是崩溃的，看起来应该是模块解析路径不对，因此在 tsconfig 中显式配置 <code>moduleResolution</code>:</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-  &quot;compilerOptions&quot;: &#123;
-    &quot;moduleResolution&quot;: &quot;Node&quot;
-    &#x2F;&#x2F; ...
-  &#125;
-&#125;</code></pre>
-
-<p>不再报错了，看看 ts 文档的解释吧，ts 共有两种可用的模块解析策略：<a target="_blank" rel="noopener" href="https://www.tslang.cn/docs/handbook/module-resolution.html#node">Node</a>和<a target="_blank" rel="noopener" href="https://www.tslang.cn/docs/handbook/module-resolution.html#classic">Classic</a></p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">module &#x3D;&#x3D;&#x3D; &quot;AMD&quot; or &quot;System&quot; or &quot;ES6&quot; ? &quot;Classic&quot; : &quot;Node&quot;</code></pre>
-
-<p>🤔 按理说 module 为 esnext 的话岂不是应该按 node 策略解析？但是目前看来似乎不是这样的？</p>
-<h5 id="配置-antd-mobile-主题"><a href="#配置-antd-mobile-主题" class="headerlink" title="配置 antd-mobile 主题"></a>配置 antd-mobile 主题</h5><p>接下来需要配置主题，anti-mobile 推荐使用 <a target="_blank" rel="noopener" href="http://lesscss.org/usage/#using-less-in-the-browser-modify-variables">modifyVars</a> 来配置主题。<br>将 .babelrc 改成做一下调整：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#123;
-    ...
-    &quot;plugins&quot;: [
-        [&quot;import&quot;, &#123;&quot;libraryName&quot;: &quot;antd-mobile&quot;, &quot;style&quot;: true&#125;],
-        ...
-    ]
-&#125;</code></pre>
-
-<p>按照 webpack 的经验，此时需要开启 <code>javascriptEnabled: true</code>问题来了 parcel 内置支持 less ，那我们要在哪里去配置 less 呢？根据 <a target="_blank" rel="noopener" href="https://github.com/parcel-bundler/parcel/issues/907">issue</a> 提到可以用 .lessrc 文件来配置，但是我经过尝试发现其实是无效的。。<br>至此基本放弃 parcel。parcel 在快速搭建实验性项目时确实有一定的优势，不过生态确实不如 webpack，由此转向使用 create-react-app</p>
-<h5 id="create-react-app"><a href="#create-react-app" class="headerlink" title="create-react-app"></a>create-react-app</h5><p>使用 cra 很快也建好 demo，解决如何让 cra 创建的项目支持 less ，这个简单：<br>通过 <code>customize-cra</code> 提供的 <code>addLessLoader</code> 方法即可，同时也提供了 <code>fixBabelImports</code> 可以很方便的添加 babel-plugin-import 配置：</p>
-<pre class="line-numbers language-js" data-language="js"><code class="language-js">const &#123; override, fixBabelImports, addLessLoader &#125; &#x3D; require(&#39;customize-cra&#39;)
-
-module.exports &#x3D; override(
-  fixBabelImports(&#39;import&#39;, &#123;
-    libraryName: &#39;antd-mobile&#39;,
-    style: true,
-  &#125;),
-  addLessLoader(&#123;
-    lessOptions: &#123;
-      javascriptEnabled: true,
-      modifyVars: &#123;
-        &#39;@brand-primary&#39;: &#39;#ff74b9&#39;,
-        &#39;brand-primary-tap&#39;: &#39;#ff9cca&#39;,
-      &#125;,
-    &#125;,
-  &#125;)
-)</code></pre>
-
-<h5 id="别名"><a href="#别名" class="headerlink" title="别名"></a>别名</h5><p>接着是配置路径别名遇到的问题，通过 <code>customize-cra</code> 提供的 <code>addWebpackAlias</code> 可以配置别名，但是 typescript 一直无法解析对应别名，那么应该只需要配置好 ts 的 paths 就行了吧：</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-  &quot;compilerOptions&quot;: &#123;
-    &quot;baseUrl&quot;: &quot;.&quot;,
-    &quot;paths&quot;: &#123;
-      &quot;@&#x2F;*&quot;: [&quot;.&#x2F;src&#x2F;*&quot;]
-    &#125;
-    &#x2F;&#x2F; ...
-  &#125;
-&#125;</code></pre>
-
-<p>vscode 不再报错了,接下来就是见证奇迹的时刻了<code>npm run start</code>：<br>控制台显示 <code>- compilerOptions.paths must not be set (aliased imports are not supported)</code> 并且 cra 会自动把 tscongfig 中的 paths 移除掉 😂<br>根据 <a target="_blank" rel="noopener" href="https://github.com/timarney/react-app-rewired/issues/375">issue</a>，使用将 baseUrl 和 paths 的配置移动到单独的文件后，在 tsconfig 里通过 extends 的方式继承，虽然控制台依然提示错误，但是别名可以生效。</p>
-<h5 id="mini-css-extract-plugin"><a href="#mini-css-extract-plugin" class="headerlink" title="mini-css-extract-plugin"></a>mini-css-extract-plugin</h5><p>在 build 时，mini-css-extract-plugin 提示 Conflicting order， 错误位置在 antd-mobile 的样式文件。根据 <a target="_blank" rel="noopener" href="https://github.com/ant-design/ant-design/issues/14895">issue</a> 以及 <a target="_blank" rel="noopener" href="https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250"> issue </a>看来这个问题主要是由于懒加载加上 antd 组件导入顺序不一致导致的，目前看来无需解决。</p>
 
     </div>
 
@@ -462,11 +450,11 @@ module.exports &#x3D; override(
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="prev" title="inversify 初体验">
+                  <i class="fa fa-chevron-left"></i> inversify 初体验
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/07/21/RN%20%E9%81%BF%E5%9D%91%E6%8C%87%E5%8C%97/" rel="next" title="RN 避坑指北">
-                  RN 避坑指北 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

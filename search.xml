@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>利用 IntersectionObserver 做曝光埋点</title>
+      <link href="/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/"/>
+      <url>/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/</url>
+      
+        <content type="html"><![CDATA[<p>前些天接了个紧急的简单需求，有多简单呢，就是一张背景图，然后上面加上一个悬浮的按钮。果然简单！不过按惯例，不可能这么简单。果然第二天就说说加了个需求，需要在这个背景图底部继续增加两行，每行三个商品，需要统计点击和曝光事件。上报点击事件倒是简单，曝光则相对麻烦点。</p><a id="more"></a><p>正如 mdn 上所说的</p><blockquote><p>过去，相交检测通常要用到事件监听，并且需要频繁调用<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Element/getBoundingClientRect"><code>Element.getBoundingClientRect()</code></a> 方法以获取相关元素的边界信息。事件监听和调用 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Element/getBoundingClientRect"><code>Element.getBoundingClientRect()</code></a> 都是在主线程上运行，因此频繁触发、调用可能会造成性能问题。这种检测方法极其怪异且不优雅。</p></blockquote><p>因此如今的浏览器提供了 IntersectionObserver  这个 api ，每当被监视的元素进入或者退出另外一个元素时(或者 <a href="https://developer.mozilla.org/en-US/docs/Glossary/Viewport">viewport</a> )，或者两个元素的相交部分大小发生变化时，该回调方法会被触发执行。</p><h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>在了解如何使用之前，作为开发者我们往往比较关心的一个问题是：这个 API 的兼容性如何？</p><p>在 <a href="https://caniuse.com/?search=IntersectionObserver%20%20">can i use</a> 上看到大部分的浏览器是支持的</p><p><img src="https://i.loli.net/2021/04/15/SJXa9fkoCY1q3AE.png" alt="image.png"></p><p>那有人就问了，如果老板就是要兼容 IE 呢 😂 </p><p>幸好 IntersectionObserver  提供了 <a href="https://github.com/w3c/IntersectionObserver/tree/main/polyfill">polyfill</a> ，我们只需要按照文档引入<code>polyfill</code> 就好了。简单瞄了一下 polyfill 源码应该就是回退到 getBoundingClientRect 方案。</p><h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>原先的代码是原生 js 写的，后来（惯例）又加了一些 AB 实验等需求，索性改成 vue 写反而更快了，页面结构大致如下所示。</p><pre class="line-numbers language-html" data-language="html"><code class="language-html">&lt;template&gt;  &lt;div&gt;    &lt;img class&#x3D;&quot;bg-img&quot; :src&#x3D;&quot;bg-img&quot; &#x2F;&gt;    &lt;img      v-for&#x3D;&quot;product in productList&quot;      :key&#x3D;&quot;product.id&quot;      :src&#x3D;&quot;product.src&quot;      class&#x3D;&quot;product-img&quot;    &#x2F;&gt;  &lt;&#x2F;div&gt;&lt;&#x2F;template&gt;</code></pre><p>第一步，我们需要创建一个 observer</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; 声明当观察到元素进出视口时触发的回调函数const callback &#x3D; (changes) &#x3D;&gt; &#123;  changes.forEach(function(change) &#123;    &#x2F;&#x2F; el 即为我们观察的元素    const el &#x3D; change.target;      &#x2F;&#x2F; 上报曝光    console.log(&quot;exposure&quot;, change);      &#x2F;&#x2F; 取消观察    observer.unobserve(el);  &#125;);&#125;&#x2F;&#x2F; IntersectionObserver 可以接收两个参数，第二个参数 opt 可以定义容器（默认为视口）等配置,这里不展开讲，详细可看 mdn 文档const observer &#x3D; new IntersectionObserver(callback，opt || &#123;&#125;);</code></pre><p>第二步，我们需要在页面初始化的时候观察。</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">mounted() &#123;[...document.querySelectorAll(&quot;.product-img&quot;)].forEach(item &#x3D;&gt; &#123;    observer.observe(item);  &#125;);&#125;</code></pre><p>大功告成？no.</p><h3 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h3><p>实际上如果这么写的话会有几个问题。</p><ol><li><p>首先就是我们一打开页面，就会发现触发所有的了上报曝光事件。这个问题就出在当我们 observe 的时候，就会触发一次回调，即使元素并没有进出视口。那么我们要做的就是判断元素是否在视口中即可，调整 callback</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; 声明当观察到元素进出视口时触发的回调函数const callback &#x3D; (changes) &#x3D;&gt; &#123;  changes.forEach(function(change) &#123;    &#x2F;&#x2F; el 即为我们观察的元素    const el &#x3D; change.target;    if (change.intersectionRatio &gt; 0) &#123;    &#x2F;&#x2F; 上报曝光    console.log(&quot;exposure&quot;, change);    &#x2F;&#x2F; 取消观察    observer.unobserve(el);    &#125;  &#125;);&#125;&#x2F;&#x2F; IntersectionObserver 可以接收两个参数，第二个参数 opt 可以定义容器（默认为视口）等配置,这里不展开讲，详细可看 mdn 文档const observer &#x3D; new IntersectionObserver(callback，opt || &#123;&#125;);</code></pre><p>通过 change.intersectionRatio 可以知道元素在视口中交叉的比例是多少，如果大于 0 则证明元素是在视口中，此时才需要曝光。</p></li><li><p>经过上述的修改，我们打开页面再看，emmm… 还是一开始就把所有的元素曝光都上报了啊。让我们来看看曝光时 change 的一些属性</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">&#123;  &#x2F;&#x2F; ...其他一些属性  &#x2F;&#x2F; 交叉比例  intersectionRatio: 1  &#x2F;&#x2F; 目标元素的属性  boundingClientRect: &#123;    bottom: 0    height: 0    left: 0    right: 375    top: 0    width: 375    x: 0    y: 0  &#125;&#125;</code></pre><p>可以看到 intersectionRatio = 1 即说明元素确确实实在视口中了，而 boundingClientRect 中的 height 表示当时元素的高度还是 0，再一看 y 也是 0。瞬间想到：mounted 的时候，图片都还没加载好，那么此时页面还没有撑开，自然所有的产品卡片都是在视口中！也就是说我们 observe 的时机不正确。那么正确的时机应该是在页面 onload 之后，而非在组件的 mounted 事件中。</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">mounted() &#123;window.addEventListener(&#39;load&#39;, function() &#123;    [...document.querySelectorAll(&quot;.product-img&quot;)].forEach(item &#x3D;&gt; &#123;    observer.observe(item);  &#125;);  &#125;)&#125;</code></pre><p>至此就可以正常上报曝光。</p><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>总结，IntersectionObserver 有如下几个优点：</p><ol><li>提供的 Api 友好，使用起来简单</li><li>兼容性不错，并且提供了 polyfill</li><li>性能方面浏览器做了相关优化</li><li>适用性广泛，应用场景则包括上述的曝光埋点，图片懒加载，无限滚动等等</li></ol></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>inversify 初体验</title>
       <link href="/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/"/>
       <url>/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
