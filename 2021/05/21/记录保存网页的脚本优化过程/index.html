@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="近期为了看文章开了网站会员，想把内容保存到本地，以便后续回顾，为此写了个脚本，记录一下思考的过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录保存网页的脚本优化过程">
+<meta property="og:url" content="https://knighd.gitee.io/2021/05/21/%E8%AE%B0%E5%BD%95%E4%BF%9D%E5%AD%98%E7%BD%91%E9%A1%B5%E7%9A%84%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="近期为了看文章开了网站会员，想把内容保存到本地，以便后续回顾，为此写了个脚本，记录一下思考的过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-21T01:17:16.000Z">
+<meta property="article:modified_time" content="2021-05-21T06:10:35.498Z">
+<meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="爬虫">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://knighd.gitee.io/2021/05/21/%E8%AE%B0%E5%BD%95%E4%BF%9D%E5%AD%98%E7%BD%91%E9%A1%B5%E7%9A%84%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>记录保存网页的脚本优化过程 | 前端见闻录</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">前端见闻录</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Goodbye World</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80"><span class="nav-number">1.</span> <span class="nav-text">方案一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C"><span class="nav-number">2.</span> <span class="nav-text">方案二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%89"><span class="nav-number">3.</span> <span class="nav-text">方案三</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E5%9B%9B"><span class="nav-number">4.</span> <span class="nav-text">方案四</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%961"><span class="nav-number">6.</span> <span class="nav-text">优化1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%962"><span class="nav-number">7.</span> <span class="nav-text">优化2</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jay Day"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jay Day</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/05/21/%E8%AE%B0%E5%BD%95%E4%BF%9D%E5%AD%98%E7%BD%91%E9%A1%B5%E7%9A%84%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记录保存网页的脚本优化过程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-05-21 09:17:16 / 修改时间：14:10:35" itemprop="dateCreated datePublished" datetime="2021-05-21T09:17:16+08:00">2021-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>近期为了看文章开了网站会员，想把内容保存到本地，以便后续回顾，为此写了个脚本，记录一下思考的过程</p>
+<a id="more"></a>
+
+<h3 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h3><p>长截图，然而一方面，长截图效果不太好，保存下来是图片，文字也不能选中，而且操作也麻烦。</p>
+<h3 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h3><p>chrome dev tool 提供了 capture snapshot 的功能，可以全屏长截图，或者是对节点进行截图。功能虽好，但依然存在手动的麻烦，并且存下来还是图片</p>
+<h3 id="方案三"><a href="#方案三" class="headerlink" title="方案三"></a>方案三</h3><p>使用 html2pdf，将网页存成 pdf。<a target="_blank" rel="noopener" href="https://github.com/eKoopmans/html2pdf.js">html2pdf</a> 实际上依赖了 <a target="_blank" rel="noopener" href="https://github.com/niklasvh/html2canvas">html2canvas</a> 与 <a target="_blank" rel="noopener" href="https://github.com/MrRio/jsPDF">jsPDF</a></p>
+<p>存在几个问题：</p>
+<ol>
+<li>原网页做了特殊处理，导致绘制 canvas 时不能正确还原展示样式</li>
+<li>保存成 pdf 时 page-breaks 配置无效，导致文本从中间被断开</li>
+<li>pdf 实际上也是插入 cavans，所以实际体验和图片差不多</li>
+<li>文章中的图片绘制到 canvas 时，会跨域导致无法绘制，需要将 img 标签里的 src 转成 object url 或者 base64</li>
+</ol>
+<p>代码如下</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">var imgs &#x3D; document.querySelectorAll(&#39;img&#39;)
+
+for (let i &#x3D; 0; i &lt; imgs.length; i++) &#123;
+  var img &#x3D; imgs[i]
+  await fetch(new Request(img.src))
+    .then((response) &#x3D;&gt; response.blob())
+    .then(function (myBlob) &#123;
+      var objectURL &#x3D; URL.createObjectURL(myBlob)
+      &#x2F;&#x2F; 将 img 转为 objectURL, 防止跨域
+      img.src &#x3D; objectURL
+    &#125;)
+&#125;
+
+function addScript(url) &#123;
+  var script &#x3D; document.createElement(&#39;script&#39;)
+  script.type &#x3D; &#39;application&#x2F;javascript&#39;
+  script.src &#x3D; url
+  document.head.appendChild(script)
+&#125;
+
+addScript(
+  &#39;https:&#x2F;&#x2F;raw.githack.com&#x2F;eKoopmans&#x2F;html2pdf&#x2F;master&#x2F;dist&#x2F;html2pdf.bundle.js&#39;
+)
+
+var pdfTitle &#x3D; document.querySelector(&#39;.title&#39;).innerText
+
+html2pdf()
+  .set(&#123;
+    filename: &#96;$&#123;pdfTitle&#125;.pdf&#96;,
+  &#125;)
+  .from(document.body)
+  .save()</code></pre>
+
+<h3 id="方案四"><a href="#方案四" class="headerlink" title="方案四"></a>方案四</h3><p>利用无头浏览器例如 <a target="_blank" rel="noopener" href="https://pptr.dev/">puppeteer</a> （以下简称 pptr）来生成 pdf。这个方案可以完美避开方案三的问题，生成的 pdf 质量也是最好的。但是需要解决一个问题：登录问题。理想的方案是使用 pptr ，启动时即可实现登录，跳转到对应的文章，保存成 pdf。鉴于实现脚本登录的成本较大，将需求拆分，即登录是在 chrome 里手动完成的，之后将整个 html 保存为本地 html，pptr 读取本地 html 并转成 pdf 即可。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>思路</p>
+<ol>
+<li>网站有比较多影响阅读的元素，如目录，用户信息等，需要将这些元素移除，仅保留内容和样式。</li>
+<li>后台起一个 nodejs 搭建的本地服务，当处理完网页后，将整个 html 内容传输给服务器，服务器写入一个本地目录（这里我用 dist）保存起来</li>
+<li>将所有需要保存的文章都存到本地后，运行生成 pdf 脚本，这个脚本读取 dist 目录所有文件，启动 pptr，依次将内容作为网页打开，保存成 pdf</li>
+</ol>
+<p>上述就是第一个版本的做法</p>
+<p>本地服务 server 代码</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const Koa &#x3D; require(&#39;koa&#39;)
+const cors &#x3D; require(&#39;@koa&#x2F;cors&#39;)
+const bodyParser &#x3D; require(&#39;koa-bodyparser&#39;)
+const fs &#x3D; require(&#39;fs-extra&#39;)
+const path &#x3D; require(&#39;path&#39;)
+
+const app &#x3D; new Koa()
+&#x2F;&#x2F; 允许跨域
+app.use(
+  cors(&#123;
+    allowHeaders: &#39;*&#39;,
+  &#125;)
+)
+app.use(bodyParser())
+
+app.use(async (ctx) &#x3D;&gt; &#123;
+  &#x2F;&#x2F; 接收 &#123; html, title &#125; 参数
+  const &#123; title, html &#125; &#x3D; ctx.request.body
+  const dir &#x3D; path.join(__dirname, &#39;..&#x2F;dist&#x2F;&#39;)
+  try &#123;
+    await fs.ensureDir(dir)
+    &#x2F;&#x2F; 注意 title 如果带有 &#x2F; 会导致创建文件失败，将 &#x2F; 替换成 |
+    &#x2F;&#x2F; 将 title 作为文件名
+    await fs.writeFile(path.join(dir, &#96;$&#123;title.replace(&#39;&#x2F;&#39;, &#39;｜&#39;)&#125;.html&#96;), html)
+    ctx.body &#x3D; &#123; code: 200 &#125;
+  &#125; catch (error) &#123;
+    console.log(error)
+  &#125;
+&#125;)
+
+&#x2F;&#x2F; 服务端口 3000
+app.listen(3000)</code></pre>
+
+<p>网页登录后，在浏览器控制台输入如下 web,js 代码</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 主要内容部分
+var mainEle &#x3D; document.querySelector(&#39;.main&#39;)
+&#x2F;&#x2F; 文章标题
+var title &#x3D; document.querySelector(&#39;.title&#39;).innerText
+document
+  .querySelectorAll(&#39;script&#39;)
+  .forEach((s) &#x3D;&gt; s.remove())
+
+var body &#x3D; document.querySelector(&#39;body&#39;)
+&#x2F;&#x2F; 移除其他内容，仅保留主要内容
+body.innerHTML &#x3D; &#39;&#39;
+body.appendChild(mainEle)
+
+&#x2F;&#x2F; 通过 fetch 将 html 及 title 传给服务端
+await fetch(&#39;http:&#x2F;&#x2F;localhost:3000&#x2F;&#39;, &#123;
+  method: &#39;POST&#39;,
+  headers: &#123;
+    &#39;Content-Type&#39;: &#39;application&#x2F;json&#39;,
+  &#125;,
+  body: JSON.stringify(&#123;
+    title,
+    html: document.documentElement.outerHTML,
+  &#125;),
+&#125;)</code></pre>
+
+<p>pptr 脚本代码如下</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const puppeteer &#x3D; require(&#39;puppeteer&#39;)
+const path &#x3D; require(&#39;path&#39;)
+const fs &#x3D; require(&#39;fs-extra&#39;)
+
+;(async () &#x3D;&gt; &#123;
+  const dist &#x3D; path.resolve(__dirname, &#39;..&#x2F;dist&#39;)
+  const htmls &#x3D; await fs.readdir(dist)
+  &#x2F;&#x2F; 启动无头浏览器
+  const browser &#x3D; await puppeteer.launch()
+  &#x2F;&#x2F; 打开新页面
+  const page &#x3D; await browser.newPage()
+  for (let i &#x3D; 0; i &lt; htmls.length; i++) &#123;
+    &#x2F;&#x2F; 依次读取 html 文件
+    const html &#x3D; htmls[i]
+    var contentHtml &#x3D; await fs.readFile(path.join(dist, html), &#39;utf8&#39;)
+    &#x2F;&#x2F; 由于页面会有图片，&#123; &#39;waitUntil&#39;: &#39;networkidle0&#39; &#125; 即等待网络请求完成后
+    await page.setContent(contentHtml, &#123; &#39;waitUntil&#39;: &#39;networkidle0&#39; &#125;)
+    &#x2F;&#x2F; 生成 pdf 文件，注意这个 api 需要在 headless 模式下才能调用
+    await page.pdf(&#123; path: path.join(dist, html.replace(&#39;.html&#39;, &#39;.pdf&#39;)) &#125;)
+  &#125;
+ 	&#x2F;&#x2F; 关掉浏览器
+  await browser.close()
+&#125;)()</code></pre>
+
+<h3 id="优化1"><a href="#优化1" class="headerlink" title="优化1"></a>优化1</h3><p>由于 web,js 中的代码会修改网页，所以每次保存完成之后，需要刷新页面，点击下一页。这需要页面重新加载脚本，样式文件等。因此我们需要一个方法不去修改原网页，所幸，这里我们可以用 cloneNode 来复制整个网页的 dom 结构，这样我们就不用修改原来的 dom 了。</p>
+<p>web-v2.js 代码如下</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">var doc &#x3D; document.documentElement.cloneNode(true)
+&#x2F;&#x2F; ...</code></pre>
+
+<p>这里将 document 深拷贝，之后所有的操作都基于这个深拷贝，就不会影响到原页面</p>
+<h3 id="优化2"><a href="#优化2" class="headerlink" title="优化2"></a>优化2</h3><p>上述还有个问题就是需要手动点下一页，然后等待页面加载完成后，重新执行 web-v2.js 。这里也可以完全使用脚本来实现</p>
+<p>Web-v3.js</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">async function fetchWeb() &#123;
+  &#x2F;&#x2F; 深拷贝
+  var doc &#x3D; document.documentElement.cloneNode(true)
+  var body &#x3D; doc.querySelector(&#39;body&#39;)
+
+  var mainEle &#x3D; body.querySelector(&#39;.main&#39;)
+  &#x2F;&#x2F; 移除换行符号等特殊字符
+  var title &#x3D; body.querySelector(&#39;.title&#39;).innerText.replace(&#x2F;\s&#x2F;g, &#39;&#39;)
+
+  doc.querySelectorAll(&#39;script&#39;).forEach((s) &#x3D;&gt; s.remove())
+  body.innerHTML &#x3D; &#39;&#39;
+  body.appendChild(mainEle)
+
+  await fetch(&#39;http:&#x2F;&#x2F;localhost:3000&#x2F;&#39;, &#123;
+    method: &#39;POST&#39;,
+    headers: &#123;
+      &#39;Content-Type&#39;: &#39;application&#x2F;json&#39;,
+    &#125;,
+    body: JSON.stringify(&#123;
+      title,
+      html: doc.outerHTML,
+    &#125;),
+  &#125;)
+&#125;
+
+&#x2F;&#x2F; 延时函数
+async function sleep(time) &#123;
+  return new Promise((resolve) &#x3D;&gt; &#123;
+    setTimeout(() &#x3D;&gt; &#123;
+      resolve()
+    &#125;, time)
+  &#125;)
+&#125;
+
+&#x2F;&#x2F; 跳转下一页
+function next() &#123;
+  const btn &#x3D; document.querySelector(&#39;.next&#39;)
+  btn.click()
+&#125;
+
+&#x2F;&#x2F; total 为需要保存的页数
+async function fetchAll(total) &#123;
+  for (let i &#x3D; 0; i &lt; total; i++) &#123;
+    console.log(&#39;开始&#39;)
+    await fetchWeb()
+    &#x2F;&#x2F; 等待 1 s
+    await sleep(1000)
+    &#x2F;&#x2F; 点击下一页
+    next()
+    &#x2F;&#x2F; 等待 3s 页面基本都加载好了，这里其实可以做的更准确点，比如根据某个元素加载好后开始 fetchWeb
+    await sleep(3000)
+  &#125;
+&#125;</code></pre>
+
+<p>至此，只需要在浏览器控制台上输入 web-v3 脚本一次，然后运行</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; total 为需要保存的页面数量即可
+fetchAll(total)</code></pre>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%88%AC%E8%99%AB/" rel="tag"># 爬虫</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/05/17/RN-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8C%97/" rel="prev" title="RN 版本升级指北">
+                  <i class="fa fa-chevron-left"></i> RN 版本升级指北
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay Day</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">136k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:47</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
