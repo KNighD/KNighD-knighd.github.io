@@ -23,28 +23,33 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta property="og:type" content="website">
-<meta property="og:title" content="前端见闻录">
-<meta property="og:url" content="https://knighd.gitee.io/index.html">
+<meta name="description" content="上一篇中主要讲的是工程架构方面的，这篇主要讲一些细节实现 使用原生能力使用原生 api，如 wx.xxx，taro 将 wx 暴露的 api 集成到 @tarojs&#x2F;taro 中了 import Taro from &#39;@tarojs&#x2F;taro&#39; Taro.xxx  使用原生组件 taro 的文档讲的就相当模糊。这里我结合自己的场景，一个是用到直播插件, app 配置 &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小程序踩坑小记（二）">
+<meta property="og:url" content="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
 <meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="上一篇中主要讲的是工程架构方面的，这篇主要讲一些细节实现 使用原生能力使用原生 api，如 wx.xxx，taro 将 wx 暴露的 api 集成到 @tarojs&#x2F;taro 中了 import Taro from &#39;@tarojs&#x2F;taro&#39; Taro.xxx  使用原生组件 taro 的文档讲的就相当模糊。这里我结合自己的场景，一个是用到直播插件, app 配置 &amp;#">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-13T03:14:14.000Z">
+<meta property="article:modified_time" content="2021-08-13T03:16:07.564Z">
 <meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="小程序">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/">
+<link rel="canonical" href="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/">
 
 
 <script class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
-<title>前端见闻录</title>
+<title>小程序踩坑小记（二） | 前端见闻录</title>
   
 
 
@@ -169,7 +174,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -182,6 +187,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%94%9F%E8%83%BD%E5%8A%9B"><span class="nav-number">1.</span> <span class="nav-text">使用原生能力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mini-css-extract-plugin-%E7%BC%96%E8%AF%91%E8%AD%A6%E5%91%8A"><span class="nav-number">2.</span> <span class="nav-text">mini-css-extract-plugin 编译警告</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UUID"><span class="nav-number">3.</span> <span class="nav-text">UUID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%8C%85"><span class="nav-number">4.</span> <span class="nav-text">分包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1"><span class="nav-number">5.</span> <span class="nav-text">路由设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%99%BB%E5%BD%95"><span class="nav-number">6.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%83%8F%E7%B4%A0%E8%BE%B9%E6%A1%86"><span class="nav-number">7.</span> <span class="nav-text">一像素边框</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -238,16 +244,17 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -260,9 +267,9 @@
       <meta itemprop="name" content="前端见闻录">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="post-title-link" itemprop="url">小程序踩坑小记（二）</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          小程序踩坑小记（二）
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -286,6 +293,13 @@
     </span>
 
   
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
       </div>
       <div class="post-meta">
     <span class="post-meta-item" title="本文字数">
@@ -311,7 +325,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>上一篇中主要讲的是工程架构方面的，这篇主要讲一些细节实现</p>
+        <p>上一篇中主要讲的是工程架构方面的，这篇主要讲一些细节实现</p>
 <h4 id="使用原生能力"><a href="#使用原生能力" class="headerlink" title="使用原生能力"></a>使用原生能力</h4><p>使用原生 api，如 wx.xxx，taro 将 wx 暴露的 api 集成到 @tarojs/taro 中了</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">import Taro from &#39;@tarojs&#x2F;taro&#39;
 Taro.xxx</code></pre>
@@ -845,7 +859,6 @@ async function myRequest(config) &#123;
 
 <p>未完待续</p>
 
-      
     </div>
 
     
@@ -853,476 +866,21 @@ async function myRequest(config) &#123;
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
+          <div class="post-tags">
+              <a href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag"># 小程序</a>
+          </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" class="post-title-link" itemprop="url">小程序踩坑小记（三）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-08-13 11:13:36 / 修改时间：11:53:31" itemprop="dateCreated datePublished" datetime="2021-08-13T11:13:36+08:00">2021-08-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>上面一篇主要讲述了一些技术细节，这一篇主要来讲讲踩的坑以及单纯吐槽</p>
-<h4 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h4><ol>
-<li><p>ScrollView 中的 fixed 样式无效 / 出错。这个问题是在使用官方的拓展组件 mp-sticky 时发现的。mp-sticky 的原理是包裹组件滚动出视口时，将样式变为 fixed 实现的，但如果在 ScrollView 中会失效 / 表现异常等，如 <a target="_blank" rel="noopener" href="https://developers.weixin.qq.com/community/develop/doc/0004aeafeccb789ac219e474756000">https://developers.weixin.qq.com/community/develop/doc/0004aeafeccb789ac219e474756000</a> </p>
-</li>
-<li><p>fixed 可能会遇到层级错乱</p>
-</li>
-<li><p>wx.getMenuButtonBoundingClientRect() 偶现返回值为 0 的问题，一般是 ios 在重新进入小程序时会重现，见 <a target="_blank" rel="noopener" href="https://developers.weixin.qq.com/community/develop/doc/0006a49ba7cf4090feea00db350000?_at=1627380707469">https://developers.weixin.qq.com/community/develop/doc/0006a49ba7cf4090feea00db350000?_at=1627380707469</a> ，目前的做法是在监听路由 appLaunch 的时候，如果获取到的值为 0 则重新获取</p>
-</li>
-<li><p>提示运行环境加载失败，这个问题可能是开了代理或者内存不足导致的</p>
-</li>
-<li><p>ScrollView 组件中要定位到某个元素是通过 scrollIntoView 这个属性来实现的，这里就有个问题，不清楚原生小程序是否存在，即定位过一次之后，如果还想定位到相同的元素，由于 scrollIntoView 属性没有变化，则不会产生滚动。。想吐槽一下为什么这个不设计成类似 pageScrollTo 这样的 api ，而是用属性形式</p>
-</li>
-<li><p>开发者工具与真机调试的请求超时/ 无网络时 的errMsg不一致</p>
-</li>
-<li><p>getNetworkType 获取到的网络状态可能会有延迟</p>
-</li>
-<li><p>tabbar borderStytle 在 ios 13 上格外粗，只能自己去实现一个 tabbar </p>
-</li>
-<li><p>Taro 的 PageMeta 无法使用 <a target="_blank" rel="noopener" href="https://github.com/NervJS/taro/issues/6092">https://github.com/NervJS/taro/issues/6092</a></p>
-</li>
-<li><p>taro 中 dataset 的相关讨论 <a target="_blank" rel="noopener" href="https://github.com/NervJS/taro/issues/7313">https://github.com/NervJS/taro/issues/7313</a></p>
-</li>
-<li><p>intersectionObserver 是一个用于监控元素与视口（或者指定元素）相交情况的一个 api，在 web 上是非常好用的，然而到了小程序有如下限制，导致我一度想放弃该 api</p>
-<ol>
-<li><p>createIntersectionObserver 创建出来的 observer 只能 observe 一次，即使 observer disconnect 之后也是如此</p>
-</li>
-<li><p>observe 不能监听新增的元素（未测试 web 上是否如此），比如无限加载的列表，新增加进来的元素是无法被监听的，除非再次 observe ，然而小程序不允许同一个 observer 重复 observe</p>
-</li>
-<li><p>observe 接收的参数是选择器，例如 ‘.classname’ 这样的，这个我觉得既然是小程序里为什么不支持 ref？</p>
-</li>
-<li><p>注意 observe  的时机，需要在组件挂载之后，那么这个时间在 Taro 对应的是 useEffect 中的 nextTick 里</p>
-<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">useEffect(() &#x3D;&gt; &#123;
-  nextTick(() &#x3D;&gt; &#123;
-    observer.observe(&#39;.item&#39;, () &#x3D;&gt; &#123;
-      &#x2F;&#x2F; ...
-    &#125;)
-  &#125;)
-&#125;, []) </code></pre>
-</li>
-<li><p>通过 obsever 第二个参数是个回调，代表相交状态变化时要执行的回调，然而从这里获取到的信息比较少</p>
-<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">interface ObserveCallbackResult &#123;
-  &#x2F;** 目标边界 *&#x2F;
-  boundingClientRect: BoundingClientRectResult
-  &#x2F;** 相交比例 *&#x2F;
-  intersectionRatio: number
-  &#x2F;** 相交区域的边界 *&#x2F;
-  intersectionRect: IntersectionRectResult
-  &#x2F;** 参照区域的边界 *&#x2F;
-  relativeRect: RelativeRectResult
-  &#x2F;** 相交检测时的时间戳 *&#x2F;
-  time: number
-&#125;</code></pre>
-
-<p>额外信息只能带在 dataSet 中，如下</p>
-<pre class="line-numbers language-js" data-language="js"><code class="language-js">import &#123; document &#125; from &#39;@tarojs&#x2F;runtime&#39;;
-
-observer.observe(
-&#39;.item&#39;,
-  (res: IntersectionObserver.ObserveCallbackResult &amp; &#123; id: string &#125;) &#x3D;&gt; &#123;
-      const el &#x3D; document.getElementById(res.id);
-  		console.log(el.dataset)
-    &#125;
- &#125;);</code></pre>
-
-</li>
-</ol>
-<p>总之这个 api 在小程序上我觉得没有很符合预期。。</p>
-</li>
-</ol>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>这个项目历时一个多月，和小伙伴们将 rn 应用搬到小程序上，中间遇到种种问题。整体开发下来的体验就是小程序有一些比较方便的 api 同时也存在一些将原先 web 好用的地方魔改而产生的问题。</p>
-<p>后续计划是将小程序中的公用组件抽出来到公共库中，同时提供小程序脚手架以便别的业务线使用。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/06/15/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/06/15/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0/" class="post-title-link" itemprop="url">小程序踩坑小记（一）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-15 19:49:14" itemprop="dateCreated datePublished" datetime="2021-06-15T19:49:14+08:00">2021-06-15</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-08-13 11:18:21" itemprop="dateModified" datetime="2021-08-13T11:18:21+08:00">2021-08-13</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>9.7k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近公司将搁置了一年的将 RN 应用搬到小程序的计划提上议程，由此开始了这段时间的踩坑之旅。考虑到技术栈为 react，因此使用 tarojs 作为基础框架。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/06/15/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/05/27/%E5%85%B3%E4%BA%8E-webpack-%E7%9A%84-tree-shaking/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/05/27/%E5%85%B3%E4%BA%8E-webpack-%E7%9A%84-tree-shaking/" class="post-title-link" itemprop="url">关于 webpack 的 tree shaking</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-05-27 15:37:51" itemprop="dateCreated datePublished" datetime="2021-05-27T15:37:51+08:00">2021-05-27</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-06-02 11:03:12" itemprop="dateModified" datetime="2021-06-02T11:03:12+08:00">2021-06-02</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>9.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>15 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近重新翻看了下 ant design 的文档，发现这样一段话</p>
-<blockquote>
-<p><code>antd</code> 默认支持基于 ES modules 的 tree shaking，对于 js 部分，直接引入 <code>import &#123; Button &#125; from &#39;antd&#39;</code> 就会有按需加载的效果。</p>
-</blockquote>
-<p>而之前的版本要做到按需加载是通过 <a target="_blank" rel="noopener" href="https://github.com/ant-design/babel-plugin-import">babel-plugin-import</a> ，通过修改引用路径来实现的。</p>
-<p>虽然也知道 tree shaking，但没有深入去了解具体的配置。以下简单记录一下探索的过程，webpack 版本为 5.37.1。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/05/27/%E5%85%B3%E4%BA%8E-webpack-%E7%9A%84-tree-shaking/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" rel="prev" title="小程序踩坑小记（三）">
+                  <i class="fa fa-chevron-left"></i> 小程序踩坑小记（三）
+                </a>
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/05/21/%E8%AE%B0%E5%BD%95%E4%BF%9D%E5%AD%98%E7%BD%91%E9%A1%B5%E7%9A%84%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/05/21/%E8%AE%B0%E5%BD%95%E4%BF%9D%E5%AD%98%E7%BD%91%E9%A1%B5%E7%9A%84%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">记录保存网页的脚本优化过程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-05-21 09:17:16 / 修改时间：14:10:35" itemprop="dateCreated datePublished" datetime="2021-05-21T09:17:16+08:00">2021-05-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>近期为了看文章开了网站会员，想把内容保存到本地，以便后续回顾，为此写了个脚本，记录一下思考的过程</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/05/21/%E8%AE%B0%E5%BD%95%E4%BF%9D%E5%AD%98%E7%BD%91%E9%A1%B5%E7%9A%84%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E8%BF%87%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+            <div class="post-nav-item">
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          </div>
     </footer>
   </article>
 </div>
@@ -1330,488 +888,7 @@ observer.observe(
 
 
 
-    
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/05/17/RN-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8C%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/05/17/RN-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8C%97/" class="post-title-link" itemprop="url">RN 版本升级指北</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-05-17 09:17:22 / 修改时间：17:52:15" itemprop="dateCreated datePublished" datetime="2021-05-17T09:17:22+08:00">2021-05-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近客户端打算将 react-native 版本升级到 0.64.1，此前是 0.59 版本。中间踩了不少坑，记录一下升级过程。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/05/17/RN-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8C%97/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/" class="post-title-link" itemprop="url">利用 IntersectionObserver 做曝光埋点</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-04-15 11:05:58 / 修改时间：15:05:55" itemprop="dateCreated datePublished" datetime="2021-04-15T11:05:58+08:00">2021-04-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>前些天接了个紧急的简单需求，有多简单呢，就是一张背景图，然后上面加上一个悬浮的按钮。果然简单！不过按惯例，不可能这么简单。果然第二天就说说加了个需求，需要在这个背景图底部继续增加两行，每行三个商品，需要统计点击和曝光事件。上报点击事件倒是简单，曝光则相对麻烦点。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/" class="post-title-link" itemprop="url">inversify 初体验</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-04-01 11:39:04" itemprop="dateCreated datePublished" datetime="2021-04-01T11:39:04+08:00">2021-04-01</time>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>0</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/" class="post-title-link" itemprop="url">谈谈 styled-components</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-30 15:09:19" itemprop="dateCreated datePublished" datetime="2021-03-30T15:09:19+08:00">2021-03-30</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-02 15:39:41" itemprop="dateModified" datetime="2021-04-02T15:39:41+08:00">2021-04-02</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>早在刚开始接触 React 的时候就有听闻过 <code>css in js</code> 的理念，中间也简单使用过 <code>styled-components</code>，但用到最后总因为各种原因放弃。这次刚好心血来潮又想重新试试，同时记录一下从个人角度来看 <code>styled-components</code> 的优缺点，以便将来选型时作为参考之用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/30/%E8%B0%88%E8%B0%88%20styled-components/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/03/24/%E5%9C%A8-react-%E4%B8%AD%E4%BD%BF%E7%94%A8-rxjs/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/24/%E5%9C%A8-react-%E4%B8%AD%E4%BD%BF%E7%94%A8-rxjs/" class="post-title-link" itemprop="url">在 react 中使用 rxjs</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-24 22:42:15" itemprop="dateCreated datePublished" datetime="2021-03-24T22:42:15+08:00">2021-03-24</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-23 14:18:54" itemprop="dateModified" datetime="2021-04-23T14:18:54+08:00">2021-04-23</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>9.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>最近出于学习目的在临摹一个在线 ppt 的开源项目。原项目使用的是 vue3，我则打算用 react 来实现，同时玩一些暂时不会在工作中使用到的技术，比如 rxjs。本文用于记录在 react 中加入 rxjs 的过程，本人也是在学习过程中，因此以下仅为个人理解，并不代表最佳实践。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/24/%E5%9C%A8-react-%E4%B8%AD%E4%BD%BF%E7%94%A8-rxjs/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 <script>

@@ -23,21 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="背景电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，实现了一个 RN 瀑布流组件。这里只记录思路，具体代码后面添加了较多业">
+<meta name="description" content="上面一篇主要讲述了一些技术细节，这一篇主要来讲讲踩的坑以及单纯吐槽 踩过的坑 ScrollView 中的 fixed 样式无效 &#x2F; 出错。这个问题是在使用官方的拓展组件 mp-sticky 时发现的。mp-sticky 的原理是包裹组件滚动出视口时，将样式变为 fixed 实现的，但如果在 ScrollView 中会失效 &#x2F; 表现异常等，如 https:&#x2F;&#x2F;developers.weixin.qq">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RN瀑布流">
-<meta property="og:url" content="https://knighd.gitee.io/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/index.html">
+<meta property="og:title" content="小程序踩坑小记（三）">
+<meta property="og:url" content="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，实现了一个 RN 瀑布流组件。这里只记录思路，具体代码后面添加了较多业">
+<meta property="og:description" content="上面一篇主要讲述了一些技术细节，这一篇主要来讲讲踩的坑以及单纯吐槽 踩过的坑 ScrollView 中的 fixed 样式无效 &#x2F; 出错。这个问题是在使用官方的拓展组件 mp-sticky 时发现的。mp-sticky 的原理是包裹组件滚动出视口时，将样式变为 fixed 实现的，但如果在 ScrollView 中会失效 &#x2F; 表现异常等，如 https:&#x2F;&#x2F;developers.weixin.qq">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-20T14:24:12.000Z">
-<meta property="article:modified_time" content="2020-10-31T01:27:05.142Z">
+<meta property="article:published_time" content="2021-08-13T03:13:36.000Z">
+<meta property="article:modified_time" content="2021-08-13T03:53:31.389Z">
 <meta property="article:author" content="Jay Day">
-<meta property="article:tag" content="ReactNative">
+<meta property="article:tag" content="小程序">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/">
+<link rel="canonical" href="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">
 
 
 <script class="page-configurations">
@@ -49,7 +49,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>RN瀑布流 | 前端见闻录</title>
+<title>小程序踩坑小记（三） | 前端见闻录</title>
   
 
 
@@ -187,7 +187,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">思路</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="nav-number">1.</span> <span class="nav-text">踩过的坑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +255,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -268,7 +268,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          RN瀑布流
+          小程序踩坑小记（三）
         </h1>
 
         <div class="post-meta-container">
@@ -278,16 +278,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-10-20 22:24:12" itemprop="dateCreated datePublished" datetime="2020-10-20T22:24:12+08:00">2020-10-20</time>
+      <time title="创建时间：2021-08-13 11:13:36 / 修改时间：11:53:31" itemprop="dateCreated datePublished" datetime="2021-08-13T11:13:36+08:00">2021-08-13</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-31 09:27:05" itemprop="dateModified" datetime="2020-10-31T09:27:05+08:00">2020-10-31</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -313,14 +307,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1k</span>
+      <span>2.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -331,47 +325,77 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，实现了一个 RN 瀑布流组件。这里只记录思路，具体代码后面添加了较多业务相关的，就不贴了。</p>
-<a id="more"></a>
+        <p>上面一篇主要讲述了一些技术细节，这一篇主要来讲讲踩的坑以及单纯吐槽</p>
+<h4 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h4><ol>
+<li><p>ScrollView 中的 fixed 样式无效 / 出错。这个问题是在使用官方的拓展组件 mp-sticky 时发现的。mp-sticky 的原理是包裹组件滚动出视口时，将样式变为 fixed 实现的，但如果在 ScrollView 中会失效 / 表现异常等，如 <a target="_blank" rel="noopener" href="https://developers.weixin.qq.com/community/develop/doc/0004aeafeccb789ac219e474756000">https://developers.weixin.qq.com/community/develop/doc/0004aeafeccb789ac219e474756000</a> </p>
+</li>
+<li><p>fixed 可能会遇到层级错乱</p>
+</li>
+<li><p>wx.getMenuButtonBoundingClientRect() 偶现返回值为 0 的问题，一般是 ios 在重新进入小程序时会重现，见 <a target="_blank" rel="noopener" href="https://developers.weixin.qq.com/community/develop/doc/0006a49ba7cf4090feea00db350000?_at=1627380707469">https://developers.weixin.qq.com/community/develop/doc/0006a49ba7cf4090feea00db350000?_at=1627380707469</a> ，目前的做法是在监听路由 appLaunch 的时候，如果获取到的值为 0 则重新获取</p>
+</li>
+<li><p>提示运行环境加载失败，这个问题可能是开了代理或者内存不足导致的</p>
+</li>
+<li><p>ScrollView 组件中要定位到某个元素是通过 scrollIntoView 这个属性来实现的，这里就有个问题，不清楚原生小程序是否存在，即定位过一次之后，如果还想定位到相同的元素，由于 scrollIntoView 属性没有变化，则不会产生滚动。。想吐槽一下为什么这个不设计成类似 pageScrollTo 这样的 api ，而是用属性形式</p>
+</li>
+<li><p>开发者工具与真机调试的请求超时/ 无网络时 的errMsg不一致</p>
+</li>
+<li><p>getNetworkType 获取到的网络状态可能会有延迟</p>
+</li>
+<li><p>tabbar borderStytle 在 ios 13 上格外粗，只能自己去实现一个 tabbar </p>
+</li>
+<li><p>Taro 的 PageMeta 无法使用 <a target="_blank" rel="noopener" href="https://github.com/NervJS/taro/issues/6092">https://github.com/NervJS/taro/issues/6092</a></p>
+</li>
+<li><p>taro 中 dataset 的相关讨论 <a target="_blank" rel="noopener" href="https://github.com/NervJS/taro/issues/7313">https://github.com/NervJS/taro/issues/7313</a></p>
+</li>
+<li><p>intersectionObserver 是一个用于监控元素与视口（或者指定元素）相交情况的一个 api，在 web 上是非常好用的，然而到了小程序有如下限制，导致我一度想放弃该 api</p>
+<ol>
+<li><p>createIntersectionObserver 创建出来的 observer 只能 observe 一次，即使 observer disconnect 之后也是如此</p>
+</li>
+<li><p>observe 不能监听新增的元素（未测试 web 上是否如此），比如无限加载的列表，新增加进来的元素是无法被监听的，除非再次 observe ，然而小程序不允许同一个 observer 重复 observe</p>
+</li>
+<li><p>observe 接收的参数是选择器，例如 ‘.classname’ 这样的，这个我觉得既然是小程序里为什么不支持 ref？</p>
+</li>
+<li><p>注意 observe  的时机，需要在组件挂载之后，那么这个时间在 Taro 对应的是 useEffect 中的 nextTick 里</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">useEffect(() &#x3D;&gt; &#123;
+  nextTick(() &#x3D;&gt; &#123;
+    observer.observe(&#39;.item&#39;, () &#x3D;&gt; &#123;
+      &#x2F;&#x2F; ...
+    &#125;)
+  &#125;)
+&#125;, []) </code></pre>
+</li>
+<li><p>通过 obsever 第二个参数是个回调，代表相交状态变化时要执行的回调，然而从这里获取到的信息比较少</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript">interface ObserveCallbackResult &#123;
+  &#x2F;** 目标边界 *&#x2F;
+  boundingClientRect: BoundingClientRectResult
+  &#x2F;** 相交比例 *&#x2F;
+  intersectionRatio: number
+  &#x2F;** 相交区域的边界 *&#x2F;
+  intersectionRect: IntersectionRectResult
+  &#x2F;** 参照区域的边界 *&#x2F;
+  relativeRect: RelativeRectResult
+  &#x2F;** 相交检测时的时间戳 *&#x2F;
+  time: number
+&#125;</code></pre>
 
-<h4 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h4><ol>
-<li><p>支持上拉加载，下拉刷新</p>
-</li>
-<li><p>支持多列可定制</p>
-</li>
-<li><p>性能尽量好</p>
-</li>
-<li><p>自定义元素</p>
-</li>
-</ol>
-<h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><ol>
-<li><p>整个瀑布流通过 FlatList 来实现，通过设置 columnsNum 与 renderItem，将每一列又分别渲染成一个 FlatList。内层并列的 FlatList 将会撑开且不会产生多余的滚动条，滚动时是外层的 FlatList。</p>
-</li>
-<li><p>接收 data 时，判断每一项应该属于哪一列， 如果项的高度不能提前获得，那么要在项的 onLayout 时获取高度，之后判断下一项属于哪一列</p>
-</li>
-<li><p>下拉采用 RN 提供的 RefreshControl 就可以完成，而上拉的事件，单列表可以通过 onReachEnd 触发，而对于我们这种实现方式则只能通过 onScroll 自行判断是否到达底部</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 由于 onEndReached 在渲染 data 项时会多次触发，且 props 及 state 未变化时不会触发，因此自行实现
-const handleScroll &#x3D; (event: NativeSyntheticEvent&lt;NativeScrollEvent&gt;) &#x3D;&gt; &#123;
-  const &#123;
-    nativeEvent: &#123;
-      contentOffset: &#123; y: scrollTop &#125;,
-      contentSize: &#123; height: scrollHeight &#125;,
-      layoutMeasurement: &#123; height &#125;,
-    &#125;,
-  &#125; &#x3D; event;
-  if (scrollHeight - height - scrollTop &lt;&#x3D; onEndReachedThreshold) &#123;
-    if (onEndReached) &#123;
-      onEndReached(event);
+<p>额外信息只能带在 dataSet 中，如下</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">import &#123; document &#125; from &#39;@tarojs&#x2F;runtime&#39;;
+
+observer.observe(
+&#39;.item&#39;,
+  (res: IntersectionObserver.ObserveCallbackResult &amp; &#123; id: string &#125;) &#x3D;&gt; &#123;
+      const el &#x3D; document.getElementById(res.id);
+  		console.log(el.dataset)
     &#125;
-  &#125;
-  if (props.onScroll) &#123;
-    props.onScroll(event);
-  &#125;
-&#125;;</code></pre>
+ &#125;);</code></pre>
 
 </li>
 </ol>
-<p>这样一个简单的 瀑布流就完成了。</p>
+<p>总之这个 api 在小程序上我觉得没有很符合预期。。</p>
+</li>
+</ol>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>这个项目历时一个多月，和小伙伴们将 rn 应用搬到小程序上，中间遇到种种问题。整体开发下来的体验就是小程序有一些比较方便的 api 同时也存在一些将原先 web 好用的地方魔改而产生的问题。</p>
+<p>后续计划是将小程序中的公用组件抽出来到公共库中，同时提供小程序脚手架以便别的业务线使用。</p>
 
     </div>
 
@@ -381,20 +405,20 @@ const handleScroll &#x3D; (event: NativeSyntheticEvent&lt;NativeScrollEvent&gt;)
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/ReactNative/" rel="tag"># ReactNative</a>
+              <a href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag"># 小程序</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/09/22/react-native-%E9%80%9A%E8%AE%AF%E5%BD%95%E5%AD%97%E6%AF%8D%E5%88%97%E8%A1%A8/" rel="prev" title="react-native 通讯录字母列表">
-                  <i class="fa fa-chevron-left"></i> react-native 通讯录字母列表
+                <a href="/2021/06/15/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0/" rel="prev" title="小程序踩坑小记（一）">
+                  <i class="fa fa-chevron-left"></i> 小程序踩坑小记（一）
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/10/30/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" rel="next" title="VSCode merge-diffs 插件开发">
-                  VSCode merge-diffs 插件开发 <i class="fa fa-chevron-right"></i>
+                <a href="/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" rel="next" title="小程序踩坑小记（二）">
+                  小程序踩坑小记（二） <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
