@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>nextjs 初体验</title>
+      <link href="/2021/08/20/nextjs-%E5%88%9D%E4%BD%93%E9%AA%8C/"/>
+      <url>/2021/08/20/nextjs-%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
+      
+        <content type="html"><![CDATA[<p>最近有个项目转到我这里维护，项目基于 nextjs，刚好之前只有耳闻，未尝使用过，这里简单记录一下。</p><a id="more"></a><p> 接手过来的时候项目没有添加 eslint，查看文档后发现添加 eslint 比较简单</p><pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">npm i eslint eslint-config-next -D&#x2F;&#x2F; .eslintrc.json&#123;  &quot;extends&quot;: &quot;next&quot;&#125;</code></pre><p>本次有个调整需要引入一个新的 npm，麻烦就来了。</p><p>首先是 next.js 默认不编译 node_modules，具体查看 <a href="https://github.com/vercel/next.js/issues/706。解决办法是添加">https://github.com/vercel/next.js/issues/706。解决办法是添加</a> <code>next-transpile-modules</code></p><pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">const withTM &#x3D; require(&#39;next-transpile-modules&#39;)([&#39;package-need-transpile&#39;]);module.exports &#x3D; withTM(&#123;  &#x2F;&#x2F; ...  webpack5: false,&#125;);</code></pre><p>项目不是 webpack5，因此置为 false</p><p>接着，nextjs 提示我第三方库引入了全局 css。具体查看 <a href="https://github.com/fullcalendar/fullcalendar/issues/5393。解决办法我这里就比较粗暴了，fork">https://github.com/fullcalendar/fullcalendar/issues/5393。解决办法我这里就比较粗暴了，fork</a> 出一份第三方库，将里面的全局样式注释掉。</p><p>接着，nextjs 提示入门必提示的 window is not defined，这是由于 node 环境还不存在 window。</p><p>这时候有几个解决方案:</p><ol><li>在 didMount / useEffect 中使用 window</li><li>如果是引入组件，那么通过 <code>next/dynamic</code> 引入, 且设置 ssr 为 false</li><li>判断 typeof window !== “undefined” 再使用 window</li></ol><p>按上述的方法解决完之后，代码运行，看似没啥问题了。打包，大功告成？等等，又出现了 window is not defined，打包失败。可是我在 dev 的时候确实是编译成功了且没有报错啊。查看提示发现原来是引入的包中使用到了 window</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">const MyNoSsrCom &#x3D; dynamic(() &#x3D;&gt; import(&#39;.&#x2F;MyCom&#39;), &#123; ssr: false &#125;)&#x2F;&#x2F; MyCom.jsximport &#123; sometool &#125; from &#39;my-package&#39;&#x2F;&#x2F; ...&#x2F;&#x2F; my-package.js&#x2F;&#x2F; 使用到了 windowwindow.xxxx</code></pre><p>这种情况虽然在 dev 是可以的，然而 build 的时候却会报错，原因不详</p><p>无奈，只能做如下处理</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; MyCom.jsxconst &#123;sometool &#125; &#x3D; typeof &#39;window&#39; &#x3D;&#x3D;&#x3D; undefined ? &#123;&#125; : require(&#39;my-package&#39;)&#x2F;&#x2F; ...</code></pre><p>看似没啥问题了，再次 build，依然还是失败了。这次提示 pages 下有文件没有默认导出 react 组件，仔细一看正是我 fork 出来的包文件。不知道为什么将这个文件判断成 react 组件，估计是因为其中存在 Class？只好添加一个默认导出</p><p>至此大功告成，但我却陷入怀疑，这个项目本身并没有太多 seo 的痕迹/需求，也只是一个页面，按道理没有首屏幕渲染之类的问题，为什么强行上了个 nextjs，代码中处处都要  <code>typeof &#39;window&#39; === undefined</code> 这真的好吗？</p><p>也许是还没有更深入去了解 nextjs，才会有上述见解。但起码对普通的项目于我而言大概率是不会再有 next 了吧。。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> react </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>小程序踩坑小记（三）</title>
       <link href="/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/"/>
       <url>/2021/08/13/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B8%A9%E5%9D%91%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</url>
