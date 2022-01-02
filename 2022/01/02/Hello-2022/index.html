@@ -23,21 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="背景最近安全部门的小伙伴提了一个前端安全的漏洞，想到前端开发过程中有时候往往追求开发效率，忽略掉一些安全问题，以下简单总结一些自己遇到过的以及一些常见的攻击手段，以自查自省。">
+<meta name="description" content="2021 的经历的事情太多，留下的遗憾太多，是时候总结一下，再立一下 2022 Flag">
 <meta property="og:type" content="article">
-<meta property="og:title" content="前端常见的安全问题汇总">
-<meta property="og:url" content="https://knighd.gitee.io/2020/07/23/%E5%89%8D%E7%AB%AF%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="Hello 2022">
+<meta property="og:url" content="https://knighd.gitee.io/2022/01/02/Hello-2022/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景最近安全部门的小伙伴提了一个前端安全的漏洞，想到前端开发过程中有时候往往追求开发效率，忽略掉一些安全问题，以下简单总结一些自己遇到过的以及一些常见的攻击手段，以自查自省。">
+<meta property="og:description" content="2021 的经历的事情太多，留下的遗憾太多，是时候总结一下，再立一下 2022 Flag">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-23T07:16:13.000Z">
-<meta property="article:modified_time" content="2020-12-14T02:31:57.330Z">
+<meta property="article:published_time" content="2022-01-02T04:27:05.000Z">
+<meta property="article:modified_time" content="2022-01-02T09:41:10.668Z">
 <meta property="article:author" content="Jay Day">
-<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="随想">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/2020/07/23/%E5%89%8D%E7%AB%AF%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+<link rel="canonical" href="https://knighd.gitee.io/2022/01/02/Hello-2022/">
 
 
 <script class="page-configurations">
@@ -49,7 +49,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>前端常见的安全问题汇总 | 前端见闻录</title>
+<title>Hello 2022 | 前端见闻录</title>
   
 
 
@@ -187,7 +187,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#XSS"><span class="nav-number">2.</span> <span class="nav-text">XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CSRF"><span class="nav-number">3.</span> <span class="nav-text">CSRF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Iframe"><span class="nav-number">4.</span> <span class="nav-text">Iframe</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#opener"><span class="nav-number">5.</span> <span class="nav-text">opener</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.1.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">技术总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text">小程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#monorepo"><span class="nav-number">1.2.</span> <span class="nav-text">monorepo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AE%E5%89%8D%E7%AB%AF"><span class="nav-number">1.3.</span> <span class="nav-text">微前端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vite"><span class="nav-number">1.4.</span> <span class="nav-text">vite</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Rust"><span class="nav-number">1.5.</span> <span class="nav-text">Rust</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#React-%E5%8E%9F%E7%90%86"><span class="nav-number">1.6.</span> <span class="nav-text">React 原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB"><span class="nav-number">1.7.</span> <span class="nav-text">技术分享</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%8E%86"><span class="nav-number">2.</span> <span class="nav-text">经历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flag"><span class="nav-number">3.</span> <span class="nav-text">flag</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +255,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/07/23/%E5%89%8D%E7%AB%AF%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/01/02/Hello-2022/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -268,7 +268,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          前端常见的安全问题汇总
+          Hello 2022
         </h1>
 
         <div class="post-meta-container">
@@ -278,16 +278,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-07-23 15:16:13" itemprop="dateCreated datePublished" datetime="2020-07-23T15:16:13+08:00">2020-07-23</time>
+      <time title="创建时间：2022-01-02 12:27:05 / 修改时间：17:41:10" itemprop="dateCreated datePublished" datetime="2022-01-02T12:27:05+08:00">2022-01-02</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-12-14 10:31:57" itemprop="dateModified" datetime="2020-12-14T10:31:57+08:00">2020-12-14</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -313,7 +307,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>1.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -331,51 +325,43 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>最近安全部门的小伙伴提了一个前端安全的漏洞，想到前端开发过程中有时候往往追求开发效率，忽略掉一些安全问题，以下简单总结一些自己遇到过的以及一些常见的攻击手段，以自查自省。</p>
+        <p>2021 的经历的事情太多，留下的遗憾太多，是时候总结一下，再立一下 2022 Flag</p>
 <a id="more"></a>
 
-<h4 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h4><p>回到安全部门提出的漏洞，场景还原如下：<br>这是一个老项目，展示文章用，页面路由为 <a target="_blank" rel="noopener" href="http://xxx/article/:id?these-are-queries，node">http://xxx/article/:id?these-are-queries，node</a> 层收到这个 url 后，返回返回该文章 html，内容则包括了【推荐文章】， 而推荐文章的链接则是根据 url 的值来的，仅变化 id。此时如果在 url 上的 query 上构造一段恶意脚本，然后引导用户打开，那么用户打开页面后就会运行该恶意脚本。<br>上述正是一个典型的 XSS 攻击，定义如下：</p>
-<blockquote>
-<p>XSS是跨站脚本攻击(Cross Site Scripting)，为不和层叠样式表(Cascading Style Sheets, CSS)的缩写混淆，故将跨站脚本攻击缩写为XSS。恶意攻击者往Web页面里插入恶意Script代码，当用户浏览该页之时，嵌入其中Web里面的Script代码会被执行，从而达到恶意攻击用户的目的。</p>
-</blockquote>
-<p>XSS 的本质是信任了某些不安全的输入，导致恶意代码混入正常代码，进而发生的攻击行为。常见的不安全输入有：</p>
+<h3 id="技术总结"><a href="#技术总结" class="headerlink" title="技术总结"></a>技术总结</h3><h4 id="小程序"><a href="#小程序" class="headerlink" title="小程序"></a>小程序</h4><p>上半年将 RN 项目迁移到小程序上，说起来算是我个人同时也是公司第一个比较大型的小程序了。在实现的过程中也是尝试了一些新技术，也踩了一些坑。</p>
+<p>本来是打算有时间产出脚手架的，可惜最后因为不可抗力（项目转交给别的部门）而腰斩了。</p>
+<h4 id="monorepo"><a href="#monorepo" class="headerlink" title="monorepo"></a>monorepo</h4><p>背景</p>
+<p>电商在公司的不同 APP / 业务组内由于各自的业务存在一些逻辑 / 样式上的差异。</p>
+<p>解决方案</p>
 <ol>
-<li>上面提到的 url 参数，这种需要诱导用户取点击</li>
-<li>用户输入的内容，比如用户发表评论</li>
-<li>第三方的链接等</li>
+<li>方案一：用策略模式，组件内根据不同环境，写各自的逻辑。这个方案的问题在于不同业务的同学可能会一起维护同一个项目，不仅仅是协作上会有问题，可能会经常有冲突，且维护不易</li>
+<li>方案二：从原项目 fork 出来，各自维护代码仓库。这个方案的问题在于一旦有共同的修改点，需要各个业务组同学重复实现</li>
+<li>方案三：我考虑使用 lerna 维护，所有的业务都在一个项目仓库中，并且将公共组件抽出来单独作一个组件库。由此可以解决上述两个方案的问题</li>
 </ol>
-<p>防范的方法通常是：对用户输入内容和服务端返回内容进行过滤和转译。</p>
-<h4 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h4><p>CSRF 攻击常见的过程如下：</p>
-<ol>
-<li>用户登录你的网站，产生登录凭证，如 cookie</li>
-<li>用户被<strong>诱导</strong>登录到恶意网站</li>
-<li>恶意网站携带刚刚在浏览器产生的凭证向你的服务器发送一个恶意请求</li>
-<li>你的服务器无法识别是否恶意请求，请求完成，用户受害。</li>
-</ol>
-<p>与上面提到的 XSS 攻击有个明显的区别在于：CSRF 攻击发生在恶意网站，而不是被攻击的网站。而这也使得攻击者并不能获取到受害者的登录凭证，仅仅只能使用。<br>防范的方法通常是：</p>
-<ol>
-<li>请求 url 添加 token 或者是在 http 请求头自定义属性进行验证</li>
-<li>同源检测，通过解析 请求头中的 referer 判断请求来源</li>
-<li>Samesite，Google 起草了一份草案来改进 HTTP 协议，为 Set-Cookie 响应头新增 Samesite 属性，用于标明 Cookie 是否能作用于其他网站，目前兼容性还不是很好。</li>
-</ol>
-<h4 id="Iframe"><a href="#Iframe" class="headerlink" title="Iframe"></a>Iframe</h4><p>当我们使用 iframe 加载第三方网站时，第三方网站可以对我们的网站执行恶意操作，如操作DOM，加载 js 等。<br>防范的方法是通过设置 sandbox 属性控制 iframe 的操作权限。</p>
-<h4 id="opener"><a href="#opener" class="headerlink" title="opener"></a>opener</h4><p>我们在通常通过以下写法在 新 tab 下打开链接：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">1. &lt;a target&#x3D;&#39;_blank&#39; href&#x3D;&#39;new-site.com&#39;&gt;
-2. window.open(&#39;new-site.com&#39;)</code></pre>
-
-<p>上述两种写法的问题在于， <code>new-site.com</code> 是可以通过 <code>window.opener</code> 来拿到源页面的 <code>window</code> 对象，进而进行恶意操作。<br>防范的方法通常是：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">1. &lt;a target&#x3D;&quot;_blank&quot; href&#x3D;&quot;new-site.com&quot; rel&#x3D;&quot;noopener noreferrer nofollow&quot;&gt;a标签跳转url&lt;&#x2F;a&gt;
-2. function openurl(url) &#123;
-    var newTab &#x3D; window.open();
-    newTab.opener &#x3D; null;
-    newTab.location &#x3D; url;
-&#125;</code></pre>
-
-<h5 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h5><ul>
-<li><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/09/27/fe-security.html">前端安全系列（一）：如何防止XSS攻击？</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/10/11/fe-security-csrf.html">前端安全系列（二）：如何防止CSRF攻击？</a></p>
-</li>
+<p>理想很美好，现实很残酷。在实现的过程中也遇到 rn 版本不一致导致无法启动 等等问题，但最终算是解决掉了。</p>
+<p>可惜最后还是因为不可抗力（项目转交给别的部门）而腰斩了。</p>
+<p>幸运的是，新项目组的 UI 框架是用 dumi 搭建的，也采用 lerna 来管理组件库，而同样使用了 dumi 的业务组件库还在起步中，刚好可以用这个机会来落地。</p>
+<h4 id="微前端"><a href="#微前端" class="headerlink" title="微前端"></a>微前端</h4><p>想尝试微前端已经很久了，仅在一个新后台项目中加入过 qiankun ，本以为可以用的上，可惜后来发现没有适用的场景，就移除掉了，略微遗憾。</p>
+<p>不过在现在项目组的项目中倒是有同学使用了这个技术，将来应该还是有机会去使用的。</p>
+<h4 id="vite"><a href="#vite" class="headerlink" title="vite"></a>vite</h4><p>在一些项目中尝试去使用了下，bundless 的开发模式启动速度确实比 webpack 快了不少。不过有同学反馈在某些机型上会有打不开的情况，这个我自己倒是没有遇到过，将来前端构建方案到底会是怎么样一个趋势呢？</p>
+<h4 id="Rust"><a href="#Rust" class="headerlink" title="Rust"></a>Rust</h4><p>前端一些工具链正在逐步用 rust 重写，这也引起了我的兴趣，打算了解下这门语言。</p>
+<p>跟着 rust 文档学习的过程中，我发现 rust 吸取了很多语言的优点。比如相对于 js 而言，对异常的处理，不是使用 try catch 这样，而是 match ，这点（碍于眼界）我确实有被惊艳到。又比如自动生成文档这样的设计，我觉得对开发者而言体验也是非常好的。</p>
+<p>不过上手上确实有难度，特别是所有权，我常常陷入是否需要加个 &amp; 的疑问中，知乎上称之为 <em>&amp; 配平</em> 我觉得颇为恰当。</p>
+<h4 id="React-原理"><a href="#React-原理" class="headerlink" title="React 原理"></a>React 原理</h4><p>2021 还在啃 React 原理，并且还未啃完，每次重新啃都有新的感悟，有时候在写业务的时候会突然悟到，原来 react 这个地方是如此如此，这般这般～想来这是一个比较漫长的过程，欲速则不达。反正不影响平时的业务开发，反而能沉下心来仔细琢磨。</p>
+<h4 id="技术分享"><a href="#技术分享" class="headerlink" title="技术分享"></a>技术分享</h4><p>今年在公司进行了两次分享，分别是 小程序的工程实践以及 React 即将取消的生命周期 这两个话题，总体上来说输出频率上是不太够的。</p>
+<h3 id="经历"><a href="#经历" class="headerlink" title="经历"></a>经历</h3><p>今年经历了不少事情。先是疯狂扩张，面试了不少前端，发现很大比例的前端都使用的 vue，而 react 实际上是很少的。接着是带着新人做了电商小程序迁移。接着做了一年多的项目又移交到别的团队，再是组织架构调整，继而被分到了新的组。</p>
+<p>在新的组里，承蒙 leader 关照，让我管理十几个人的前端团队，不胜惶恐。从零启动了一个医药相关的项目，期间管理的事项多且繁琐，不过于个人而言确实是一个不小的成长，可以站在更高的角度去看问题。</p>
+<p>可惜好景不长，接着又是裁员风波，这么几周因为离职加微信的人比去年一整年都多。几家欢喜几家愁，而对于团队而言，不少新老同学受到波及，有朋友指出我在这件上事情的某些点上处理的过于理性而近乎不近人情，其实这也基于诸多无奈及我这些年的职场观作出的决定，我也反思是不是确实又些处理的不妥（做人比做技术难 _(:з」∠)_）希望能通过这件事有所成长吧。</p>
+<p>近期两个老领导也离职了，略微伤感。而公司内部似乎因为这次裁员似乎也起了一些波澜，希望不破不立，2022 能是立的一年吧。</p>
+<p>以上是工作上的，而生活上，即将迎接新生命，精力也被分散了些许，以至于有时候感觉对技术的敏感度有所下降，这个应该要注意。体重比去年保持的好一点，有所增涨，但是健身也因为种种原因中断掉。</p>
+<p>路漫漫其修远兮，吾将上下而求索。再过几年即将而立，与刚毕业的时候相比，少了些恐慌，但着眼于更远的远方，迷茫却并未减少。而能做的无非就是走好脚下的道路，然后偶尔抬头，看看是否依然在追逐太阳的路上。</p>
+<h3 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h3><p>2022 年希望能</p>
+<ul>
+<li>学会 rust ，并写一些小项目练练手</li>
+<li>保持博客更新的习惯</li>
+<li>继续啃 React</li>
+<li>找机会对开源做一点贡献</li>
+<li>体重继续涨…</li>
 </ul>
 
     </div>
@@ -386,21 +372,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+              <a href="/tags/%E9%9A%8F%E6%83%B3/" rel="tag"># 随想</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/07/21/RN%20%E9%81%BF%E5%9D%91%E6%8C%87%E5%8C%97/" rel="prev" title="RN 避坑指北">
-                  <i class="fa fa-chevron-left"></i> RN 避坑指北
+                <a href="/2021/08/20/nextjs-%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="prev" title="nextjs 初体验">
+                  <i class="fa fa-chevron-left"></i> nextjs 初体验
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/07/26/%E3%80%90%E8%AF%91%E3%80%91ReactHooks-%E5%B9%B6%E9%9D%9E%E9%BB%91%E9%AD%94%E6%B3%95%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF%E6%95%B0%E7%BB%84/" rel="next" title="【译】ReactHooks-并非黑魔法，本质是数组">
-                  【译】ReactHooks-并非黑魔法，本质是数组 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
