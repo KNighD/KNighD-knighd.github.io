@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="近期项目组的组件库需要维护，其中有关于组件按需加载采用 antd 组件库的方案，是通过 umijs&#x2F;babel-plugin-import 来实现的。 这个方案实际上是通过分析语法，在编译阶段将模块引用转成通过相对路径来实现的。即 import &amp;#123; Button &amp;#125; from &#39;antd&#39;; ReactDOM.render(&lt;Button&gt;xxxx&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 Tree Shaking 的探索">
+<meta property="og:url" content="https://knighd.gitee.io/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/index.html">
+<meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="近期项目组的组件库需要维护，其中有关于组件按需加载采用 antd 组件库的方案，是通过 umijs&#x2F;babel-plugin-import 来实现的。 这个方案实际上是通过分析语法，在编译阶段将模块引用转成通过相对路径来实现的。即 import &amp;#123; Button &amp;#125; from &#39;antd&#39;; ReactDOM.render(&lt;Button&gt;xxxx&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-27T02:54:59.000Z">
+<meta property="article:modified_time" content="2022-02-14T09:32:18.928Z">
+<meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="前端工程化">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://knighd.gitee.io/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>关于 Tree Shaking 的探索 | 前端见闻录</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">前端见闻录</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Goodbye World</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%83%BD%E8%AE%A9-webpack-%E7%9A%84-tree-shaking-%E7%94%9F%E6%95%88%E5%91%A2%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">如何能让 webpack 的 tree shaking 生效呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#usedExports"><span class="nav-number">2.</span> <span class="nav-text">usedExports</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PURE"><span class="nav-number">3.</span> <span class="nav-text">&#x2F;*#PURE*&#x2F;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jay Day"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jay Day</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于 Tree Shaking 的探索
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-27 10:54:59" itemprop="dateCreated datePublished" datetime="2022-01-27T10:54:59+08:00">2022-01-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-02-14 17:32:18" itemprop="dateModified" datetime="2022-02-14T17:32:18+08:00">2022-02-14</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>近期项目组的组件库需要维护，其中有关于组件按需加载采用 antd 组件库的方案，是通过 <a target="_blank" rel="noopener" href="https://github.com/umijs">umijs</a>/<strong><a target="_blank" rel="noopener" href="https://github.com/umijs/babel-plugin-import">babel-plugin-import</a></strong> 来实现的。</p>
+<p>这个方案实际上是通过分析语法，在编译阶段将模块引用转成通过相对路径来实现的。即</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123; Button &#125; from &#39;antd&#39;;
+ReactDOM.render(&lt;Button&gt;xxxx&lt;&#x2F;Button&gt;);
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+var _button &#x3D; require(&#39;antd&#x2F;lib&#x2F;button&#39;);
+ReactDOM.render(&lt;_button&gt;xxxx&lt;&#x2F;_button&gt;);</code></pre>
+
+<p>然而这个方案实际上早在很久之前已经被 antd 官方抛弃了，antd 目前的是通过 tree shaking 实现 <em>JS</em> 部分的按需加载而， css 方面则认为性价比不高等原因没有额外处理，略有争议，详细可以参考 <a target="_blank" rel="noopener" href="https://github.com/ant-design/ant-design/issues/23988">https://github.com/ant-design/ant-design/issues/23988</a> 这个 issue 里的相关讨论。</p>
+<p>鉴于 webpack 里的 tree shaking 比较晦涩，借着尝试将原项目调整为tree shaking 按需加载的契机，我将在 tree shaking 方面的探索的相关知识整理如下。</p>
+<a id="more"></a>
+
+<p>最早些时候注意到 tree shaking 这个词，应该是对比 rollup 与 webpack 这两种打包工具的异同，那会儿 webpack 应该是还未能支持到 tree shaking 的，也正是基于此，antd 出了 babel plugin import 这个方案。目前来说其实主流的打包工具都应该是支持 tree shaking 的。</p>
+<blockquote>
+<p><em>tree shaking</em> 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)。它依赖于 ES2015 模块语法的 <a target="_blank" rel="noopener" href="http://exploringjs.com/es6/ch_modules.html#static-module-structure">静态结构</a> 特性，例如 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import"><code>import</code></a> 和 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export"><code>export</code></a>。这个术语和概念实际上是由 ES2015 模块打包工具 <a target="_blank" rel="noopener" href="https://github.com/rollup/rollup">rollup</a> 普及起来的。</p>
+</blockquote>
+<p>由于webpack5 实际上对 tree shaking 做了一些升级，但我们项目中目前还多是 webpack4 ，因此我们还是先从 webpack4 的 tree shaking 开始。</p>
+<p>先来解释几个概念</p>
+<ol>
+<li>dead code，即未引用的代码</li>
+<li>sideEffects，副作用，这个我们经常在函数式编程里听到。在导入时会执行特殊行为的代码，这个行为可能会影响到全局的环境就算是有副作用了，例如 console.log，引入 css 文件等等</li>
+<li>tree shaking，即将无副作用的 dead code 移除，仅保留有效的代码，以减少打包后的体积</li>
+</ol>
+<h4 id="如何能让-webpack-的-tree-shaking-生效呢？"><a href="#如何能让-webpack-的-tree-shaking-生效呢？" class="headerlink" title="如何能让 webpack 的 tree shaking 生效呢？"></a>如何能让 webpack 的 tree shaking 生效呢？</h4><p>整个大前提是需要使用 ES2015 模块语法（即 <code>import</code> 和 <code>export</code>）。</p>
+<p>我们建一个简单的 DEMO 来看看</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; 目录树如下
+├── node_modules
+├── package-lock.json
+├── package.json
+├── src
+│   ├── index.js
+│   └── utils.js
+└── webpack.config.js
+
+&#x2F;&#x2F; webpack.config.js
+const path &#x3D; require(&#39;path&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;none&#39;,
+&#125;
+
+&#x2F;&#x2F; package.json
+&#123;
+  &quot;name&quot;: &quot;tree-shaking-demo&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;main&quot;: &quot;index.js&quot;,
+  &quot;scripts&quot;: &#123;
+    &quot;build&quot;: &quot;webpack&quot;,
+  &#125;,
+  &quot;devDependencies&quot;: &#123;
+    &quot;webpack&quot;: &quot;^4.46.0&quot;,
+    &quot;webpack-cli&quot;: &quot;^4.9.2&quot;
+  &#125;
+&#125;</code></pre>
+
+<p>注意：这里为了避免 webpack 一些默认配置项的干扰，将 mode 设置为 none</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; utils.js
+export const add &#x3D; (a, b) &#x3D;&gt; a + b
+export const minus &#x3D; (a, b) &#x3D;&gt; a - b
+
+&#x2F;&#x2F; index.js
+import &#123; add &#125; from &quot;.&#x2F;utils&quot;;
+add(1, 2)</code></pre>
+
+<p>可以看到上述的代码中，实际上 minus 就属于 dead code。</p>
+<p>此时我们打包:</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;************************************************************************&#x2F;
+ &#x2F;******&#x2F; &#123;
+   &#x2F;***&#x2F; &#39;.&#x2F;src&#x2F;index.js&#39;:
+     &#x2F;*!**********************!*\
+ !*** .&#x2F;src&#x2F;index.js ***!
+ \**********************&#x2F;
+     &#x2F;*! no exports provided *&#x2F;
+     &#x2F;***&#x2F; function (module, __webpack_exports__, __webpack_require__) &#123;
+       &#39;use strict&#39;
+       eval(
+         &#39;__webpack_require__.r(__webpack_exports__);\n&#x2F;* harmony import *&#x2F; var _utils__WEBPACK_IMPORTED_MODULE_0__ &#x3D; __webpack_require__(&#x2F;*! .&#x2F;utils *&#x2F; &quot;.&#x2F;src&#x2F;utils.js&quot;);\n\n\nObject(_utils__WEBPACK_IMPORTED_MODULE_0__[&quot;add&quot;])(1, 2)\n\n&#x2F;&#x2F;# sourceURL&#x3D;webpack:&#x2F;&#x2F;&#x2F;.&#x2F;src&#x2F;index.js?&#39;
+       )
+
+       &#x2F;***&#x2F;
+     &#125;,
+
+   &#x2F;***&#x2F; &#39;.&#x2F;src&#x2F;utils.js&#39;:
+     &#x2F;*!**********************!*\
+ !*** .&#x2F;src&#x2F;utils.js ***!
+ \**********************&#x2F;
+     &#x2F;*! exports provided: add, minus *&#x2F;
+     &#x2F;***&#x2F; function (module, __webpack_exports__, __webpack_require__) &#123;
+       &#39;use strict&#39;
+       eval(
+         &#39;__webpack_require__.r(__webpack_exports__);\n&#x2F;* harmony export (binding) *&#x2F; __webpack_require__.d(__webpack_exports__, &quot;add&quot;, function() &#123; return add; &#125;);\n&#x2F;* harmony export (binding) *&#x2F; __webpack_require__.d(__webpack_exports__, &quot;minus&quot;, function() &#123; return minus; &#125;);\nconst add &#x3D; (a, b) &#x3D;&gt; a + b\nconst minus &#x3D; (a, b) &#x3D;&gt; a - b\n\n&#x2F;&#x2F;# sourceURL&#x3D;webpack:&#x2F;&#x2F;&#x2F;.&#x2F;src&#x2F;utils.js?&#39;
+       )
+
+       &#x2F;***&#x2F;
+     &#125;,
+
+   &#x2F;******&#x2F;</code></pre>
+
+<p>如果使用了 import，则 webpack 打上 /* harmony import <em>/ 这个标识，如果使用了 export，则会打上 /\</em> harmony export (binding) */ 这个标识。</p>
+<h4 id="usedExports"><a href="#usedExports" class="headerlink" title="usedExports"></a>usedExports</h4><p>让我们修改一下 webpack 的配置，将 usedExports 这个属性打开</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">const path &#x3D; require(&#39;path&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;development&#39;,
+  optimization: &#123;
+    usedExports: true,
+  &#125;,
+&#125;</code></pre>
+
+<p>再次打包后</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;***&#x2F; &quot;.&#x2F;src&#x2F;utils.js&quot;:
+&#x2F;*!**********************!*\
+  !*** .&#x2F;src&#x2F;utils.js ***!
+  \**********************&#x2F;
+&#x2F;*! exports provided: add, minus *&#x2F;
+&#x2F;*! exports used: add *&#x2F;
+&#x2F;***&#x2F; (function(module, __webpack_exports__, __webpack_require__) &#123;
+
+&quot;use strict&quot;;
+eval(&quot;&#x2F;* harmony export (binding) *&#x2F; __webpack_require__.d(__webpack_exports__, \&quot;a\&quot;, function() &#123; return add; &#125;);\n&#x2F;* unused harmony export minus *&#x2F;\nconst add &#x3D; (a, b) &#x3D;&gt; a + b\nconst minus &#x3D; (a, b) &#x3D;&gt; a - b\n\n&#x2F;&#x2F;# sourceURL&#x3D;webpack:&#x2F;&#x2F;&#x2F;.&#x2F;src&#x2F;utils.js?&quot;);
+
+&#x2F;***&#x2F; &#125;)
+
+&#x2F;******&#x2F;</code></pre>
+
+<p>对比上一次的打包，可以 minus 的标识变成 unused harmony export minus 了，即说明这个模块被 webpack 识别为无用的导出。</p>
+<p>那么如果我们改成 commonjs 是什么效果呢？</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;***&#x2F; &quot;.&#x2F;src&#x2F;utils.js&quot;:
+&#x2F;*!**********************!*\
+  !*** .&#x2F;src&#x2F;utils.js ***!
+  \**********************&#x2F;
+&#x2F;*! no static exports found *&#x2F;
+&#x2F;*! exports used: add *&#x2F;
+&#x2F;***&#x2F; (function(module, exports) &#123;
+
+eval(&quot;module.exports.add &#x3D; (a, b) &#x3D;&gt; a + b\nmodule.exports.minus &#x3D; (a, b) &#x3D;&gt; a - b\n\n&#x2F;&#x2F;# sourceURL&#x3D;webpack:&#x2F;&#x2F;&#x2F;.&#x2F;src&#x2F;utils.js?&quot;);
+
+&#x2F;***&#x2F; &#125;)</code></pre>
+
+<p>可以看到的是 minus 不再有 unused harmony export minus 的标识了。</p>
+<p>这里对应文档提到的第一点前提：需要使用 ESM，因为 webpack 才可以识别到是否模块导出但未被使用。</p>
+<p>但是到这里为止，minus 依然被打包进来了，即 webpack 仅做标识，并不进行代码移除。要移除代码，我们需要配合一些压缩插件，这里我们使用官方推荐的 terser</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; webpack.config.js
+const path &#x3D; require(&#39;path&#39;)
+const TerserPlugin &#x3D; require(&#39;terser-webpack-plugin&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;none&#39;,
+  optimization: &#123;
+    usedExports: true,
+    minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+    ],
+  &#125;,
+&#125;</code></pre>
+
+<p>那么我们再次打包</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">function (e, t, r) &#123;
+    &#39;use strict&#39;
+    r.r(t)
+    var n &#x3D; r(1)
+    Object(n.a)(1, 2)
+  &#125;,
+  function (e, t, r) &#123;
+    &#39;use strict&#39;
+    r.d(t, &#39;a&#39;, function () &#123;
+      return n
+    &#125;)
+    const n &#x3D; (e, t) &#x3D;&gt; e + t
+  &#125;,</code></pre>
+
+<p>可以看到代码虽然压缩了，但是 minus 的代码确实已经移除掉了。</p>
+<p>但如果我们将 mode 改为在 development ，则依然保留未使用的代码，应该是因为某些配置项导致的（不太清楚是哪个默认配置）。而在 production 模式下则是默认开启了 tree shaking 的优化。</p>
+<p>这里对应文档提到的第二点前提：需要 production 模式（目前为止效果相当于启用了上述 usedExports 和 TerserPlugin）</p>
+<p>####sideEffects</p>
+<p>usedExports 是 webpack 通过 terser 检测语句来识别副作用的，但有时候 terser 识别出语句存在副作用而打包进来</p>
+<p>例如，我希望增强一下 log 这个函数，现在让我们增加一个 log.js 文件</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; log.js
+function getEnhancedLog() &#123;
+  return (result) &#x3D;&gt; console.log(&#39;result &#39;, result)
+&#125;
+
+export const enhancedLog &#x3D; getEnhancedLog()</code></pre>
+
+<p>然后在 utils.js 中重新导出</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">export const add &#x3D; (a, b) &#x3D;&gt; a + b
+
+const minus &#x3D; (a, b) &#x3D;&gt; a - b
+
+export * from &#39;.&#x2F;log&#39;</code></pre>
+
+<p>那这个时候我们实际上没有使用到 enhancedLog，理所当然的，webpack 会把 enhancedLog 相关的代码移除掉。</p>
+<p>但如果 getEnhancedLog 这个函数不纯，那就有可能出现问题了</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">function getEnhancedLog() &#123;
+  console.log &#x3D; window.alert
+  return (result) &#x3D;&gt; console.log(&#39;result &#39;, result)
+&#125;</code></pre>
+
+<p>再次打包后 console.log = window.alert 这段代码实际上却会被打包进来，我们是否需要真的需要有这段副作用的代码呢？webpack 无法确定我们实际的意图。如果此时我希望如果 enhancedLog 没有被使用到的时候  console.log = window.alert 也不会打包进来该怎么处理？</p>
+<p>这个时候就需要用到 sideEffcts。</p>
+<p>webpack 中有个配置项 optimization.sideEffects， 默认为 true，这个配置项即去识别 npm 包中的 package.json 配置的副作用，并进行 tree-shaking。</p>
+<p>那么现在，我们在 package.json 新增一行</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: false</code></pre>
+
+<p>同时将 webpack 的 mode 设置为 production，需要注意的是 ‘mode: none’ + ‘terser’ + ‘usedExport’ 这种配置或者是 mode 为 development 下是无法生效的。</p>
+<p>当前的 webpack 配置如下</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">const path &#x3D; require(&#39;path&#39;)
+const TerserPlugin &#x3D; require(&#39;terser-webpack-plugin&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;production&#39;
+&#125;</code></pre>
+
+<p>此时再次打包，我们发现 console.log = window.alert 这段代码就已经不见了。</p>
+<p>sideEffects 这个字段默认为 true，即当 webpack 认为你的代码中存在副作用时，就会将相关代码打包进来。但如果粗暴将其设置为 false，则会产生新的问题，例如我们经常引入 css 文件</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; index.css
+body &#123;
+  background-color: &#39;red&#39;;
+&#125;
+
+&#x2F;&#x2F; index.js
+import &#39;.&#x2F;index.css&#39;
+import &#123; add &#125; from &quot;.&#x2F;utils&quot;;
+
+add(1, 2)
+
+&#x2F;&#x2F; webpack.congfig.js
+const path &#x3D; require(&#39;path&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;production&#39;,
+  module: &#123;
+    rules: [
+      &#123;
+        test: &#x2F;\.css$&#x2F;i,
+        use: [&#39;style-loader&#39;, &#39;css-loader&#39;],
+      &#125;,
+    ],
+  &#125;,
+&#125;</code></pre>
+
+<p>如果 sideEffects 为 false，我们会发现 css 的样式也一并也移除掉了。</p>
+<p>那么我们就需要配置告诉 webpack 哪些文件是存在副作用的，调整 package.json 如下</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: [&quot;**&#x2F;*.css&quot;]</code></pre>
+
+<p>再次打包，由于我们声明了 css 文件是存在副作用的，而其他文件不存在副作用（如 log.js），此时可以看到确实是将 css 代码打包进去了，而 log.js 的代码则没有。</p>
+<p>对于开发库来说，我们经常需要重新导出模块，如下</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; index.js
+export &#123; a, b &#125; from &#39;.&#x2F;module1&#39;;
+export &#123; c, d, e &#125; from &#39;.&#x2F;module2&#39;;
+export &#123; f &#125; from &#39;.&#x2F;module3&#39;;</code></pre>
+
+<p>此时一定要需要注意配置正确的 sideEffects。</p>
+<p>只有当库配置了正确的 sideEffects，业务使用者的 webpack 才会根据其配置进行 tree-shaking。</p>
+<p>如果我们能确保库没有额外的副作用，那么可以设置 “sideEffects”: false，例如 vue。</p>
+<p>如果存在一些副作用，则也要做对应的声明，如 antd 的设置</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: [
+  &quot;dist&#x2F;*&quot;,
+  &quot;es&#x2F;**&#x2F;style&#x2F;*&quot;,
+  &quot;lib&#x2F;**&#x2F;style&#x2F;*&quot;,
+  &quot;*.less&quot;
+]</code></pre>
+
+<p>我们可以建一个 react 的 demo，引入 antd，在 node_modules/antd/package.json 里调整 sideEffects 看看打包结果。</p>
+<p>如果只是业务开发者，个人认为一般不用去配置 sideEffects，大部分情况下 webpack 的运行结果是符合预期的</p>
+<h4 id="PURE"><a href="#PURE" class="headerlink" title="/*#PURE*/"></a>/*#<strong>PURE</strong>*/</h4><p>可以看到 sideEffects 实际上是在文件层面的副作用声明，比如 css 文件 / log.js 文件等等，但如果我需要更为细粒度的声明呢？</p>
+<p>现在让我们把 log.js 里的内容移动到 utils.js 里看看</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; utils.js
+export const add &#x3D; (a, b) &#x3D;&gt; a + b
+
+export const minus &#x3D; (a, b) &#x3D;&gt; a - b
+
+function getEnhancedLog() &#123;
+  console.log &#x3D; window.alert
+  return (result) &#x3D;&gt; console.log(&#39;result &#39;, result)
+&#125;
+
+export const enhancedLog &#x3D; getEnhancedLog()</code></pre>
+
+<p>此时，不管你在 sideEffects 里声明 utils.js 是否存在副作用都没有作用，这里我直接粗暴地设置为 false ，webpack 都将会把 console.log = window.alert 打包进去</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: false</code></pre>
+
+<p>那么我们要怎么告诉 webpack 不需要将 console.log = window.alert 打包进去呢？</p>
+<p>很简单，通过 /*#<strong>PURE</strong>*/ 注释即可</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">export const add &#x3D; (a, b) &#x3D;&gt; a + b
+
+export const minus &#x3D; (a, b) &#x3D;&gt; a - b
+
+function getEnhancedLog() &#123;
+  console.log &#x3D; window.alert
+  return (result) &#x3D;&gt; console.log(&#39;result &#39;, result)
+&#125;
+
+export const enhancedLog &#x3D; &#x2F;*#__PURE__*&#x2F;getEnhancedLog()</code></pre>
+
+<p>这里告诉 webpack 调用 getEnhancedLog 不会有副作用的，请放心删除。再次打包可以发现确实 console.log = window.alert 不见了。</p>
+<p>如果同学们平时足够细心可以发现我们写的 react 组件，babel 转译后都会加上这个 /*#<strong>PURE</strong>*/ 正是基于这个原因。</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">const App &#x3D; () &#x3D;&gt; &lt;div &#x2F;&gt;
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+&quot;use strict&quot;;
+
+var App &#x3D; function App() &#123;
+  return &#x2F;*#__PURE__*&#x2F;React.createElement(&quot;div&quot;, null);
+&#125;;</code></pre>
+
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>以上是在 webpack4 的基础上对 tree shaking 的一个探索与总结，webpack5 对 tree shaking 又新增一些新的特性，例如对 commonjs 的支持等等特性，还有待继续测试探索。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/" rel="tag"># 前端工程化</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/React-Class-%E4%B8%AD%E5%8D%B3%E5%B0%86%E6%B6%88%E5%A4%B1%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" rel="prev" title="React Class 中即将消失的生命周期">
+                  <i class="fa fa-chevron-left"></i> React Class 中即将消失的生命周期
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay Day</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">188k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:14</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -197,7 +197,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -239,6 +239,341 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/" class="post-title-link" itemprop="url">关于 Tree Shaking 的探索</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-27 10:54:59" itemprop="dateCreated datePublished" datetime="2022-01-27T10:54:59+08:00">2022-01-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-02-14 17:32:18" itemprop="dateModified" datetime="2022-02-14T17:32:18+08:00">2022-02-14</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>近期项目组的组件库需要维护，其中有关于组件按需加载采用 antd 组件库的方案，是通过 <a target="_blank" rel="noopener" href="https://github.com/umijs">umijs</a>/<strong><a target="_blank" rel="noopener" href="https://github.com/umijs/babel-plugin-import">babel-plugin-import</a></strong> 来实现的。</p>
+<p>这个方案实际上是通过分析语法，在编译阶段将模块引用转成通过相对路径来实现的。即</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import &#123; Button &#125; from &#39;antd&#39;;
+ReactDOM.render(&lt;Button&gt;xxxx&lt;&#x2F;Button&gt;);
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+var _button &#x3D; require(&#39;antd&#x2F;lib&#x2F;button&#39;);
+ReactDOM.render(&lt;_button&gt;xxxx&lt;&#x2F;_button&gt;);</code></pre>
+
+<p>然而这个方案实际上早在很久之前已经被 antd 官方抛弃了，antd 目前的是通过 tree shaking 实现 <em>JS</em> 部分的按需加载而， css 方面则认为性价比不高等原因没有额外处理，略有争议，详细可以参考 <a target="_blank" rel="noopener" href="https://github.com/ant-design/ant-design/issues/23988">https://github.com/ant-design/ant-design/issues/23988</a> 这个 issue 里的相关讨论。</p>
+<p>鉴于 webpack 里的 tree shaking 比较晦涩，借着尝试将原项目调整为tree shaking 按需加载的契机，我将在 tree shaking 方面的探索的相关知识整理如下。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/01/18/React-Class-%E4%B8%AD%E5%8D%B3%E5%B0%86%E6%B6%88%E5%A4%B1%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/18/React-Class-%E4%B8%AD%E5%8D%B3%E5%B0%86%E6%B6%88%E5%A4%B1%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="post-title-link" itemprop="url">React Class 中即将消失的生命周期</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-18 14:44:39" itemprop="dateCreated datePublished" datetime="2022-01-18T14:44:39+08:00">2022-01-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-01-19 08:35:50" itemprop="dateModified" datetime="2022-01-19T08:35:50+08:00">2022-01-19</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>这个主题是早前在公司分享的，主要讲的是 React Class Component 中的生命周期的变迁。但是一直没有时间整理，近来工作节奏逐渐恢复稳定，因此腾出时间来整理一下。这个期间看到 React Conf 2021 上黄玄还分享了 React Forget，有一些想法可能和当时分享的时候有所出入，但基本上还是一致的。</p>
+<p>分享这个主题的背景是因为当时有不少新来的小伙伴是从 vue 刚转入 react 的，一上来就接触的是 hooks，反而对 react 传统的 Class Components 不熟悉，遑论生命周期的变更历史，因此就当做一个简单的科普。</p>
+<h4 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h4><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">function App() &#123;
+	const [state, setState] &#x3D; useState(false)
+  const otherState &#x3D; (() &#x3D;&gt; &#123;
+    &#x2F;&#x2F; ....some compute
+  &#125;)()
+  return &lt;button onClick&#x3D;&#123;() &#x3D;&gt; setState(true)&#125;&gt;
+    click &#123;state&#125; &#123;otherState&#125;
+  &lt;&#x2F;button&gt;
+&#125;</code></pre>
+
+<p>这里点击按钮，想要避免 otherState 重新计算，大家都知道可以通过 useMemo 来包裹一下即可：</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">const otherState &#x3D; useMemo(() &#x3D;&gt; &#123;
+    &#x2F;&#x2F; ....some compute
+  &#125;, []);</code></pre>
+
+<p>当时在分享的时候抛出的一个问题。那么为什么 react 不将 memo 的行为作为默认的行为？</p>
+<p>那时候我说的是因为 memo 实际上是有成本的，不应滥用（不过后来 React Forget 表明似乎官方也想将 memo 作为默认的行为，打脸。。。）不过 memo 实际上是有成本的这个确实是没问题的，我们需要遍历 memo 的依赖，判断是否有变更等等。</p>
+<p>按黄玄的说法就是开发体验和用户体验在当前有时候不能兼顾。</p>
+<p>但其实一般情况下，某些语句的重复执行开销并不会很大，我们的页面发生严重卡顿，通常是 dom 层面上的原因。我将通过 React 生命周期的变更来论证这一点，那么开始我今天的分享。</p>
+<h4 id="简单回顾生命周期"><a href="#简单回顾生命周期" class="headerlink" title="简单回顾生命周期"></a>简单回顾生命周期</h4><p>目前我们使用的 React 只要是 17，过于远古的版本暂且不谈，我们以 16.3 这个重要的分水岭讲起。</p>
+<p>我尝试画了张流程图，实在画的不好看，就直接在掘金上找了张图，在 16.3 之前</p>
+<p><img src="https://s2.loli.net/2022/01/18/BM7UgxERPJ5VyKX.jpg" alt="a27fy-pvcrd.jpeg"></p>
+<p>下面是一个简单的例子 <a target="_blank" rel="noopener" href="https://codesandbox.io/s/v16-1-tik5l?file=/src/App.js">https://codesandbox.io/s/v16-1-tik5l?file=/src/App.js</a></p>
+<p>在这个例子中，挂载期间的生命周期输出 log 如下</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">parent will mount 
+parent rendering 
+child will mount 
+child rendering 
+child did mount 
+parent did mount</code></pre>
+
+<p>随后我们点击按钮改变父组件状态，log 输出如下</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">parent should update 
+parent will update 
+parent rendering 
+child will receive props 
+child should update 
+child will update 
+child rendering 
+child did update 
+parent did update </code></pre>
+
+<p>在 16.3 时,   如果我们开启了严格模式，依然执行上述代码 <a target="_blank" rel="noopener" href="https://codesandbox.io/s/v16-3-1-2ixbx?file=/src/index.js，你会发现现在输出的日志中多了一些警告">https://codesandbox.io/s/v16-3-1-2ixbx?file=/src/index.js，你会发现现在输出的日志中多了一些警告</a></p>
+<pre class="line-numbers language-none"><code class="language-none">Warning: Unsafe lifecycle methods were found within a strict-mode tree:
+
+
+componentWillMount: Please update the following components to use componentDidMount instead: Child, Parent
+
+
+componentWillReceiveProps: Please update the following components to use static getDerivedStateFromProps instead: Child, Parent
+
+
+componentWillUpdate: Please update the following components to use componentDidUpdate instead: Child, Parent
+
+
+Learn more about this warning here:
+
+https:&#x2F;&#x2F;fb.me&#x2F;react-strict-mode-warnings</code></pre>
+
+<p>意思就是说 componentWillMount / componentWillReceiveProps / componentWillUpdate 这三个生命周期是不安全的，要替换成别的生命周期。</p>
+<p>为什么说这些生命周期是不安全的呢？同时有的同学可能发现 parent redering 和 child rendering 输出了数次，这是什么？这里暂且按下不表。</p>
+<p>那么 16.3 的生命周期是怎么样的呢？<img src="https://s2.loli.net/2022/01/18/9nfPCxGrVyZhKE8.jpg" alt="生命周期2.jpg"></p>
+<p>这里注意 getDerivedStateFromProps 是静态的方法，这么设计的用意是什么？这里同样按下不表。</p>
+<p>例子 <a target="_blank" rel="noopener" href="https://codesandbox.io/s/v16-3-2-48ire?file=/src/Child.js">https://codesandbox.io/s/v16-3-2-48ire?file=/src/Child.js</a> log 输出如下</p>
+<pre class="line-numbers language-none"><code class="language-none">parent get derived state from props and this&#x3D; null
+parent rendering 
+child get derived state from props and this&#x3D; null
+child rendering 
+child did mount 
+parent did mount </code></pre>
+
+<p>点击变更父组件状态后输出</p>
+<pre class="line-numbers language-none"><code class="language-none">parent should update 
+parent rendering 
+child get derived state from props and this&#x3D; null
+child should update
+child rendering 
+child get snapshot before update 
+parent get snapshot before update 
+child did update 
+parent did update </code></pre>
+
+<p>同样，我们发现 getDerivedStateFromProps 以及 rendering 可能输出多次</p>
+<p>那么 16.3 之后的生命周期是怎么样的呢？</p>
+<p><img src="https://s2.loli.net/2022/01/18/uLlC6Sjfks1iyKZ.jpg" alt="生命周期3.jpg"></p>
+<p>可以发现无非是现在 getDerivedStateFromProps 也可以通过 setState 和 forceUpdate 触发了，这里就不赘述。</p>
+<p>整理一下，至此我们一共有会有以下几个疑问：</p>
+<ol>
+<li>为什么要移除 componentWillMount / componentWillReceiveProps /componentWillUpdate？为什么这些生命周期是不安全的？</li>
+<li>为什么 redering  / getDerivedStateFromProps  会输出多次</li>
+<li>为什么 getDerivedStateFromProps  要设计成静态的方法，而 getSnapshotBeforeUpdate 则不是静态的方法</li>
+</ol>
+<p>其实答案都在上面的生命周期图中。</p>
+<h4 id="Fiber"><a href="#Fiber" class="headerlink" title="Fiber"></a>Fiber</h4><p>首先让我们来认识一下React 中的 Fiber</p>
+<p>从 16.3 之前的生命周期，我们不难想到 react 的更新机制。</p>
+<p><img src="https://s2.loli.net/2022/01/18/coKdy3PWrxhsNlI.png" alt="React 更新顺序.jpg"></p>
+<p>这是一个类似深度遍历的过程，当这颗树越发庞大，则这个调用栈就越深。只有最底层的调用返回，整个渲染的过程才逐步返回。</p>
+<p>这个过程不可被打断，即大量的同步计算阻塞了浏览器，导致浏览器无法处理别的任何事务，比如用户的交互将无法及时响应，给用户的体验是页面卡顿或卡死。</p>
+<p>这种更新机制，被称为 Stack Reconciler</p>
+<p><img src="https://s2.loli.net/2022/01/18/otvWZTIbpDVM7ry.png" alt="Stack.png"></p>
+<p>为了解决这个问题，React 提出了新的架构，</p>
+<ol>
+<li>将更新切分成多个任务每次执行完一次小任务就将控制权交给浏览器，在浏览器空闲的时间里执行之前未完成的任务。</li>
+<li>任务有优先级的区分，高优先级的任务可以打断低优先级的任务，如用户键盘输入这样的任务就会打断 Diff 这样的任务，具体的分级方式就不在这里展开。</li>
+</ol>
+<p><img src="https://s2.loli.net/2022/01/18/wYAT7zdvE5mHJVl.png" alt="Fiber.png"></p>
+<p>打断的任务重新执行一边还是继续上次的断点呢？实际上 React 是让这些被中断的任务重新执行</p>
+<p>那么是否所有的任务都可以被打断？React 认为可以被用户感知的任务是不可被打断的，而用户感知不到的任务则可被打断。</p>
+<p>让我们回到上面生命周期的这张图</p>
+<p>React 将生命周期分为 Render 与 Commit 阶段，Render 阶段的任务均可打断，而 Commit 阶段则不可以打断。</p>
+<p>由此我们来回答上述几个问题</p>
+<ol>
+<li><p>为什么移除 componentWillMount / componentWillReceiveProps /componentWillUpdate，为什么不安全？</p>
+<p>因为这些生命周期属于 render 阶段，但他们是不纯的，打断后重新执行，会造成一些 bug，举个例子：在 componentWillMount  发送请求，那么有可能就会导致请求两次。</p>
+</li>
+<li><p>为什么 redering / getDerivedStateFromProps 会输出多次？</p>
+<p>因为这些生命周期可被打断，会被重新执行</p>
+</li>
+<li><p>为什么 getDerivedStateFromProps 要设计成静态的方法，而 getSnapshotBeforeUpdate 则不是静态的方法</p>
+<p>因为 getDerivedStateFromProps 在 render 阶段，需要尽量保证它是纯的，静态方法没有 this，也就不会有如 this.setState 这样的操作了，而 getSnapshotBeforeUpdate 则是在 commit 阶段，不会被打断重启，且需要提供一些可以获取到 dom 的方法，如 this.ref.xxx，所以无需设计成静态方法。</p>
+</li>
+</ol>
+<p>####结尾</p>
+<p>至此通过 react fiber 的设计验证了开篇提出的观点，React 其实也不认为重新执行代码会浪费很多性能，甚至允许多次打断重启，对与前端而言，更多的瓶颈其实是在 dom 的渲染上，而这个环节 React 也确实不允许多次执行。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1033,184 +1368,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/" class="post-title-link" itemprop="url">利用 IntersectionObserver 做曝光埋点</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-04-15 11:05:58 / 修改时间：15:05:55" itemprop="dateCreated datePublished" datetime="2021-04-15T11:05:58+08:00">2021-04-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>前些天接了个紧急的简单需求，有多简单呢，就是一张背景图，然后上面加上一个悬浮的按钮。果然简单！不过按惯例，不可能这么简单。果然第二天就说说加了个需求，需要在这个背景图底部继续增加两行，每行三个商品，需要统计点击和曝光事件。上报点击事件倒是简单，曝光则相对麻烦点。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/15/%E5%88%A9%E7%94%A8-IntersectionObserver-%E5%81%9A%E6%9B%9D%E5%85%89%E5%9F%8B%E7%82%B9/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Jay Day">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端见闻录">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/01/inversify-%E5%88%9D%E4%BD%93%E9%AA%8C/" class="post-title-link" itemprop="url">inversify 初体验</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-04-01 11:39:04" itemprop="dateCreated datePublished" datetime="2021-04-01T11:39:04+08:00">2021-04-01</time>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>0</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1255,13 +1414,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">173k</span>
+    <span title="站点总字数">188k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:49</span>
+    <span title="站点阅读时长">5:14</span>
   </span>
 </div>
 <div class="busuanzi-count">
