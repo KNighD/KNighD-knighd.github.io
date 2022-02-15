@@ -31,7 +31,7 @@
 <meta property="og:description" content="近期项目组的组件库需要维护，其中有关于组件按需加载采用 antd 组件库的方案，是通过 umijs&#x2F;babel-plugin-import 来实现的。 这个方案实际上是通过分析语法，在编译阶段将模块引用转成通过相对路径来实现的。即 import &amp;#123; Button &amp;#125; from &#39;antd&#39;; ReactDOM.render(&lt;Button&gt;xxxx&amp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-01-27T02:54:59.000Z">
-<meta property="article:modified_time" content="2022-02-14T10:04:57.785Z">
+<meta property="article:modified_time" content="2022-02-15T08:26:35.046Z">
 <meta property="article:author" content="Jay Day">
 <meta property="article:tag" content="前端工程化">
 <meta name="twitter:card" content="summary">
@@ -286,7 +286,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-02-14 18:04:57" itemprop="dateModified" datetime="2022-02-14T18:04:57+08:00">2022-02-14</time>
+        <time title="修改时间：2022-02-15 16:26:35" itemprop="dateModified" datetime="2022-02-15T16:26:35+08:00">2022-02-15</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -313,14 +313,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>12k</span>
+      <span>13k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>19 分钟</span>
+      <span>22 分钟</span>
     </span>
 </div>
 
@@ -587,13 +587,57 @@ export * from &#39;.&#x2F;log&#39;</code></pre>
 &#125;</code></pre>
 
 <p>再次打包后 console.log = window.alert 这段代码实际上却会被打包进来，我们是否需要真的需要有这段副作用的代码呢？webpack 无法确定我们实际的意图。如果此时我希望如果 enhancedLog 没有被使用到的时候  console.log = window.alert 也不会打包进来该怎么处理？</p>
-<p>这个时候就需要用到 sideEffcts。</p>
-<p>webpack 中有个配置项 optimization.sideEffects， 默认为 true，这个配置项即去识别 npm 包中的 package.json 配置的副作用，并进行 tree-shaking。</p>
+<p>这个时候就需要用到 sideEffects</p>
 <p>那么现在，我们在 package.json 新增一行</p>
 <pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: false</code></pre>
 
-<p>同时将 webpack 的 mode 设置为 production，需要注意的是 ‘mode: none’ + ‘terser’ + ‘usedExport’ 这种配置或者是 mode 为 development 下是无法生效的。</p>
 <p>当前的 webpack 配置如下</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">const path &#x3D; require(&#39;path&#39;)
+const TerserPlugin &#x3D; require(&#39;terser-webpack-plugin&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;none&#39;,
+  optimization: &#123;
+    usedExports: true,
+    minimize: true,
+    minimizer: [new TerserPlugin()]
+  &#125;,
+&#125;</code></pre>
+
+<p>此时我们打包</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">function (e, t, n) &#123;
+    &#39;use strict&#39;
+    console.log &#x3D; window.alert
+  &#125;,</code></pre>
+
+<p>副作用依然被打包进来了</p>
+<p>此时如果我们调整一下配置，在 webpack 的配置项里新增 optimization.sideEffects 为 true</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">const path &#x3D; require(&#39;path&#39;)
+const TerserPlugin &#x3D; require(&#39;terser-webpack-plugin&#39;)
+
+module.exports &#x3D; &#123;
+  entry: &#39;.&#x2F;src&#x2F;index.js&#39;,
+  output: &#123;
+    filename: &#39;bundle.js&#39;,
+    path: path.resolve(__dirname, &#39;dist&#39;),
+  &#125;,
+  mode: &#39;none&#39;,
+  optimization: &#123;
+    usedExports: true,
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+    sideEffects: true,
+  &#125;,
+&#125;</code></pre>
+
+<p>此时再次打包，可以发现 console.log = window.alert  这段副作用代码已经不见了。</p>
+<p>即 optimization.sideEffects 这个配置项的作用是识别 npm 包中的 package.json 配置的副作用，并进行 tree-shaking。</p>
+<p>production 模式下 optimization.sideEffects 默认为 true</p>
 <pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">const path &#x3D; require(&#39;path&#39;)
 const TerserPlugin &#x3D; require(&#39;terser-webpack-plugin&#39;)
 
@@ -606,8 +650,9 @@ module.exports &#x3D; &#123;
   mode: &#39;production&#39;
 &#125;</code></pre>
 
-<p>此时再次打包，我们发现 console.log = window.alert 这段代码就已经不见了。</p>
-<p>sideEffects 这个字段默认为 true，即当 webpack 认为你的代码中存在副作用时，就会将相关代码打包进来。但如果粗暴将其设置为 false，则会产生新的问题，例如我们经常引入 css 文件</p>
+<p>此时再次打包，我们发现 console.log = window.alert 这段代码也会不见。</p>
+<p>package.json 中的 sideEffects 这个字段默认为 true，即当 webpack 认为你的代码中存在副作用时，就会将相关代码打包进来。</p>
+<p>但如果仅仅是粗暴将其设置为 false，则会产生新的问题，例如我们经常引入 css 文件</p>
 <pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; index.css
 body &#123;
   background-color: &#39;red&#39;;
@@ -644,15 +689,7 @@ module.exports &#x3D; &#123;
 <pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: [&quot;**&#x2F;*.css&quot;]</code></pre>
 
 <p>再次打包，由于我们声明了 css 文件是存在副作用的，而其他文件不存在副作用（如 log.js），此时可以看到确实是将 css 代码打包进去了，而 log.js 的代码则没有。</p>
-<p>对于开发库来说，我们经常需要重新导出模块，如下</p>
-<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; index.js
-export &#123; a, b &#125; from &#39;.&#x2F;module1&#39;;
-export &#123; c, d, e &#125; from &#39;.&#x2F;module2&#39;;
-export &#123; f &#125; from &#39;.&#x2F;module3&#39;;</code></pre>
-
-<p>此时一定要需要注意配置正确的 sideEffects。</p>
-<p>只有当库配置了正确的 sideEffects，业务使用者的 webpack 才会根据其配置进行 tree-shaking。</p>
-<p>如果我们能确保库没有额外的副作用，那么可以设置 “sideEffects”: false，例如 vue。</p>
+<p>作为是库的开发者，如果我们能确保库没有额外的副作用，那么可以设置 “sideEffects”: false，例如 vue。</p>
 <p>如果存在一些副作用，则也要做对应的声明，如 antd 的设置</p>
 <pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&quot;sideEffects&quot;: [
   &quot;dist&#x2F;*&quot;,
@@ -662,7 +699,22 @@ export &#123; f &#125; from &#39;.&#x2F;module3&#39;;</code></pre>
 ]</code></pre>
 
 <p>我们可以建一个 react 的 demo，引入 antd，在 node_modules/antd/package.json 里调整 sideEffects 看看打包结果。</p>
-<p>如果只是业务开发者，个人认为一般不用去配置 sideEffects，大部分情况下 webpack 的运行结果是符合预期的</p>
+<p>这里有个困扰我很久的问题，如果我们去看 antd 的代码，我们其实可以看到各个组件应该是没有副作用的</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import Button from &#39;.&#x2F;button&#39;;
+
+export &#123; ButtonProps, ButtonShape, ButtonType &#125; from &#39;.&#x2F;button&#39;;
+export &#123; ButtonGroupProps &#125; from &#39;.&#x2F;button-group&#39;;
+export &#123; SizeType as ButtonSize &#125; from &#39;..&#x2F;config-provider&#x2F;SizeContext&#39;;
+
+export default Button;</code></pre>
+
+<p>可为什么当我们引入一个组件的时候会把所有的组件都引入呢？</p>
+<pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; 如果在业务组件中使用 Button，会将 antd 的所有组件都引入进来
+import &#123; Button &#125; from &#39;antd&#39;</code></pre>
+
+<p>答案应该在于我们忽略了 babel  编译代码会带来副作用，参考 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000012794598">https://segmentfault.com/a/1190000012794598</a> 这篇文章。</p>
+<p>不过文章具有一定的时效性，如文中提到类编译后会带有副作用，我自己测试时发现 rollup 现在会给编译后的代码打上 /*#<strong>PURE</strong>*/ 注释，这样webpack 是可以正确 tree shaking 的，对于刚刚提到的 /*#<strong>PURE</strong>*/将在下面进行更详细的解释。</p>
+<p>不过作为库的开发者，如果我们应该还是需要正确去设置 sideEffects，而如果只是业务开发者，个人认为一般不用去配置 sideEffects，大部分情况下 webpack 的运行结果是符合预期的。</p>
 <h4 id="PURE"><a href="#PURE" class="headerlink" title="/*#PURE*/"></a>/*#<strong>PURE</strong>*/</h4><p>可以看到 sideEffects 实际上是在文件层面的副作用声明，比如 css 文件 / log.js 文件等等，但如果我需要更为细粒度的声明呢？</p>
 <p>现在让我们把 log.js 里的内容移动到 utils.js 里看看</p>
 <pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">&#x2F;&#x2F; utils.js
@@ -780,13 +832,13 @@ var App &#x3D; function App() &#123;
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">189k</span>
+    <span title="站点总字数">191k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:15</span>
+    <span title="站点阅读时长">5:18</span>
   </span>
 </div>
 <div class="busuanzi-count">
