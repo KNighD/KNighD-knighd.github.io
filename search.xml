@@ -4,6 +4,46 @@
   
     
     <entry>
+      <title>RN 线上错误搜集</title>
+      <link href="/2022/03/03/RN-%E7%BA%BF%E4%B8%8A%E9%94%99%E8%AF%AF%E6%90%9C%E9%9B%86/"/>
+      <url>/2022/03/03/RN-%E7%BA%BF%E4%B8%8A%E9%94%99%E8%AF%AF%E6%90%9C%E9%9B%86/</url>
+      
+        <content type="html"><![CDATA[<p>最近项目组收到用户反馈无法进入收到一个 RN 页面，怀疑是客户端加载页面时发生异常，但也不排除是前端代码异常导致的。</p><p>为此打算接入早先别组同学搭建的 Sentry，以便于观测与搜集前端异常。不过现有的 sdk 是基于 h5 与 node 的，rn 这方面没有对应的 sdk。sentry 是有开源的 rn sdk，但由于项目特殊性，与客户端耦合较多，因此简单自行封装一个 sdk 作为过渡，等后续负责 sentry 的同学提供统一的 RN sdk 再替换掉，这里记录一下封装的思路。</p><a id="more"></a><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>公司的 sentry 项目不是我这里负责的，不过大概的原理在封装 sdk 的过程中也猜的差不多了。</p><ol><li>client 捕获到异常</li><li>client 通过请求 / 图片将异常信息发送到日记统计平台</li><li>定时从日志平台拉取 sentry 异常相关的日志</li><li>将日志整理成 sentry 识别的字段，存入数据库</li><li>用户在 sentry 的平台查看 issue 即可</li></ol><h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><ol><li><p>提供一个 HOC 用于捕获未处理的异常，就叫 withErrorBoundary 吧，这个与 React 捕获异常其实都差不多</p><pre class="line-numbers language-jsx" data-language="jsx"><code class="language-jsx">import React from &#39;react&#39;;import &#123; report &#125; from &#39;@hooks&#x2F;useSentry&#39;;&#x2F;** 捕获页面异常并上报到 sentry *&#x2F;class ErrorBoundary extends React.Component &#123;    state: &#123; error?: any &#125; &#x3D; &#123;&#125;;    static getDerivedStateFromError(error: any) &#123;        return &#123; error &#125;;    &#125;    componentDidCatch(error: any) &#123;        report(error);    &#125;    render() &#123;        return this.state.error ? (          &lt;div&gt;oops!&lt;&#x2F;div&gt;        ) : (            this.props.children        );    &#125;&#125;export const withErrorBoundary &#x3D;(WrappedComponent) &#x3D;&gt; (props) &#x3D;&gt; (&lt;ErrorBoundary &#123;...props&#125;&gt;&lt;WrappedComponent &#123;...props&#125; &#x2F;&gt;&lt;&#x2F;ErrorBoundary&gt;)export default ErrorBoundary;</code></pre><p>给需要的页面包裹上 <code>withErrorBoundary(Page)</code> 即可</p></li><li><p>实现 report，实际上 report 无非就是将信息整理成需要的格式，然后发送到日志平台。</p><p>那么需要的信息包括什么呢？</p><p>首先肯定是错误栈，这里通过 ErrorBoundary 里的 error 能获取 error.message 以及错误栈</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">&#123;  column: 2410,   line: 1100,   componentStack:       in p     &#x2F;&#x2F; ...  isComponentError: True,   sourceURL: ...&#125;</code></pre><p>其次是错误发生的时间 / 版本信息 / 机型 等辅助信息</p><p>最后是业务相关的信息，通常包括 用户 / 页面路径</p><p>sentry 管这个叫 event ，具体的参数可以参考sentry 的<a href="https://develop.sentry.dev/sdk/event-payloads/">开发文档</a>。</p><p>那么当我们整理好所需的信息就需要上报上去，顺带说一下前端常用的手段是用 1x1 像素的透明 gif 图片，也叫 image beacon。通过 new Image 构造一个图片请求，主要原因是</p><pre><code>1. 对比 ajax，不会有跨域问题1. 对比 js 标签，不阻塞页面加载1. 对比 png / jpg，这种图片体积最小</code></pre></li><li><p>source map，线上的代码都是压缩过的，报错的信息就很模糊，这个时候我们需要借助 source map 来还原源码的报错位置。rn 也是有提供 source map 的，在执行 react-native bundle 的时候添加参数 <code>--bundle-output [sourcemap-name].map</code> 即可输出对应平台的 source map，通过下述代码即可定位源码报错位置</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">const sourceMap &#x3D; require(&#39;source-map&#39;)const fs &#x3D; require(&#39;fs-extra&#39;)&#x2F;&#x2F; 读取 source map 为 jsonconst rawSourceMapJsonData &#x3D; await fs.readJson(&#39;[sourcemap-name].map&#39;)const consumer &#x3D; await new sourceMap.SourceMapConsumer(rawSourceMapJsonData);&#x2F;&#x2F; line 与 column 指压缩后的报错位置console.log(consumer.originalPositionFor(&#123; line, column &#125;));</code></pre><p>当然 sentry 也提供了 source map 的配置，这块还没尝试，可自行查看文档 <a href="https://docs.sentry.io/platforms/react-native/sourcemaps/">https://docs.sentry.io/platforms/react-native/sourcemaps/</a></p><p>不过遗憾的是 component stack 似乎是没有办法还原出报错所在组件的位置，参考 <a href="https://github.com/facebook/create-react-app/issues/3753">https://github.com/facebook/create-react-app/issues/3753</a></p></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> web前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ReactNative </tag>
+            
+            <tag> 前端工程化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>从零搭建组件库</title>
+      <link href="/2022/02/24/%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E7%BB%84%E4%BB%B6%E5%BA%93/"/>
+      <url>/2022/02/24/%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E7%BB%84%E4%BB%B6%E5%BA%93/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>关于 Tree Shaking 的探索</title>
       <link href="/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/"/>
       <url>/2022/01/27/%E5%85%B3%E4%BA%8E-Tree-Shaking-%E7%9A%84%E6%8E%A2%E7%B4%A2/</url>
