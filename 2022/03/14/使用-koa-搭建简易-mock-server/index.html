@@ -23,21 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="背景电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，实现了一个 RN 瀑布流组件。这里只记录思路，具体代码后面添加了较多业">
+<meta name="description" content="目前项目组里的项目，要么没有 mock，要么 mock 数据的方式就是将假数据写到业务代码中，不方便开发。近来刚好有时间，因此抽空对原项目进行一些改造，让其支持数据的 mock。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RN瀑布流">
-<meta property="og:url" content="https://knighd.gitee.io/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/index.html">
+<meta property="og:title" content="使用 koa 搭建简易 mock server">
+<meta property="og:url" content="https://knighd.gitee.io/2022/03/14/%E4%BD%BF%E7%94%A8-koa-%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93-mock-server/index.html">
 <meta property="og:site_name" content="前端见闻录">
-<meta property="og:description" content="背景电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，实现了一个 RN 瀑布流组件。这里只记录思路，具体代码后面添加了较多业">
+<meta property="og:description" content="目前项目组里的项目，要么没有 mock，要么 mock 数据的方式就是将假数据写到业务代码中，不方便开发。近来刚好有时间，因此抽空对原项目进行一些改造，让其支持数据的 mock。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-20T14:24:12.000Z">
-<meta property="article:modified_time" content="2020-10-31T01:27:05.142Z">
+<meta property="article:published_time" content="2022-03-14T00:44:41.000Z">
+<meta property="article:modified_time" content="2022-03-16T01:17:55.062Z">
 <meta property="article:author" content="Jay Day">
-<meta property="article:tag" content="ReactNative">
+<meta property="article:tag" content="前端工程化">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/">
+<link rel="canonical" href="https://knighd.gitee.io/2022/03/14/%E4%BD%BF%E7%94%A8-koa-%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93-mock-server/">
 
 
 <script class="page-configurations">
@@ -49,7 +49,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>RN瀑布流 | 前端见闻录</title>
+<title>使用 koa 搭建简易 mock server | 前端见闻录</title>
   
 
 
@@ -187,7 +187,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">思路</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scripts"><span class="nav-number">2.1.</span> <span class="nav-text">scripts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dev-mock"><span class="nav-number">2.2.</span> <span class="nav-text">dev:mock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mock-server"><span class="nav-number">2.3.</span> <span class="nav-text">mock-server</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +255,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2020/10/20/RN%E7%80%91%E5%B8%83%E6%B5%81/">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/03/14/%E4%BD%BF%E7%94%A8-koa-%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93-mock-server/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -268,7 +268,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          RN瀑布流
+          使用 koa 搭建简易 mock server
         </h1>
 
         <div class="post-meta-container">
@@ -279,14 +279,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-10-20 22:24:12" itemprop="dateCreated datePublished" datetime="2020-10-20T22:24:12+08:00">2020-10-20</time>
+      <time title="创建时间：2022-03-14 08:44:41" itemprop="dateCreated datePublished" datetime="2022-03-14T08:44:41+08:00">2022-03-14</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-31 09:27:05" itemprop="dateModified" datetime="2020-10-31T09:27:05+08:00">2020-10-31</time>
+        <time title="修改时间：2022-03-16 09:17:55" itemprop="dateModified" datetime="2022-03-16T09:17:55+08:00">2022-03-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -294,7 +294,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+          <a href="/categories/NodeJs/" itemprop="url" rel="index"><span itemprop="name">NodeJs</span></a>
         </span>
     </span>
 
@@ -313,14 +313,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1k</span>
+      <span>2.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -331,47 +331,109 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>电商以及图片网站经常可以看到瀑布流的列表，即多列等宽的列表，但是每一列中的元素高度不一定一致。这在 web 是一个很常见的设计且有很多组件可供使用，而在 ReactNative 中，少有成熟的瀑布流组件，大多数组件要么是多年前维护的，要么 star 数较少，或者干脆有一些不维护了，总之就是用着不放心。因此在产品同学的要求下，实现了一个 RN 瀑布流组件。这里只记录思路，具体代码后面添加了较多业务相关的，就不贴了。</p>
+        <p>目前项目组里的项目，要么没有 mock，要么 mock 数据的方式就是将假数据写到业务代码中，不方便开发。近来刚好有时间，因此抽空对原项目进行一些改造，让其支持数据的 mock。</p>
 <a id="more"></a>
 
-<h4 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h4><ol>
-<li><p>支持上拉加载，下拉刷新</p>
-</li>
-<li><p>支持多列可定制</p>
-</li>
-<li><p>性能尽量好</p>
-</li>
-<li><p>自定义元素</p>
-</li>
-</ol>
-<h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><ol>
-<li><p>整个瀑布流通过 FlatList 来实现，通过设置 columnsNum 与 renderItem，将每一列又分别渲染成一个 FlatList。内层并列的 FlatList 将会撑开且不会产生多余的滚动条，滚动时是外层的 FlatList。</p>
-</li>
-<li><p>接收 data 时，判断每一项应该属于哪一列， 如果项的高度不能提前获得，那么要在项的 onLayout 时获取高度，之后判断下一项属于哪一列</p>
-</li>
-<li><p>下拉采用 RN 提供的 RefreshControl 就可以完成，而上拉的事件，单列表可以通过 onReachEnd 触发，而对于我们这种实现方式则只能通过 onScroll 自行判断是否到达底部</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">&#x2F;&#x2F; 由于 onEndReached 在渲染 data 项时会多次触发，且 props 及 state 未变化时不会触发，因此自行实现
-const handleScroll &#x3D; (event: NativeSyntheticEvent&lt;NativeScrollEvent&gt;) &#x3D;&gt; &#123;
-  const &#123;
-    nativeEvent: &#123;
-      contentOffset: &#123; y: scrollTop &#125;,
-      contentSize: &#123; height: scrollHeight &#125;,
-      layoutMeasurement: &#123; height &#125;,
-    &#125;,
-  &#125; &#x3D; event;
-  if (scrollHeight - height - scrollTop &lt;&#x3D; onEndReachedThreshold) &#123;
-    if (onEndReached) &#123;
-      onEndReached(event);
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>开发时，我们通过 devServer 代理到测试环境，测试环境返回对应的测试数据，在 mock 时，我们就需要将接口代理到我们自己的 mock 服务器，那么返回的数据就可以自行定义，本文以 webpack 为例，其他的构建工具大致上思路是一样的。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="scripts"><a href="#scripts" class="headerlink" title="scripts"></a>scripts</h3><p>首先我们要区分开普通的开发模式与 mock 的开发模式，因此在 package.json 中添加一些 script</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
+	&#x2F;&#x2F; ...
+  scripts: &#123;
+    &quot;dev&quot;: &quot;run some script for develop&quot;,
+    &quot;mock-server&quot;: &quot;nodemon mock&#x2F;index.js&quot;,
+    &quot;dev:mock&quot;: &quot;cross-env MOCK&#x3D;1 run some script for develop&quot;,
+    &quot;mock&quot;: &quot;npm-run-all -p -r mock-server dev:mock&quot;
+  &#125;
+&#125;</code></pre>
+
+<p><code>mock-server</code> 命令用于启动一个 mock 服务, 启动的脚本在 mock/index.js (后面将补充详细的说明)</p>
+<p><code>dev:mock</code>命令与普通开发模式 dev 的区别在于注入一个 <code>MOCK=1</code>, 这个 变量的作用是配置 webpack 的 devServer 中的 proxy，当 <code>process.env.MOCK === &#39;1&#39;</code> 时，将接口代理到 mock server。</p>
+<p><code>mock</code> 命令就是通过 <code>npm-run-all</code>将<code>mock-server</code>与<code>dev:mock</code>命令串行执行。</p>
+<h3 id="dev-mock"><a href="#dev-mock" class="headerlink" title="dev:mock"></a>dev:mock</h3><p>在 dev 模式的配置文件里（如  webpack.dev.conf.js )，修改 devServer.proxy</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#123;
+	&#x2F;&#x2F; ...
+  devServer: &#123;
+    &#x2F;&#x2F; ...
+    proxy: &#123;
+      &#39;&#x2F;api&#39;: &#123;
+        &#x2F;&#x2F; 假设我们的 mocker server 端口在 8009
+        process.env.MOCK &#x3D;&#x3D;&#x3D; &#39;1&#39; ? &#39;http:&#x2F;&#x2F;localhost:8009&#39; : &#39;http:&#x2F;&#x2F;your-test-domain&#39;,
+        changeOrigin: true,
+      &#125;
     &#125;
   &#125;
-  if (props.onScroll) &#123;
-    props.onScroll(event);
-  &#125;
-&#125;;</code></pre>
+&#125;</code></pre>
 
-</li>
-</ol>
-<p>这样一个简单的 瀑布流就完成了。</p>
+<p>这样我们在 mock 的时候，以 <code>/api</code> 开头的接口就能转发到 <code>http://localhost:8009</code> 了，下面让我们完成 mock server 的部分</p>
+<h3 id="mock-server"><a href="#mock-server" class="headerlink" title="mock-server"></a>mock-server</h3><p>我们创建一个 mock 目录，在下面创建一个 index.js 文件作为启动脚本。</p>
+<p>当我们在 mock 目录下新建 *.mock.js， 如 test.mock.js </p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">module.exports &#x3D; &#123;
+  &#39;get &#x2F;api&#x2F;test&#39;: ctx &#x3D;&gt; &#123;
+    ctx.body &#x3D; &#123;
+      code: 0,
+      message: &quot;my mock data&quot;
+    &#125;
+  &#125;,
+  &#39;post &#x2F;api&#x2F;test2&#39;: &#123;
+      code: 0,
+      message: &quot;my mock data2&quot;
+   &#125;
+&#125;;
+</code></pre>
+
+<p>上面的配置可以看出其实和写 koa 的接口是一样的，为了方便起见，我们还支持直接返回一个对象。</p>
+<p>mock/index 的具体实现如下：</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">const Koa &#x3D; require(&#39;koa&#39;);
+const app &#x3D; new Koa();
+const glob &#x3D; require(&#39;glob&#39;);
+const Router &#x3D; require(&#39;koa-router&#39;);
+const chalk &#x3D; require(&#39;chalk&#39;);
+const proxy &#x3D; require(&#39;koa-proxies&#39;);
+const router &#x3D; new Router();
+
+glob.sync(&#39;**&#x2F;*.mock.js&#39;, &#123;
+    cwd: __dirname,
+    ignore: [&#39;index.js&#39;],
+&#125;).forEach(file &#x3D;&gt; &#123;
+  &#x2F;&#x2F; 读取所有 *.mock.js 文件
+  const apis &#x3D; require(&#96;.&#x2F;$&#123;file&#125;&#96;);
+  &#x2F;&#x2F; 注册路由
+  Object.keys(apis).forEach(api &#x3D;&gt; &#123;
+    const [method, url] &#x3D; api.split(&#x2F;\s+&#x2F;);
+    router[method](
+      url,
+      &#x2F;&#x2F; 如果是方法，则执行方法，否则直接返回对象
+      typeof apis[api] &#x3D;&#x3D;&#x3D; &#39;function&#39;
+      ? apis[api]
+      : ctx &#x3D;&gt; &#123;
+        ctx.body &#x3D; apis[api];
+      &#125;,
+    );
+  &#125;);
+&#125;);
+
+app.use(async (ctx, next) &#x3D;&gt; &#123;
+  await next();
+  &#x2F;&#x2F; 打个日志
+  console.log(&#96;$&#123;chalk.blue(&#39;mock 请求:&#39;)&#125; $&#123;ctx.method&#125; $&#123;ctx.url&#125;&#96;);
+&#125;)
+	&#x2F;&#x2F; 注册路由
+  .use(router.routes())
+  .use(router.allowedMethods());
+	&#x2F;&#x2F; bypass，如果没有对应的 mock api 的话就还是转发到测试环境
+  .use(
+    &#x2F;&#x2F; 代理
+    proxy(&#96;&#x2F;api&#96;, &#123;
+      target: &#39;http:&#x2F;&#x2F;your-test-domain&#39;,
+      changeOrigin: true,
+    &#125;),
+  )
+	&#x2F;&#x2F; 监听 8090 端口
+  .listen(8009, () &#x3D;&gt; &#123;
+	  console.log(chalk.green(&#39;mock server is running at port 8009&#39;));
+	&#125;);</code></pre>
+
+<p>至此， 通过 koa 完成了一个很简单的 mock 服务。</p>
 
     </div>
 
@@ -381,21 +443,18 @@ const handleScroll &#x3D; (event: NativeSyntheticEvent&lt;NativeScrollEvent&gt;)
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/ReactNative/" rel="tag"># ReactNative</a>
+              <a href="/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/" rel="tag"># 前端工程化</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/09/22/react-native-%E9%80%9A%E8%AE%AF%E5%BD%95%E5%AD%97%E6%AF%8D%E5%88%97%E8%A1%A8/" rel="prev" title="react-native 通讯录字母列表">
-                  <i class="fa fa-chevron-left"></i> react-native 通讯录字母列表
+                <a href="/2022/03/03/RN-%E7%BA%BF%E4%B8%8A%E9%94%99%E8%AF%AF%E6%90%9C%E9%9B%86/" rel="prev" title="RN 线上错误搜集">
+                  <i class="fa fa-chevron-left"></i> RN 线上错误搜集
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/10/30/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" rel="next" title="VSCode merge-diffs 插件开发">
-                  VSCode merge-diffs 插件开发 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
