@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="背景所负责的一个 rn 项目，分为用户端和医生端，这两个端有很多可复用的地方，比如相似的界面，相似的组件，相似的逻辑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NX 重构 RN 项目">
+<meta property="og:url" content="https://knighd.gitee.io/2022/07/08/NX-%E9%87%8D%E6%9E%84-RN-%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="背景所负责的一个 rn 项目，分为用户端和医生端，这两个端有很多可复用的地方，比如相似的界面，相似的组件，相似的逻辑。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-08T01:28:17.000Z">
+<meta property="article:modified_time" content="2022-07-08T01:30:43.565Z">
+<meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="ReactNative">
+<meta property="article:tag" content="前端工程化">
+<meta property="article:tag" content="monorepo">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://knighd.gitee.io/2022/07/08/NX-%E9%87%8D%E6%9E%84-RN-%E9%A1%B9%E7%9B%AE/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>NX 重构 RN 项目 | 前端见闻录</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">前端见闻录</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Goodbye World</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#monorepo"><span class="nav-number">3.</span> <span class="nav-text">monorepo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nx"><span class="nav-number">4.</span> <span class="nav-text">nx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E7%9A%84%E8%BF%87%E7%A8%8B%E5%8F%8A%E8%B8%A9%E5%9D%91"><span class="nav-number">5.</span> <span class="nav-text">重构的过程及踩坑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B8%A9%E5%9D%91"><span class="nav-number">5.1.</span> <span class="nav-text">踩坑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jay Day"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jay Day</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/07/08/NX-%E9%87%8D%E6%9E%84-RN-%E9%A1%B9%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NX 重构 RN 项目
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-07-08 09:28:17 / 修改时间：09:30:43" itemprop="dateCreated datePublished" datetime="2022-07-08T09:28:17+08:00">2022-07-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>所负责的一个 rn 项目，分为用户端和医生端，这两个端有很多可复用的地方，比如相似的界面，相似的组件，相似的逻辑。</p>
+<a id="more"></a>
+<p>在此前的架构设计可能是前期工期比较紧张的原因，简单粗暴地将将两个端放置在同一个仓库当中，仅通过文件夹作为区分</p>
+<pre class="line-numbers language-none"><code class="language-none">├── src
+│   ├── assets
+│   ├── components
+│   ├── hooks
+│   ├── client
+│   ├── doctor
+│   └── index.ts
+├── package.json
+└── README.md</code></pre>
+
+<p>大概就是类似这样的一个结构。</p>
+<p>这带来了什么问题呢？</p>
+<ol>
+<li>统一入口为 index.ts, 所有的 client 和 doctor 的页面都在这里注册，导致最终 bundle 出来的 包非常大，对用户端来说多了很多医生端的代码，同理对医生端来说，多了很多用户端的代码。</li>
+<li>无法评估影响点，例如仅修改医生端的代码，构建的时候会把用户端的部分也重新构建。并且作为开发者而言，我们也不好评估修改某些代码时会影响到哪一端。</li>
+<li>一旦构建就是两端同时构建，这导致构建时间变长。</li>
+</ol>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>其实上面的问题本质上都是因为入口单一，都通过 index.ts 作为注册页面的入口。比较容易想到的是，把入口拆分成 client-index.ts 与 doctor-index.ts 类似这样的。<br>但这仍然存在问题：<br>项目是通过 gitlab ci 持续集成构建的，当有代码变更的时候，就会执行构建脚本。但 gitlab 显然无法得知需要构建的是 client 还是 doctor，如果不管三七二十一，我都构建，那么显然上述 2 和 3 的问题是无法解决的。<br>为了解决上面的问题，即如何能获知代码变更造成的影响点，我逐渐把目光放到了 monorepo 上。</p>
+<h3 id="monorepo"><a href="#monorepo" class="headerlink" title="monorepo"></a>monorepo</h3><p>提到 monorepo，第一个反应应当是 lerna，但当时的 lerna 还是不能满足上面的需求。然后我又看了一些目前比较热门的 monorepo 框架，如 nx / rush 等。此时我发现一个 issue <a target="_blank" rel="noopener" href="https://github.com/lerna/lerna/issues/3121">https://github.com/lerna/lerna/issues/3121</a> 没错，在这个 issue 里提到，lerna 将转给 nx 来维护，由此我打算仔细研究一下 nx。</p>
+<h3 id="nx"><a href="#nx" class="headerlink" title="nx"></a>nx</h3><p>翻阅文档可以看到 <a target="_blank" rel="noopener" href="https://nx.dev/getting-started/intro">nx</a> 对比 lerna</p>
+<blockquote>
+<ul>
+<li><strong>Parallelization and task dependencies -</strong> Nx automatically <a target="_blank" rel="noopener" href="https://nx.dev/structure/dependency-graph">knows how your projects relate to each other</a>. As a result, if <code>project-a</code> depends on <code>project-b</code> and you run the build command for <code>project-a</code>, Nx first runs the builds for all of <code>project-a</code>‘s dependencies and then the invoked project itself. Nx sorts these tasks to maximize parallelism.</li>
+<li><strong>Only run what changed -</strong> Using <a target="_blank" rel="noopener" href="https://nx.dev/using-nx/affected">Nx affected commands</a> you only really execute tasks on the projects that changed, compared to a given baseline (usually the main branch).</li>
+<li><strong>Caching -</strong> You get Nx’s <a target="_blank" rel="noopener" href="https://nx.dev/using-nx/caching">computation caching</a> for free. All operations, including artifacts and terminal output are restored from the cache (if present) in a completely transparent way without disrupting your DX. No configuration needed. Obviously this results in an incredible speed improvement.</li>
+</ul>
+</blockquote>
+<p>nx 对比 lerna 强在于任务编排</p>
+<ol>
+<li>nx 可以自动分析项目依赖，在执行任务时可以将前置依赖的package 构建</li>
+<li>通过 nx affected 命令，nx 可以仅运行有变更的项目</li>
+<li>nx 可以缓存构建结果<br>从上述看出，nx 完美符合我的需求，因此打算将项目通过 nx 进行重构。</li>
+</ol>
+<h3 id="重构的过程及踩坑"><a href="#重构的过程及踩坑" class="headerlink" title="重构的过程及踩坑"></a>重构的过程及踩坑</h3><p>重构的步骤比较简单：</p>
+<ol>
+<li>由于结构变动比较大，因此直接初始化一个 react native 项目<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">npx create-nx-workspace your-workspace-name \
+--preset&#x3D;react-native \
+--appName&#x3D;your-app-name
+
+npm install @nrwl&#x2F;react-native --save-dev
+
+nx g @nrwl&#x2F;react-native:app doctor
+
+nx g @nrwl&#x2F;react-native:app client</code></pre></li>
+<li>将公共的代码抽成 libs<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">nx g @nrwl&#x2F;react-native:library shared-hooks
+nx g @nrwl&#x2F;react-native:library shared-components
+nx g @nrwl&#x2F;react-native:library shared-assets</code></pre></li>
+<li>修改引用，之前引用公共代码类似 <code>import SomeComponent from &#39;@components&#39;</code>，现在则更新为 <code>import SomeComponent from &#39;your-workspace-name/shared-component&#39;</code>。注意这里还需要修改一下 tsconfig 里的别名，以方便 <code>import SomeImage from &#39;your-workspace-name/shared-assets&#39;</code><pre class="line-numbers language-none"><code class="language-none">&quot;your-workspace-name&#x2F;shared-assets&#x2F;*&quot;: [&quot;libs&#x2F;shared-assets&#x2F;src&#x2F;*&quot;]</code></pre></li>
+<li>重点在 package 的脚本，构建脚本调整为<pre class="line-numbers language-none"><code class="language-none">&quot;release&quot;: &quot;nx affected --target&#x3D;release --base&#x3D;origin&#x2F;main~1 --head&#x3D;origin&#x2F;main&quot;,</code></pre>
+当 gitlab ci 运行时，执行 <code>npm run release</code> 这个脚本，此时 <code>nx affected</code> 会检测到 origin/main~1 与 origin/main 不同的地方，找到受影响的项目，并且执行这些项目的 release 命令</li>
+<li>上面提到的 <code>--target=release</code> 中的 release 是自定义的 excutor，即 nx 的执行脚本，关于这部分可以参考 <a target="_blank" rel="noopener" href="https://nx.dev/executors/run-commands-builder">https://nx.dev/executors/run-commands-builder</a> 实际上最主要的功能就是执行 react-native-cli 的 bundle（当然 nx 也内置了 bundle 的 excutor）</li>
+</ol>
+<h4 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h4><p> 以上都比较顺利，唯一的坑点在于，导入 shared-assets 的图片在 app 中并不会加载出来。一开始我以为是 nx 的问题，后来经过探索发现实际上是 metro 的问题（react-native-cli 底层打包工具）。具体可以查看这个 issue <a target="_blank" rel="noopener" href="https://github.com/facebook/metro/issues/290#issuecomment-543746458">https://github.com/facebook/metro/issues/290#issuecomment-543746458</a> 大概的原因是因为 metro 在打包资源的时候，会将资源的相对路径也编译进去，引用外层的资源时，路径中就会包含 <code>../</code> 然而最终生成的代码目录显然找不到这样的路径，由此加载会失败。怎么办呢，这个 issue 里有人提出用类似 <code>dir</code> 这样的特殊字符来替换 <code>../</code></p>
+<p>我在尝试了上述 <a target="_blank" rel="noopener" href="https://github.com/facebook/metro/issues/290#issuecomment-917695784">https://github.com/facebook/metro/issues/290#issuecomment-917695784</a> 的方案后，开发时正常，但是在最终构建之后依然无法显示出来（时间有点久了，忘记具体原因了，大概原因还是打包后的路径依然不正确导致的）。<br>最终结合了 issue 里的方案，调整了个目前运行起来没问题的方案（不得不吐槽下 metro 的文档，有一些 api 就一笔带过，只能翻 issue 看用法）</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; metro.config.js
+const &#123; withNxMetro &#125; &#x3D; require(&#39;@nrwl&#x2F;react-native&#39;);
+const &#123; getDefaultConfig &#125; &#x3D; require(&#39;metro-config&#39;);
+const exclusionList &#x3D; require(&#39;metro-config&#x2F;src&#x2F;defaults&#x2F;exclusionList&#39;);
+
+module.exports &#x3D; (async () &#x3D;&gt; &#123;
+  const &#123;
+    resolver: &#123; sourceExts, assetExts &#125;,
+  &#125; &#x3D; await getDefaultConfig();
+  return withNxMetro(
+    &#123;
+	    &#x2F;&#x2F; ...
+        &#x2F;&#x2F; 将请求资源的路径 ..&#x2F; 替换成 dir&#x2F;
+        assetPlugins: [require.resolve(&#39;.&#x2F;metro-asset-plugin&#39;)],
+      &#125;,
+      server: &#123;
+        &#x2F;&#x2F; 开发环境替换图片资源引用路径,否则无法找到正确的路径
+        enhanceMiddleware: (middleware) &#x3D;&gt; &#123;
+          return (req, res, next) &#x3D;&gt; &#123;
+            if (req.url.indexOf(&#39;&#x2F;dir&#39;) !&#x3D;&#x3D; -1) &#123;
+              req.url &#x3D; req.url.replace(&#x2F;dir\&#x2F;&#x2F;g, &#39;..&#x2F;&#39;);
+            &#125;
+            return middleware(req, res, next);
+          &#125;;
+        &#125;,
+      &#125;,
+      &#x2F;&#x2F; ...
+    &#125;,
+    &#x2F;&#x2F; ...
+  );
+&#125;)();
+
+
+&#x2F;&#x2F; metro-asset-plugin.js
+module.exports &#x3D; function (assetData) &#123;
+  if (assetData.httpServerLocation.indexOf(&#39;..&#x2F;&#39;) !&#x3D;&#x3D; -1) &#123;
+    assetData.httpServerLocation &#x3D; assetData.httpServerLocation.replace(
+      &#x2F;\.\.\&#x2F;&#x2F;g,
+      &#39;dir&#x2F;&#39;
+    );
+  &#125;
+  return assetData;
+&#125;;</code></pre>
+
+<p>核心就在于 server.enhanceMiddleware 与 transformer.assetPlugins 替换图片资源引用路径。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>上述仅简单概述了一下通过 monorepo 重构 RN 项目的过程，隐去了不少细节，但通过阅读文档应当也能摸索出具体操作，这里就不再赘述。<br>通过上述的重构之后，构建后用户端体积减少至原来的 30%，而医生端则降低到原来的 80%，效果还是比较显著的。<br>当然 nx 的作用不仅于此，因为不是重点，因此也不打算展开。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ReactNative/" rel="tag"># ReactNative</a>
+              <a href="/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/" rel="tag"># 前端工程化</a>
+              <a href="/tags/monorepo/" rel="tag"># monorepo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/14/%E4%BD%BF%E7%94%A8-koa-%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93-mock-server/" rel="prev" title="使用 koa 搭建简易 mock server">
+                  <i class="fa fa-chevron-left"></i> 使用 koa 搭建简易 mock server
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay Day</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">191k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:19</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
