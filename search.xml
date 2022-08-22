@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>2022 年 React 端技术栈</title>
+      <link href="/2022/08/21/2022-React-%E7%AB%AF%E6%8A%80%E6%9C%AF%E6%A0%88/"/>
+      <url>/2022/08/21/2022-React-%E7%AB%AF%E6%8A%80%E6%9C%AF%E6%A0%88/</url>
+      
+        <content type="html"><![CDATA[<p>2022 年, 前端框架依然在日新月异地变化，近期有个后台的 PC 项目，刚好总结下 2022 年我开发起来比较舒适的技术栈（这里特指的 PC），且非常地有主观倾向，仅作参考。</p><a id="more"></a><h4 id="react"><a href="#react" class="headerlink" title="react"></a>react</h4><p>在浅尝了 vue3 之后，react 在 ts 的支持上还是让我最为满意的，仅这一点就足以让我在俩者中做出选择。至于 solidjs 有种融合了 react / vue / svelte 的感觉，不用写 dependence 确实吸引人，还有待观望。</p><h4 id="vite"><a href="#vite" class="headerlink" title="vite"></a>vite</h4><p>相比较 webpack，vite 开始时启动速度的确是舒服，热更新更是如此</p><h4 id="antd"><a href="#antd" class="headerlink" title="antd"></a>antd</h4><p>mui 让我比较喜欢的是 jss 的设计，然而国内团队大多以 antd 设计原型，如果是个人项目应该还是会使用 mui。</p><h4 id="tailwindcss"><a href="#tailwindcss" class="headerlink" title="tailwindcss"></a>tailwindcss</h4><p>tailwind 可以避免写一些重复的样式，比如 flex。</p><h4 id="jss"><a href="#jss" class="headerlink" title="jss"></a>jss</h4><p>当 tailwind 无法覆盖的场景，如覆盖 antd 样式等使用 jss。相对比 styled component，jss 比较简单，对我而言就是个 css module 的替代品</p><h4 id="react-query"><a href="#react-query" class="headerlink" title="react query"></a>react query</h4><p>这个库前阵子改名成 tan query，类似的库还有 swr。使用这个库可以不用自己维护请求的 loading 态，以及可以方便地管理接口下发的数据状态，但需要转变一些以往命令式的思维。</p><h4 id="zustand"><a href="#zustand" class="headerlink" title="zustand"></a>zustand</h4><p>目前用过最顺手的 react 状态管理库，比 redux 简单。</p><h4 id="plop"><a href="#plop" class="headerlink" title="plop"></a>plop</h4><p>在项目中时常会写一些模板化的代码，例如添加路由，添加 service 等，plop 相当于项目中的脚手架，可以通过模板生成代码。</p><h4 id="zx"><a href="#zx" class="headerlink" title="zx"></a>zx</h4><p>node 写脚本时使用 shell 命令并不太方便，通过 zx 编写会简单很多</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> web 前端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> React </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>NX 重构 RN 项目</title>
       <link href="/2022/07/08/NX-%E9%87%8D%E6%9E%84-RN-%E9%A1%B9%E7%9B%AE/"/>
       <url>/2022/07/08/NX-%E9%87%8D%E6%9E%84-RN-%E9%A1%B9%E7%9B%AE/</url>
@@ -77,33 +102,6 @@
             <tag> ReactNative </tag>
             
             <tag> 前端工程化 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>从零搭建组件库</title>
-      <link href="/2022/02/24/%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E7%BB%84%E4%BB%B6%E5%BA%93/"/>
-      <url>/2022/02/24/%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E7%BB%84%E4%BB%B6%E5%BA%93/</url>
-      
-        <content type="html"><![CDATA[<p>写一个玩票性质的组件库，单纯为了尝试 pnpm + vite + storybook +jest 等工作中还没机会使用的框架，这里做一个开发过程的记录，想到哪儿写到哪儿，可能比较混乱，持续更新。</p><a id="more"></a><h2 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h2><ol><li>安装 pnpm，官方添加了很多安装方式，这里我挑一个 <code>curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm</code></li><li>vite 初始化项目 <code>vite create my-components</code> 根据提示选择 react + ts 的模板</li><li>添加 commitlint，规范提交信息，参考文档 <a href="https://commitlint.js.org/#/guides-local-setup?id=install-commitlint">https://commitlint.js.org/#/guides-local-setup?id=install-commitlint</a></li><li>添加 eslint  / prettier / editorconfig</li><li>添加 linted-staged 及配置 husky 用于提交前检测 eslint 与 prettier 是否通过。<code>pnpx mrm@2 lint-staged</code> 可以一键安装，需要注意的是确保 eslint 和 prettier 要在 devDependencies 里，参考 issue <a href="https://github.com/sapegin/mrm/issues/158">https://github.com/sapegin/mrm/issues/158</a></li></ol><p>处理完上述步骤，基本的架子就搭好了，做到这里的时候想到虽然 vite 也提供了不少模板，但总有些与自己的风格不符，不如把目前的代码作为模板，将来就不需要重复配置了。通过 github 的 import 功能，轻松复制了一下当前的仓库，等日后有时间再完善成 vite template</p><h2 id="起步"><a href="#起步" class="headerlink" title="起步"></a>起步</h2><h3 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h3><p>文档通过 storybook 展示，storybook 依赖于 webpack，而项目中使用的反而是 vite，那不如直接把 story 和 components 作为不同包，由此想到使用 monorepo。</p><p>不过 <code>pnpx sb init</code> 似乎不兼容 pnpm，初始化过程中会通过 npm 安装，初始化之后，删除 node_modules 执行 pnpm install 则会提示，启动 storybook 会报错  <code>Cannot find module &#39;...webpack.config&#39;</code>，见 <a href="https://github.com/storybookjs/storybook/issues/13428，由此看来">https://github.com/storybookjs/storybook/issues/13428，由此看来</a> pnpm 的兼容性还有待研究，由此 pnpm 也被放弃</p><h3 id="monorepo"><a href="#monorepo" class="headerlink" title="monorepo"></a>monorepo</h3><p>如今 monorepo 的方案有很多，例如 lerna / nx / rushstack，或者直接使用包管理工具 pnpm / yarn 2 / npm 7 等。由于 rush 上手成本比较高, 原计划使用 lerna + pnpm</p><p>到这一步想到可能这个仓库就不太简单是个组件库了，不如就作为一个私人的工具库吧，其下面的 components 才是组件库。</p><p>在根目录下执行 <code>pnpx lerna init</code>，可以看到目录下多了 packages 和 lerna.json。</p><p>修改 lerna.json 及 package.json</p><pre class="line-numbers language-js" data-language="js"><code class="language-js">&#x2F;&#x2F; lerna.json&#123;  &quot;packages&quot;: [&quot;packages&#x2F;*&quot;],  &quot;version&quot;: &quot;independent&quot;,  &quot;npmClient&quot;: &quot;pnpm&quot;,  &quot;useWorkspaces&quot;: true&#125;&#x2F;&#x2F; package.json&#123;  &#x2F;&#x2F; ...  &quot;workspaces&quot;: [    &quot;packages&#x2F;*&quot;  ],&#125;</code></pre><p>然后将代码分别移动到 packages 下</p><p>在一番腾挪之后发现，<code>lerna bootstrap</code> 无法给 packages 下的包安装依赖,见 <a href="https://github.com/prisma/language-tools/issues/272">https://github.com/prisma/language-tools/issues/272</a> 不过按以下顺序重新走一遍流程又可以生效，比较奇怪</p><p>初始化项目 – lerna 初始化 – 到 packages 中 vite 创建 components，cra 创建 stories  – lerna bootstrap</p><p>不过 lerna 的一些问题也在这个过程中暴露出来，比如长期不维护，老issue，幽灵依赖等，所以我打算尝试一下 <a href="https://github.com/nrwl">nrwl</a>/<strong><a href="https://github.com/nrwl/nx">nx</a></strong></p><h2 id="初始化项目2"><a href="#初始化项目2" class="headerlink" title="初始化项目2"></a>初始化项目2</h2><p>执行 <code>npx create-nx-workspace --preset=react</code>     </p><p>在 13.9.x 版本运行项目会出现提示 <a href="https://github.com/nrwl/nx/issues/7924，不过项目的重点不在">https://github.com/nrwl/nx/issues/7924，不过项目的重点不在</a> apps，而是 libs</p><p>添加 ui 库</p><p><code>nx generate @nrwl/react:lib ui-components</code></p><p>为 ui 库添加 storybook</p><p><code>nx generate @nrwl/react:storybook-configuration ui-components</code></p><p>整个项目只有根目录有一个 package.json，那么如果要发布的时候版本号从哪里获取呢？</p><p>查阅文档发现 lib 是存在两种模式的 <a href="https://nx.dev/structure/buildable-and-publishable-libraries#publishable-and-buildable-nx-libraries，那我们这里应该选择">https://nx.dev/structure/buildable-and-publishable-libraries#publishable-and-buildable-nx-libraries，那我们这里应该选择</a> publish</p><p>那么先把先前建立的 ui-components 移除掉</p><p><code>nx g @nrwl/workspace:remove ui-components</code></p><p>发现 ui-components 在 ui-components-e2e 中有依赖，先移除 ui-components-e2e，之后再移除 ui-components</p><p>重新添加</p><p><code>nx generate @nrwl/react:lib ui-components --publishable --importPath @rellika/ui-components</code></p><p>同理创建一个 ui-themes </p><p>运行 storybook</p><pre class="line-numbers language-none"><code class="language-none">nx run ui-components:storybook</code></pre><h3 id="样式与主题"><a href="#样式与主题" class="headerlink" title="样式与主题"></a>样式与主题</h3><p>样式方面，国内大部分选择 scss / less，material-ui 选择 styled-jsx，我这里选择 styled-components</p><h3 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h3><p><a href="https://github.com/developit/microbundle">https://github.com/developit/microbundle</a></p><h3 id="Button"><a href="#Button" class="headerlink" title="Button"></a>Button</h3><p>为了方便定制，在 Styled 装饰的组件上，都添加了样式名。例如<code>StyledNativeButton</code> 这里就会有一个 <code>RuiButton-nativeBtn</code> 的样式名。命名的规范就是 Rui + 组件名 + 装饰的组件。</p><p>文件命名规范：组件使用 AaBb 这样的 Pascal，文件夹使用 aa-bb 这样的 snake</p><h3 id="Jest"><a href="#Jest" class="headerlink" title="Jest"></a>Jest</h3><pre class="line-numbers language-none"><code class="language-none">nx test ui-components</code></pre><p>添加 jest-dom 方便对 dom 进行断言</p><pre class="line-numbers language-none"><code class="language-none">npm install --save-dev @testing-library&#x2F;jest-dom</code></pre>]]></content>
-      
-      
-      <categories>
-          
-          <category> web前端 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 组件库 </tag>
-            
-            <tag> React </tag>
             
         </tags>
       
