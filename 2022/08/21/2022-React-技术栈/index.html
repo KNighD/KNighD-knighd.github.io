@@ -23,16 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"knighd.gitee.io","root":"/","images":"/images","scheme":"Pisces","version":"8.2.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":true,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta property="og:type" content="website">
-<meta property="og:title" content="前端见闻录">
-<meta property="og:url" content="https://knighd.gitee.io/archives/2020/07/index.html">
+<meta name="description" content="2022 年, 前端框架依然在日新月异地变化，近期有个后台的 PC 项目，刚好总结下 2022 年我开发起来比较舒适的技术栈（这里特指的 PC），且非常地有主观倾向，仅作参考。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022 年 React 技术栈">
+<meta property="og:url" content="https://knighd.gitee.io/2022/08/21/2022-React-%E6%8A%80%E6%9C%AF%E6%A0%88/index.html">
 <meta property="og:site_name" content="前端见闻录">
+<meta property="og:description" content="2022 年, 前端框架依然在日新月异地变化，近期有个后台的 PC 项目，刚好总结下 2022 年我开发起来比较舒适的技术栈（这里特指的 PC），且非常地有主观倾向，仅作参考。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-21T14:52:57.000Z">
+<meta property="article:modified_time" content="2022-08-22T01:24:43.986Z">
 <meta property="article:author" content="Jay Day">
+<meta property="article:tag" content="React">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://knighd.gitee.io/archives/2020/07/">
+<link rel="canonical" href="https://knighd.gitee.io/2022/08/21/2022-React-%E6%8A%80%E6%9C%AF%E6%A0%88/">
 
 
 <script class="page-configurations">
@@ -40,11 +45,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
-<title>归档 | 前端见闻录</title>
+<title>2022 年 React 技术栈 | 前端见闻录</title>
   
 
 
@@ -169,7 +174,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -182,6 +187,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#react"><span class="nav-number">1.</span> <span class="nav-text">react</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vite"><span class="nav-number">2.</span> <span class="nav-text">vite</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#antd"><span class="nav-number">3.</span> <span class="nav-text">antd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tailwindcss"><span class="nav-number">4.</span> <span class="nav-text">tailwindcss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jss"><span class="nav-number">5.</span> <span class="nav-text">jss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#react-query"><span class="nav-number">6.</span> <span class="nav-text">react query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zustand"><span class="nav-number">7.</span> <span class="nav-text">zustand</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#plop"><span class="nav-number">8.</span> <span class="nav-text">plop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zx"><span class="nav-number">9.</span> <span class="nav-text">zx</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -238,150 +244,138 @@
 </noscript>
 
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://knighd.gitee.io/2022/08/21/2022-React-%E6%8A%80%E6%9C%AF%E6%A0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Jay Day">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端见闻录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2022 年 React 技术栈
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-21 22:52:57" itemprop="dateCreated datePublished" datetime="2022-08-21T22:52:57+08:00">2022-08-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-08-22 09:24:43" itemprop="dateModified" datetime="2022-08-22T09:24:43+08:00">2022-08-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web-%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">web 前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>649</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>2022 年, 前端框架依然在日新月异地变化，近期有个后台的 PC 项目，刚好总结下 2022 年我开发起来比较舒适的技术栈（这里特指的 PC），且非常地有主观倾向，仅作参考。</p>
+<a id="more"></a>
+<h4 id="react"><a href="#react" class="headerlink" title="react"></a>react</h4><p>在浅尝了 vue3 之后，react 在 ts 的支持上还是让我最为满意的，仅这一点就足以让我在俩者中做出选择。至于 solidjs 有种融合了 react / vue / svelte 的感觉，不用写 dependence 确实吸引人，还有待观望。</p>
+<h4 id="vite"><a href="#vite" class="headerlink" title="vite"></a>vite</h4><p>相比较 webpack，vite 开始时启动速度的确是舒服，热更新更是如此</p>
+<h4 id="antd"><a href="#antd" class="headerlink" title="antd"></a>antd</h4><p>mui 让我比较喜欢的是 jss 的设计，然而国内团队大多以 antd 设计原型，如果是个人项目应该还是会使用 mui。</p>
+<h4 id="tailwindcss"><a href="#tailwindcss" class="headerlink" title="tailwindcss"></a>tailwindcss</h4><p>tailwind 可以避免写一些重复的样式，比如 flex。</p>
+<h4 id="jss"><a href="#jss" class="headerlink" title="jss"></a>jss</h4><p>当 tailwind 无法覆盖的场景，如覆盖 antd 样式等使用 jss。相对比 styled component，jss 比较简单，对我而言就是个 css module 的替代品</p>
+<h4 id="react-query"><a href="#react-query" class="headerlink" title="react query"></a>react query</h4><p>这个库前阵子改名成 tan query，类似的库还有 swr。使用这个库可以不用自己维护请求的 loading 态，以及可以方便地管理接口下发的数据状态，但需要转变一些以往命令式的思维。</p>
+<h4 id="zustand"><a href="#zustand" class="headerlink" title="zustand"></a>zustand</h4><p>目前用过最顺手的 react 状态管理库，比 redux 简单。</p>
+<h4 id="plop"><a href="#plop" class="headerlink" title="plop"></a>plop</h4><p>在项目中时常会写一些模板化的代码，例如添加路由，添加 service 等，plop 相当于项目中的脚手架，可以通过模板生成代码。</p>
+<h4 id="zx"><a href="#zx" class="headerlink" title="zx"></a>zx</h4><p>node 写脚本时使用 shell 命令并不太方便，通过 zx 编写会简单很多</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/React/" rel="tag"># React</a>
+          </div>
+
         
-        <span class="collection-header">还行! 目前共计 47 篇日志。 继续努力。</span>
-      </div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-07-31T09:20:24+08:00"
-              content="2020-07-31">
-          07-31
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/31/%E5%BD%93%E6%88%91%E4%BB%AC%E8%AF%B4%E5%88%B0%E6%89%93%E5%8C%85%E6%97%B6%EF%BC%8C%E6%88%91%E4%BB%AC%E5%9C%A8%E8%AF%B4%E4%BB%80%E4%B9%88/" itemprop="url">
-            <span itemprop="name">当我们说到打包时，我们在说什么</span>
-          </a>
-      </div>
-
-      
-    </header>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/08/NX-%E9%87%8D%E6%9E%84-RN-%E9%A1%B9%E7%9B%AE/" rel="prev" title="NX 重构 RN 项目">
+                  <i class="fa fa-chevron-left"></i> NX 重构 RN 项目
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/06/%E5%85%B3%E4%BA%8E%E6%88%91%E5%B0%86-fcp-%E7%BC%A9%E7%9F%AD-60-%E8%BF%99%E4%BB%B6%E4%BA%8B/" rel="next" title="关于我将 FCP 缩短 60% 这件事">
+                  关于我将 FCP 缩短 60% 这件事 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-07-28T14:41:40+08:00"
-              content="2020-07-28">
-          07-28
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-JS%E4%B8%AD%E7%9A%84%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" itemprop="url">
-            <span itemprop="name">设计模式-JS中的单例模式</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-07-26T22:14:50+08:00"
-              content="2020-07-26">
-          07-26
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/26/%E3%80%90%E8%AF%91%E3%80%91ReactHooks-%E5%B9%B6%E9%9D%9E%E9%BB%91%E9%AD%94%E6%B3%95%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF%E6%95%B0%E7%BB%84/" itemprop="url">
-            <span itemprop="name">【译】ReactHooks-并非黑魔法，本质是数组</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-07-23T15:16:13+08:00"
-              content="2020-07-23">
-          07-23
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/23/%E5%89%8D%E7%AB%AF%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/" itemprop="url">
-            <span itemprop="name">前端常见的安全问题汇总</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-07-21T14:16:53+08:00"
-              content="2020-07-21">
-          07-21
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/21/RN%20%E9%81%BF%E5%9D%91%E6%8C%87%E5%8C%97/" itemprop="url">
-            <span itemprop="name">RN 避坑指北</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-07-20T15:21:54+08:00"
-              content="2020-07-20">
-          07-20
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/07/20/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%20react%20%E9%A1%B9%E7%9B%AE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/" itemprop="url">
-            <span itemprop="name">记录一次搭建 react 项目遇到的坑</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
+</div>
 
 
-    </div>
-  </div>
-  
-  
-  
+
+
+
 
 
 <script>
